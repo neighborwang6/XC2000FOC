@@ -10,8 +10,6 @@ u8 eeprom_rd(u16 addr,u8 len,u8 *buf);
 extern void delay_ms(u16 tm);
 extern void delay_us(u16 tm);
 
-extern void  add(void);
-
 #endif /* define _EEPROM_H */
 
 
