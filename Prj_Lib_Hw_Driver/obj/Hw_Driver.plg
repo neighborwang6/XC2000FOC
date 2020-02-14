@@ -1,0 +1,22 @@
+Build Project 'Hw_Driver' - Target 'Hw_Driver'
+creating library .\obj\Hw_Driver.LIB...
+TRANSFER
+"..\objs\valve.obj",
+"..\objs\adc.obj",
+"..\objs\ccu6.obj",
+"..\objs\hcu.obj",
+"..\objs\hw.obj",
+"..\objs\Lib_Hw_Driver_Version.obj",
+"..\objs\motor.obj",
+"..\objs\rtc.obj",
+"..\objs\scs.obj",
+"..\objs\ssc.obj",
+"..\objs\timer.obj",
+"..\objs\tle6212.obj",
+"..\objs\trap.obj",
+"..\objs\uart.obj",
+"..\objs\quick_dbg.obj" 
+TO ".\obj\Hw_Driver.LIB"
+LIB166 LIBRARY MANAGER V4.26
+COPYRIGHT KEIL ELEKTRONIK GmbH 1987 - 2005
+".\obj\Hw_Driver.LIB" - 0 Error(s), 0 Warning(s).

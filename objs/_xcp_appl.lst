@@ -1,0 +1,857 @@
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE _XCP_APPL
+OBJECT MODULE PLACED IN .\objs\_xcp_appl.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\_xcp_appl.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_D
+                    -iag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG
+                    - CODE PRINT(.\objs\_xcp_appl.lst) TABS(2) OBJECT(.\objs\_xcp_appl.obj) 
+
+ stmt lvl     source
+
+    1         
+    2         
+    3         /*****************************************************************************
+    4         | Project Name:   XCP application callback function template
+    5         |    File Name:   _xcp_appl.c
+    6         |
+    7         |  Description: 
+    8         |    Template for the XCP application callback functions.
+    9         |    This is just an example and may be modified .
+   10         |
+   11         |  Contains:
+   12         |    - Examples for FLASH programming, EEPROM programming, CalPage switching
+   13         |
+   14         |-----------------------------------------------------------------------------
+   15         |               D E M O
+   16         |-----------------------------------------------------------------------------
+   17         |
+   18         |       Please note, that the demo and example programs 
+   19         |       only show special aspects of the software. 
+   20         |       With regard to the fact that these programs are meant 
+   21         |       for demonstration purposes only,
+   22         |       Vector Informatik's liability shall be expressly excluded in cases 
+   23         |       of ordinary negligence, to the extent admissible by law or statute.
+   24         |
+   25         |-----------------------------------------------------------------------------
+   26         |               C O P Y R I G H T
+   27         |-----------------------------------------------------------------------------
+   28         | Copyright (c) 2016 by Vector Informatik GmbH.           All rights reserved.
+   29         |
+   30         |       This software is copyright protected and 
+   31         |       proporietary to Vector Informatik GmbH.
+   32         |       Vector Informatik GmbH grants to you only
+   33         |       those rights as set out in the license conditions.
+   34         |       All other rights remain with Vector Informatik GmbH.
+   35         | 
+   36         |       Diese Software ist urheberrechtlich geschuetzt. 
+   37         |       Vector Informatik GmbH raeumt Ihnen an dieser Software nur 
+   38         |       die in den Lizenzbedingungen ausdruecklich genannten Rechte ein.
+   39         |       Alle anderen Rechte verbleiben bei Vector Informatik GmbH.
+   40         |
+   41         |-----------------------------------------------------------------------------
+   42         |               A U T H O R   I D E N T I T Y
+   43         |-----------------------------------------------------------------------------
+   44         | Initials     Name                      Company
+   45         | --------     ---------------------     -------------------------------------
+   46         | Tri          Frank Triem               Vector Informatik GmbH
+   47         | Hr           Andreas Herkommer         Vector Informatik GmbH
+   48         | Svh          Sven Hesselmann           Vector Informatik GmbH
+   49         |-----------------------------------------------------------------------------
+   50         |               R E V I S I O N   H I S T O R Y
+   51         |-----------------------------------------------------------------------------
+   52         |  Date       Version  Author  Description
+   53         | ----------  -------  ------  -----------------------------------------------
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 2   
+
+   54         | 2004-12-30  1.00.00   Tri    ESCAN00010708: Create template _xcp_appl.c
+   55         | 2005-02-21  1.01.00   Tri    Rename XcpApplInit to ApplXcpInitTemplate
+   56         | 2005-05-19  1.02.00   Tri    Support data paging on Star12X
+   57         | 2005-12-14  1.03.00   Tri    ESCAN00013899: Data acquisition not possible during cold start
+   58         | 2006-03-17  1.04.00   Tri    Compiler switch for paged memory model added
+   59         | 2006-05-30  1.05.00   Tri    Demo disclaimer added
+   60         | 2007-01-18  1.06.00   Tri    ESCAN00018808: Support data paging on Star12X / Cosmic
+   61         | 2007-07-09  1.06.01   Hr     Support AUTOSAR Memory Mapping
+   62         | 2008-04-03  1.07.00   Hr     ESCAN00025754: Missing function stubs
+   63         | 2008-07-21  1.08.00   Hr     Added new callbacks
+   64         | 2008-09-10  1.09.00   Svh    Added new callback ApplXcpReadChecksumValue
+   65         | 2010-03-24  1.10.00   Hr     Added new callback ApplXcpCalibrationWrite/Read
+   66         | 2013-12-09  1.11.00   Hr     ESCAN00072503: Support custom CRC Cbk
+   67         |                       Hr     ESCAN00072505: Support Generic GET_ID
+   68         | 2015-03-26  1.12.00   Hr     ESCAN00082098: Time Check for DAQ lists
+   69         | 2016-11-18  1.12.01   Hr     ESCAN00091528: Compiler Warning: C++ Comment style used
+   70         |***************************************************************************/
+   71         
+   72         
+   73         /*****************************************************************************/
+   74         /* Include files                                                             */
+   75         /*****************************************************************************/
+   76         #include "XcpBasic.h"
+   77         
+   78         
+   79         vuint8 kXcpStationId[]="XCPDemo";
+   80         
+   81         /***************************************************************************/
+   82         /* Version check                                                           */
+   83         /***************************************************************************/
+   84         #if ( CP_XCP_VERSION < 0x0125u )
+              #error "XCP Protocol Layer and XCP template are inconsistent!"
+              #endif
+   87         #if ( CP_XCP_VERSION < 0x00 )
+              #error "XCP Protocol Layer and XCP on CAN Transport Layer are not consistent!"
+              #endif
+   90         
+   91         
+   92         /***************************************************************************/
+   93         /* Defines                                                                 */
+   94         /***************************************************************************/
+   95         /* DAQ runtime supervision threshold value in timer ticks */
+   96         #define DAQ_RS_THRESHOLD 1234
+   97         /* macro which is used to return the current timer ticks from the hw timer */
+   98         #define HW_TIMER_TICKS 0
+   99         
+  100         
+  101         /*****************************************************************************/
+  102         /* Constants                                                                 */
+  103         /*****************************************************************************/
+  104         
+  105         
+  106         /*****************************************************************************/
+  107         /* Local data definitions                                                    */
+  108         /*****************************************************************************/
+  109         
+  110         #if defined ( XCP_ENABLE_CALIBRATION_PAGE )
+  111         static vuint8 xcpCalPage; /* 0-Ram,1-Flash */
+  112         #endif
+  113         
+  114         #if defined ( XCP_ENABLE_SEED_KEY )
+  115         vuint8 xcpResource;
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 3   
+
+  116         #endif
+  117         
+  118         
+  119         
+  120         extern tXcpData xcp;
+  121         
+  122         /* Variable used to store the intermdiate timer value */
+  123         
+  124         
+  125         
+  126         /*****************************************************************************/
+  127         /*                                                                           */
+  128         /* Implementation                                                            */
+  129         /*                                                                           */
+  130         /*****************************************************************************/
+  131         
+  132         
+  133         #if defined ( XCP_ENABLE_SEED_KEY ) || defined ( XCP_ENABLE_CALIBRATION_PAGE )
+  134         
+  135         void ApplXcpInitTemplate( void )
+  136         {
+  137  1      #if defined ( XCP_ENABLE_SEED_KEY )
+  138  1        /* Part of the example implementation for Seed & Key. */
+  139  1        xcpResource = 0;
+  140  1      #endif
+  141  1        
+  142  1        
+  143  1      #if defined ( XCP_ENABLE_CALIBRATION_PAGE )
+  144  1        /* Part of the example implementation for page switching */
+  145  1        xcpCalPage = 0;                         /* 0-Ram,1-Flash */
+  146  1      #endif
+  147  1      }
+  148         
+  149         #endif
+  150         
+  151         
+  152         
+  153         #if defined (XCP_ENABLE_DAQ)
+  154         
+  155         
+  156         
+  157         #if defined ( XCP_ENABLE_DAQ_TIMESTAMP )
+  158         /****************************************************************************/
+  159         /* DAQ Timestamp                                                            */
+  160         /****************************************************************************/
+  161         
+  162         XcpDaqTimestampType ApplXcpGetTimestamp( void )
+  163         {
+  164  1        return (XcpDaqTimestampType)0u;
+  165  1      }
+  166         #endif /* XCP_ENABLE_DAQ_TIMESTAMP */
+  167         
+  168         #endif /* XCP_ENABLE_DAQ */
+  169         
+  170         
+  171         
+  172         #if defined ( XCP_ENABLE_CALIBRATION_PAGE )
+  173         
+  174         /*****************************************************************************/
+  175         /* Page switching                                                            */
+  176         /* This is just an example how the page switching could be implemented.      */
+  177         /*****************************************************************************/
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 4   
+
+  178         
+  179         /*****************************************************************************
+  180         | NAME:             ApplXcpGetCalPage
+  181         | CALLED BY:        XcpCommand
+  182         | PRECONDITIONS:    RAM / ROM switching enabled
+  183         | INPUT PARAMETERS: segment : 
+  184         |                   mode    : 
+  185         | RETURN VALUES:    
+  186         | DESCRIPTION:      
+  187         ******************************************************************************/
+  188         vuint8 ApplXcpGetCalPage( vuint8 segment, vuint8 mode ) 
+  189         {
+  190  1        UNUSED_PARA(segment);
+  191  1        UNUSED_PARA(mode);
+  192  1      
+  193  1        return (vuint8)xcpCalPage;
+  194  1      }
+  195         
+  196         /*****************************************************************************
+  197         | NAME:             ApplXcpSetCalPage
+  198         | CALLED BY:        XcpCommand
+  199         | PRECONDITIONS:    RAM / ROM switching enabled
+  200         | INPUT PARAMETERS: segment : 
+  201         |                   page    :
+  202         |                   mode    : CAL_ECU and/or CAL_XCP or CAL_ALL
+  203         | RETURN VALUES:    
+  204         | DESCRIPTION:      
+  205         ******************************************************************************/
+  206         vuint8 ApplXcpSetCalPage( vuint8 segment, vuint8 page, vuint8 mode ) 
+  207         {
+  208  1        if (segment!=0)
+  209  1        {
+  210  2          return CRC_OUT_OF_RANGE; /* Only one segment supported */
+  211  2        }
+  212  1        if (page>1)
+  213  1        {
+  214  2          return CRC_PAGE_NOT_VALID; 
+  215  2        }
+  216  1        if ((mode&0x03)!=0x03)
+  217  1        {
+  218  2          return CRC_PAGE_MODE_NOT_VALID; /* Only one segment supported */
+  219  2        }
+  220  1        xcpCalPage = page;
+  221  1        
+  222  1        return (vuint8)0;
+  223  1      }
+  224         
+  225         
+  226         #if defined ( XCP_ENABLE_PAGE_COPY )
+              /*****************************************************************************
+              | NAME:             ApplXcpCopyCalPage
+              | CALLED BY:        XcpCommand
+              | PRECONDITIONS:    RAM / ROM switching enabled
+              | INPUT PARAMETERS: srcSeg   : 
+              |                   srcPage  :
+              |                   destSeg  : 
+              |                   destPage :
+              | RETURN VALUES:    
+              | DESCRIPTION:      
+              ******************************************************************************/
+              vuint8 ApplXcpCopyCalPage(vuint8 srcSeg, vuint8 srcPage, vuint8 destSeg, vuint8 destPage)
+              {
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 5   
+
+                
+                /* something has to be done here */
+                
+                return (vuint8)1u;
+              }
+              #endif
+  246         
+  247         #endif /* XCP_ENABLE_CALIBRATION_PAGE */
+  248         
+  249         
+  250         #if defined ( XCP_ENABLE_PAGE_FREEZE )
+              /*****************************************************************************
+              | NAME:             ApplXcpSetFreezeMode
+              | CALLED BY:        XcpCommand
+              | PRECONDITIONS:    RAM / ROM switching enabled
+              | INPUT PARAMETERS: segment : 
+              |                   mode    :
+              | RETURN VALUES:    
+              | DESCRIPTION:      
+              ******************************************************************************/
+              void ApplXcpSetFreezeMode( vuint8 segment, vuint8 mode )
+              {
+                /* something has to be done here */
+              }
+              
+              /*****************************************************************************
+              | NAME:             ApplXcpGetFreezeMode
+              | CALLED BY:        XcpCommand
+              | PRECONDITIONS:    RAM / ROM switching enabled
+              | INPUT PARAMETERS: segment : 
+              | RETURN VALUES: mode    
+              | DESCRIPTION:      
+              ******************************************************************************/
+              vuint8 ApplXcpGetFreezeMode( vuint8 segment )
+              {
+                /* something has to be done here */
+                
+                return (vuint8)0u;
+              }
+              #endif /* XCP_ENABLE_PAGE_FREEZE */
+  280         
+  281         
+  282         
+  283         
+  284         
+  285         
+  286         /*****************************************************************************/
+  287         /* Platform and implementation specific functions for XCP                    */
+  288         /*****************************************************************************/
+  289         
+  290         /*****************************************************************************
+  291         | NAME:             ApplXcpGetPointer
+  292         | CALLED BY:        XcpCommand
+  293         | PRECONDITIONS:    none
+  294         | INPUT PARAMETERS: addr_ext : 8  bit address extension
+  295         |                   addr     : 32 bit address
+  296         | RETURN VALUES:    Pointer to the address specified by the parameters. 
+  297         | DESCRIPTION:      Convert a memory address from XCP format 8/32bit into a C pointer.
+  298         |                   Used for memory transfers like DOWNLOAD, UPLOAD (MTA)
+  299         ******************************************************************************/
+  300         #if defined ( ApplXcpGetPointer )
+              /* defined as macro */
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 6   
+
+              #else
+  303         MTABYTEPTR ApplXcpGetPointer( vuint8 addr_ext, vuint32 addr )
+  304         {
+  305  1        
+  306  1        UNUSED_PARA(addr_ext);
+  307  1        
+  308  1        return (u8 far *)addr;
+  309  1      }
+  310         
+  311         #endif /* ApplXcpGetPointer */
+  312         
+  313         
+  314         #if defined ( XCP_ENABLE_MEM_ACCESS_BY_APPL )
+              
+              /*****************************************************************************
+              | NAME:             ApplXcpRead
+              | CALLED BY:        XCP Protocol Layer
+              | PRECONDITIONS:    none
+              | INPUT PARAMETERS: addr : 32 bit address
+              | RETURN VALUES:    Value specified by the address parameters. 
+              | DESCRIPTION:      Read a single byte from the memory.
+              ******************************************************************************/
+              vuint8 ApplXcpRead( vuint32 addr )
+              {
+                // return *((vuint8* __far)addr);
+                return *((vuint8*)addr);
+              }  
+              
+              /*****************************************************************************
+              | NAME:             ApplXcpWrite
+              | CALLED BY:        XCP Protocol Layer
+              | PRECONDITIONS:    none
+              | INPUT PARAMETERS: addr : 32 bit address
+              |                   data : data to be written to memory
+              | RETURN VALUES:    none
+              | DESCRIPTION:      Write a single byte to RAM.
+              ******************************************************************************/
+              void XCP_FAR ApplXcpWrite( vuint32 addr, vuint8 data )
+              {
+                // *((vuint8* __far)addr) = data;
+                *((vuint8*)addr) = data;
+              }
+              #endif
+  345         
+  346         #if defined ( XCP_ENABLE_CALIBRATION_MEM_ACCESS_BY_APPL ) || defined ( XCP_ENABLE_MEM_ACCESS_BY_APPL )
+              #if defined ( XCP_ENABLE_CHECKSUM )
+              #if ( kXcpChecksumMethod == XCP_CHECKSUM_TYPE_ADD22 ) || \
+                ( kXcpChecksumMethod == XCP_CHECKSUM_TYPE_ADD24 ) || \
+                ( kXcpChecksumMethod == XCP_CHECKSUM_TYPE_ADD44 ) || \
+              defined ( XCP_ENABLE_CALIBRATION_MEM_ACCESS_BY_APPL )
+              /*****************************************************************************
+              | NAME:             ApplXcpReadChecksumValue
+              | CALLED BY:        XCP Protocol Layer
+              | PRECONDITIONS:    none
+              | INPUT PARAMETERS: addr : 32 bit address
+              | RETURN VALUES:    Pointer to the address specified by the parameters. 
+              | DESCRIPTION:      Read and return memory with size of tXcpChecksumAddType.
+              ******************************************************************************/
+              tXcpChecksumAddType ApplXcpReadChecksumValue( vuint32 addr )
+              {
+                return *((tXcpChecksumAddType*)addr);
+              }  
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 7   
+
+              #endif
+              #endif
+              #endif
+  367         
+  368         #if defined ( XCP_ENABLE_CHECKSUM ) && defined ( XCP_ENABLE_CUSTOM_CRC )
+              /*****************************************************************************
+              | NAME:             ApplXcpCalculateChecksum
+              | CALLED BY:        XCP Protocol Layer
+              | PRECONDITIONS:    none
+              | INPUT PARAMETERS: pMemArea : Pointer to memory area for checksum calculation
+              |                   pRes : Pointer to resulting XCP response string
+              |                   length : Length of memory area
+              | RETURN VALUES:    XCP_CMD_OK: CRC calculation performed, value stored in pRes
+              |                   XCP_CMD_PENDING: Pending response, triggered by call of Xcp_SendCrm
+              |                   XCP_CMD_DENIED: CRC calculation not possible
+              | DESCRIPTION:      
+              ******************************************************************************/
+              vuint8 ApplXcpCalculateChecksum( ROMBYTEPTR pMemArea, BYTEPTR pRes, vuint32 length )
+              {
+                /* Calculate CRC synchronously and return XCP_CMD_OK, keep runtime and possible timeouts in mind! */
+                /* or */
+                /* Trigger calculation of CRC asynchronously and trigger response by call of Xcp_SendCrm after calculatio
+             -n */
+                vuint32 crc;
+                /* crc = Crc_CalculateCRC32(pMemArea, length, 0x00); */
+                pRes[0] = 0xFF; /* Positive Response */
+                pRes[1] = XCP_CHECKSUM_TYPE_CRC32;
+                pRes[2] = 0x00; /* Reserved */
+                pRes[3] = 0x00; /* Reserved */
+                /* Consider endianess, this is little endian architecture */
+                pRes[4] = (vuint8)crc;
+                pRes[5] = (vuint8)(crc >> 8);
+                pRes[6] = (vuint8)(crc >> 16);
+                pRes[7] = (vuint8)(crc >> 24);
+                return(XCP_CMD_DENIED);
+                /* return(XCP_CMD_OK); */
+              }
+              #endif
+  401         
+  402         
+  403         #if defined ( XCP_ENABLE_CALIBRATION_MEM_ACCESS_BY_APPL ) && !defined ( XCP_ENABLE_MEM_ACCESS_BY_APPL )
+              /*****************************************************************************
+              | NAME:             ApplXcpCalibrationWrite
+              | CALLED BY:        XCP Protocol Layer
+              | PRECONDITIONS:    none
+              | INPUT PARAMETERS: addr : destination address
+              |                   size : length of data to write
+              |                   data : data to write
+              | RETURN VALUES:    XCP_CMD_OK or XCP_CMD_ERROR
+              | DESCRIPTION:      Write memory with size
+              ******************************************************************************/
+              vuint8 ApplXcpCalibrationWrite(MTABYTEPTR addr, vuint8 size, const BYTEPTR data)
+              {
+                while(size > (vuint8)0)
+                {
+                  *addr = *data;
+                  addr++;
+                  data++;
+                  size--;
+                }
+                return (vuint8)XCP_CMD_OK;
+              }
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 8   
+
+              /*****************************************************************************
+              | NAME:             ApplXcpCalibrationRead
+              | CALLED BY:        XCP Protocol Layer
+              | PRECONDITIONS:    none
+              | INPUT PARAMETERS: addr : source address
+              |                   size : length of data to read
+              |                   data : read data
+              | RETURN VALUES:    XCP_CMD_OK or XCP_CMD_ERROR
+              | DESCRIPTION:      Read and return memory with size
+              ******************************************************************************/
+              vuint8 ApplXcpCalibrationRead(MTABYTEPTR addr, vuint8 size, BYTEPTR data)
+              {
+                while(size > (vuint8)0)
+                {
+                  *data = *addr;
+                  addr++;
+                  data++;
+                  size--;
+                }
+                return (vuint8)XCP_CMD_OK;
+              }
+              #endif
+  447         
+  448         #if defined ( XCP_ENABLE_DAQ )
+  449         
+  450         #endif
+  451         
+  452         /*****************************************************************************/
+  453         /* Seed & Key                                                                */
+  454         /* This is just an example how seed & key could be implemented.              */
+  455         /*****************************************************************************/
+  456         #if defined ( XCP_ENABLE_SEED_KEY )
+  457         
+  458         /*****************************************************************************
+  459         | NAME:             ApplXcpGetSeed
+  460         | CALLED BY:        XcpCommand
+  461         | PRECONDITIONS:    none
+  462         | INPUT PARAMETERS: resource : resource
+  463         |                              (either RM_CAL_PAG or RM_DAQ or RM_STIM or RM_PGM)
+  464         |                   seed     : pointer to the generated seed.
+  465         | RETURN VALUES:    the length of the seed.
+  466         | DESCRIPTION:      Generates a seed.
+  467         |                   Attention: The seed has a maximum length of MAX_CTO-2 bytes.
+  468         ******************************************************************************/
+  469         vuint8 ApplXcpGetSeed( const vuint8 resource, vuint8 *seed )
+  470         {
+  471  1        /* Store resource mask */
+  472  1        xcpResource = resource;
+  473  1        
+  474  1        /* Generate a seed */
+  475  1        seed[0] = 1;
+  476  1        seed[1] = 2;
+  477  1        seed[2] = 3;
+  478  1        seed[3] = 4;
+  479  1        seed[4] = 5;
+  480  1        seed[5] = 6;
+  481  1        
+  482  1        return (vuint8)6u;
+  483  1      }
+  484         
+  485         /*****************************************************************************
+  486         | NAME:             ApplXcpUnlock
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 9   
+
+  487         | CALLED BY:        XcpCommand
+  488         | PRECONDITIONS:    none
+  489         | INPUT PARAMETERS: key    : pointer to the key 
+  490         |                   length : length of the key
+  491         | RETURN VALUES:    0 : if the key is not valid
+  492         |                   RM_CAL_PAG, RM_DAQ, RM_STIM, RM_PGM : for valid keys
+  493         | DESCRIPTION:      Check key and return the resource that has to be unlocked.
+  494         ******************************************************************************/
+  495         vuint8 ApplXcpUnlock( const vuint8 *key, const vuint8 length )
+  496         {
+  497  1        /*
+  498  1          Ckeck the key
+  499  1          key[0],key[1],key[2],key[3],key[4],key[5]
+  500  1        */
+  501  1        if(length!=4 && length!=6)
+  502  1          return 0;
+  503  1        
+  504  1        if(key[0]!=1 || key[1]!=2 || key[2]!=3 || key[3]!=4)
+  505  1          return 0;
+  506  1        
+  507  1        return xcpResource;
+  508  1      }
+  509         
+  510         #endif /* XCP_ENABLE_SEED_KEY */
+  511         
+  512         
+  513         /****************************************************************************/
+  514         /* GET_ID service                                                           */
+  515         /****************************************************************************/
+  516         #if defined ( XCP_ENABLE_GET_ID_GENERIC )
+              /*****************************************************************************
+              | NAME:             ApplXcpGetIdData
+              | CALLED BY:        XcpCommand
+              | PRECONDITIONS:    none
+              | INPUT PARAMETERS: pData : pointer to pointer of the MAP file names
+              |                   id: Identifier of requested information
+              | RETURN VALUES:    length of the MAP file names
+              | DESCRIPTION:      Returns a pointer to a pointer of MAP file names
+              ******************************************************************************/
+              vuint32 ApplXcpGetIdData( MTABYTEPTR *pData, vuint8 id )
+              {
+                switch( id )
+                { /* Example code, fit to your needs */
+                  case IDT_ASCII: *pData = (MTABYTEPTR)&asciiString; /* Handle ASCII text */
+                  return (vuint32)sizeof(asciiString)-1;
+                  break;
+                  case IDT_ASAM_NAME: *pData = (MTABYTEPTR)&asamName; /* Handle ASAM-MC2 filename without path and exten
+             -sion */
+                  return (vuint32)sizeof(asamName)-1;
+                  break;
+                  case IDT_ASAM_PATH: *pData = (MTABYTEPTR)&asamPath; /* Handle ASAM-MC2 filename with path and extensio
+             -n */
+                  return (vuint32)sizeof(asamPath)-1;
+                  break;
+                  case IDT_VECTOR_MAPNAMES: *pData = (MTABYTEPTR)&mapName; /* Handle map file name */
+                  return (vuint32)sizeof(mapName)-1;
+                  break;
+                  default:
+                  return (vuint32)0u; /* Id not available */
+                }
+              }
+              #endif /* XCP_ENABLE_GET_ID_GENERIC */
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 10  
+
+  547         
+  548         
+  549         /****************************************************************************/
+  550         /* User defined service                                                     */
+  551         /****************************************************************************/
+  552         #if defined ( XCP_ENABLE_USER_COMMAND )
+              /*****************************************************************************
+              | NAME:             ApplXcpUserService
+              | CALLED BY:        XcpCommand
+              | PRECONDITIONS:    none
+              | INPUT PARAMETERS: pCmd : pointer to command string
+              | RETURN VALUES:    XCP_CMD_OK      : command ok
+              |                   XCP_CMD_SYNTAX  : command not accepted
+              |                   XCP_CMD_PENDING : command in progress, call $$Xcp_SendCrm when done
+              | DESCRIPTION:      Implemented user command
+              ******************************************************************************/
+              vuint8 ApplXcpUserService( const BYTEPTR pCmd )
+              {
+                
+                /* something has to be done here */
+                
+                return (vuint8)XCP_CMD_OK;
+              }
+              
+              #endif
+  572         
+  573         
+  574         /****************************************************************************/
+  575         /* Open Command Interface                                                   */
+  576         /****************************************************************************/
+  577         
+  578         
+  579         
+  580         #if defined ( XCP_ENABLE_TESTMODE )
+              /****************************************************************************/
+              /* Test                                                                     */
+              /****************************************************************************/
+              
+              #if defined ( ApplXcpPrint )
+              /* ApplXcpPrint is a macro */
+              #else
+              
+              void ApplXcpPrint( const vsint8 *str, ... )
+              {
+                /* something has to be done here */
+              }
+              
+              #endif
+              
+              #endif /* XCP_ENABLE_TESTMODE */
+  597         
+  598         
+  599         /****************************************************************************/
+  600         /* ApplXcpSendStall                                                             */
+  601         /****************************************************************************/
+  602         
+  603         #if defined ( XCP_ENABLE_SEND_EVENT ) || defined ( XCP_ENABLE_SERV_TEXT_PUTCHAR )
+  604         #if defined ( ApplXcpSendStall )
+              /* ApplXcpSendStall is already defined or a macro */
+              #else
+  607         vuint8 ApplXcpSendStall( void )
+  608         {
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 11  
+
+  609  1        /* something has to be done here */
+  610  1        
+  611  1        return( (vuint8) 1u );
+  612  1      }
+  613         #endif
+  614         #endif
+  615         
+  616         
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 12  
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION ApplXcpInitTemplate (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 135
+                                           ; SOURCE LINE # 139
+0000 F78E0100 R    MOVB      xcpResource,ZEROS
+                                           ; SOURCE LINE # 145
+0004 F78E0000 R    MOVB      xcpCalPage,ZEROS
+                                           ; SOURCE LINE # 147
+0008 DB00          RETS      
+             ; FUNCTION ApplXcpInitTemplate (END    RMASK = @0x8000)
+
+             ; FUNCTION ApplXcpGetTimestamp (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 162
+                                           ; SOURCE LINE # 164
+000A E004          MOV       R4,#00H
+                                           ; SOURCE LINE # 165
+000C DB00          RETS      
+             ; FUNCTION ApplXcpGetTimestamp (END    RMASK = @0x0010)
+
+             ; FUNCTION ApplXcpGetCalPage (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 188
+;---- Variable 'mode' assigned to Register 'R9' ----
+;---- Variable 'segment' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 193
+000E F3F80000 R    MOVB      RL4,xcpCalPage
+                                           ; SOURCE LINE # 194
+0012 DB00          RETS      
+             ; FUNCTION ApplXcpGetCalPage (END    RMASK = @0x4010)
+
+             ; FUNCTION ApplXcpSetCalPage (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 206
+;---- Variable 'mode' assigned to Register 'R10' ----
+;---- Variable 'page' assigned to Register 'R9' ----
+;---- Variable 'segment' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 208
+0014 F048          MOV       R4,R8
+0016 4980          CMPB      RL4,#00H
+0018 2D03          JMPR      cc_Z,?C0003
+                                           ; SOURCE LINE # 210
+001A E7F82200      MOVB      RL4,#022H
+001E DB00          RETS      
+                                           ; SOURCE LINE # 211
+0020         ?C0003:
+                                           ; SOURCE LINE # 212
+0020 F049          MOV       R4,R9
+0022 4981          CMPB      RL4,#01H
+0024 FD03          JMPR      cc_ULE,?C0005
+                                           ; SOURCE LINE # 214
+0026 E7F82600      MOVB      RL4,#026H
+002A DB00          RETS      
+                                           ; SOURCE LINE # 215
+002C         ?C0005:
+                                           ; SOURCE LINE # 216
+002C F04A          MOV       R4,R10
+002E 6983          ANDB      RL4,#03H
+0030 4983          CMPB      RL4,#03H
+0032 2D03          JMPR      cc_Z,?C0006
+                                           ; SOURCE LINE # 218
+0034 E7F82700      MOVB      RL4,#027H
+0038 DB00          RETS      
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 13  
+
+                                           ; SOURCE LINE # 219
+003A         ?C0006:
+                                           ; SOURCE LINE # 220
+003A F049          MOV       R4,R9
+003C F7F80000 R    MOVB      xcpCalPage,RL4
+                                           ; SOURCE LINE # 222
+0040 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 223
+0042         ?C0004:
+0042 DB00          RETS      
+             ; FUNCTION ApplXcpSetCalPage (END    RMASK = @0x4010)
+
+             ; FUNCTION ApplXcpGetPointer (BEGIN  RMASK = @0x4030)
+                                           ; SOURCE LINE # 303
+;---- Variable 'addr' assigned to Register 'R9/R10' ----
+;---- Variable 'addr_ext' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 308
+0044 F049          MOV       R4,R9
+0046 F05A          MOV       R5,R10
+0048 0044          ADD       R4,R4
+004A 1055          ADDC      R5,R5
+004C 0044          ADD       R4,R4
+004E 1055          ADDC      R5,R5
+0050 7C24          SHR       R4,#02H
+                                           ; SOURCE LINE # 309
+0052 DB00          RETS      
+             ; FUNCTION ApplXcpGetPointer (END    RMASK = @0x4030)
+
+             ; FUNCTION ApplXcpGetSeed (BEGIN  RMASK = @0x4050)
+                                           ; SOURCE LINE # 469
+;---- Variable 'seed' assigned to Register 'R9/R10' ----
+;---- Variable 'resource' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 472
+0054 F048          MOV       R4,R8
+0056 F7F80100 R    MOVB      xcpResource,RL4
+                                           ; SOURCE LINE # 475
+005A E11C          MOVB      RL6,#01H
+005C DC4A          EXTP      R10,#01H
+005E B9C9          MOVB      [R9],RL6
+                                           ; SOURCE LINE # 476
+0060 E12C          MOVB      RL6,#02H
+0062 DC4A          EXTP      R10,#01H
+0064 E4C90100      MOVB      [R9+#POF(01H)],RL6
+                                           ; SOURCE LINE # 477
+0068 E13C          MOVB      RL6,#03H
+006A DC4A          EXTP      R10,#01H
+006C E4C90200      MOVB      [R9+#POF(02H)],RL6
+                                           ; SOURCE LINE # 478
+0070 E14C          MOVB      RL6,#04H
+0072 DC4A          EXTP      R10,#01H
+0074 E4C90300      MOVB      [R9+#POF(03H)],RL6
+                                           ; SOURCE LINE # 479
+0078 E15C          MOVB      RL6,#05H
+007A DC4A          EXTP      R10,#01H
+007C E4C90400      MOVB      [R9+#POF(04H)],RL6
+                                           ; SOURCE LINE # 480
+0080 E16C          MOVB      RL6,#06H
+0082 DC4A          EXTP      R10,#01H
+0084 E4C90500      MOVB      [R9+#POF(05H)],RL6
+                                           ; SOURCE LINE # 482
+0088 E168          MOVB      RL4,#06H
+                                           ; SOURCE LINE # 483
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 14  
+
+008A DB00          RETS      
+             ; FUNCTION ApplXcpGetSeed (END    RMASK = @0x4050)
+
+             ; FUNCTION ApplXcpUnlock (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 495
+;---- Variable 'length' assigned to Register 'R10' ----
+;---- Variable 'key' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 501
+008C F04A          MOV       R4,R10
+008E 4984          CMPB      RL4,#04H
+0090 2D04          JMPR      cc_Z,?C0009
+0092 4986          CMPB      RL4,#06H
+0094 2D02          JMPR      cc_Z,?C0009
+                                           ; SOURCE LINE # 502
+0096 E108          MOVB      RL4,#00H
+0098 DB00          RETS      
+009A         ?C0009:
+                                           ; SOURCE LINE # 504
+009A DC49          EXTP      R9,#01H
+009C A988          MOVB      RL4,[R8]
+009E 4981          CMPB      RL4,#01H
+00A0 3D0F          JMPR      cc_NZ,?C0012
+00A2 DC49          EXTP      R9,#01H
+00A4 F4880100      MOVB      RL4,[R8+#POF(01H)]
+00A8 4982          CMPB      RL4,#02H
+00AA 3D0A          JMPR      cc_NZ,?C0012
+00AC DC49          EXTP      R9,#01H
+00AE F4880200      MOVB      RL4,[R8+#POF(02H)]
+00B2 4983          CMPB      RL4,#03H
+00B4 3D05          JMPR      cc_NZ,?C0012
+00B6 DC49          EXTP      R9,#01H
+00B8 F4880300      MOVB      RL4,[R8+#POF(03H)]
+00BC 4984          CMPB      RL4,#04H
+00BE 2D02          JMPR      cc_Z,?C0011
+00C0         ?C0012:
+                                           ; SOURCE LINE # 505
+00C0 E108          MOVB      RL4,#00H
+00C2 DB00          RETS      
+00C4         ?C0011:
+                                           ; SOURCE LINE # 507
+00C4 F3F80100 R    MOVB      RL4,xcpResource
+                                           ; SOURCE LINE # 508
+00C8         ?C0010:
+00C8 DB00          RETS      
+             ; FUNCTION ApplXcpUnlock (END    RMASK = @0x4010)
+
+             ; FUNCTION ApplXcpSendStall (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 607
+                                           ; SOURCE LINE # 611
+00CA E118          MOVB      RL4,#01H
+                                           ; SOURCE LINE # 612
+00CC DB00          RETS      
+             ; FUNCTION ApplXcpSendStall (END    RMASK = @0x0010)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         206     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+C166 COMPILER V7.57.0, _XCP_APPL                                                           01/03/2020 16:20:10 PAGE 15  
+
+  NEAR-DATA SIZE   =           2     --------
+  FAR-DATA SIZE    =           8     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          14     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

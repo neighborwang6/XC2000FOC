@@ -1,0 +1,171 @@
+C166 COMPILER V7.57.0, TRAP                                                                01/03/2020 16:20:07 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE TRAP
+OBJECT MODULE PLACED IN .\objs\trap.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\trap.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_
+                    -Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBU
+                    -G CODE PRINT(.\objs\trap.lst) TABS(2) OBJECT(.\objs\trap.obj) 
+
+ stmt lvl     source
+
+    1         //////////////////////////////////////////////////////////
+    2         #include "xc2365a.h"
+    3         
+    4         /*********************************************************
+    5          * Non-Maskable Interrupt
+    6         *********************************************************/
+    7         
+    8         static void NMI_trap (void) interrupt 0x02  
+    9         {
+   10  1        while (1);
+   11  1      }
+   12         
+   13         
+   14         /*********************************************************
+   15          * Stack Overflow Interrupt
+   16         **********************************************************/
+   17         static void STKOF_trap (void) interrupt 0x04  
+   18         {
+   19  1        while (1);
+   20  1      }
+   21         
+   22         
+   23         /*********************************************************
+   24          * Stack Underflow Interrupt
+   25         *********************************************************/
+   26         static void STKUF_trap (void) interrupt 0x06  
+   27         {
+   28  1        while (1);
+   29  1      }
+   30         
+   31         
+   32         /*********************************************************
+   33          * Class B Hardware Trap:
+   34          *   ->  Undefined Opcode
+   35          *   ->  Protected Instruction Fault
+   36          *   ->  Illegal Word Operand Access
+   37          *   ->  Illegal Instruction Access
+   38          *   ->  Illegal External Bus Access
+   39         *********************************************************/
+   40         static void Class_B_trap (void) interrupt 0x0A  
+   41         {
+   42  1        if(TFR_UNDOPC)    // Undefined Opcode
+   43  1        {
+   44  2          TFR_UNDOPC = 0;
+   45  2      
+   46  2          while (1);
+   47  2        }
+   48  1      
+   49  1        if(TFR_ACER)     // Programm Memory Interface Access Error
+   50  1        {
+   51  2          TFR_ACER = 0;
+   52  2          while (1);
+   53  2        }
+C166 COMPILER V7.57.0, TRAP                                                                01/03/2020 16:20:07 PAGE 2   
+
+   54  1      
+   55  1        if(TFR_PRTFLT)
+   56  1        {
+   57  2          TFR_PRTFLT = 0;
+   58  2          while (1);
+   59  2        }
+   60  1      
+   61  1        if(TFR_ILLOPA)
+   62  1        {
+   63  2          TFR_ILLOPA = 0;
+   64  2          while (1);
+   65  2        }
+   66  1      }
+C166 COMPILER V7.57.0, TRAP                                                                01/03/2020 16:20:07 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION NMI_trap (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 8
+                                           ; SOURCE LINE # 10
+0000         ?C0001:
+0000 0DFF          JMPR      cc_UC,?C0001
+             ; FUNCTION NMI_trap (END    RMASK = @0x8000)
+
+             ; FUNCTION STKOF_trap (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 17
+                                           ; SOURCE LINE # 19
+0002         ?C0005:
+0002 0DFF          JMPR      cc_UC,?C0005
+             ; FUNCTION STKOF_trap (END    RMASK = @0x8000)
+
+             ; FUNCTION STKUF_trap (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 26
+                                           ; SOURCE LINE # 28
+0004         ?C0009:
+0004 0DFF          JMPR      cc_UC,?C0009
+             ; FUNCTION STKUF_trap (END    RMASK = @0x8000)
+
+             ; FUNCTION Class_B_trap (BEGIN  RMASK = @0x4000)
+                                           ; SOURCE LINE # 40
+0006 C6030300      SCXT      DPP3,#03H
+                                           ; SOURCE LINE # 42
+000A 9AD60270      JNB       TFR_UNDOPC,?C0013
+                                           ; SOURCE LINE # 44
+000E 7ED6          BCLR      TFR_UNDOPC
+                                           ; SOURCE LINE # 46
+0010         ?C0014:
+0010 0DFF          JMPR      cc_UC,?C0014
+                                           ; SOURCE LINE # 47
+0012         ?C0013:
+                                           ; SOURCE LINE # 49
+0012 9AD60240      JNB       TFR_ACER,?C0018
+                                           ; SOURCE LINE # 51
+0016 4ED6          BCLR      TFR_ACER
+                                           ; SOURCE LINE # 52
+0018         ?C0019:
+0018 0DFF          JMPR      cc_UC,?C0019
+                                           ; SOURCE LINE # 53
+001A         ?C0018:
+                                           ; SOURCE LINE # 55
+001A 9AD60230      JNB       TFR_PRTFLT,?C0023
+                                           ; SOURCE LINE # 57
+001E 3ED6          BCLR      TFR_PRTFLT
+                                           ; SOURCE LINE # 58
+0020         ?C0024:
+0020 0DFF          JMPR      cc_UC,?C0024
+                                           ; SOURCE LINE # 59
+0022         ?C0023:
+                                           ; SOURCE LINE # 61
+0022 9AD60220      JNB       TFR_ILLOPA,?C0028
+                                           ; SOURCE LINE # 63
+0026 2ED6          BCLR      TFR_ILLOPA
+                                           ; SOURCE LINE # 64
+0028         ?C0029:
+0028 0DFF          JMPR      cc_UC,?C0029
+                                           ; SOURCE LINE # 65
+C166 COMPILER V7.57.0, TRAP                                                                01/03/2020 16:20:07 PAGE 4   
+
+002A         ?C0028:
+002A FC03          POP       DPP3
+002C FB88          RETI      
+             ; FUNCTION Class_B_trap (END    RMASK = @0x4000)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          46     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,386 @@
+C166 COMPILER V7.57.0, SSC                                                                 01/03/2020 16:20:07 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE SSC
+OBJECT MODULE PLACED IN .\objs\ssc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ssc.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_D
+                    -iag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG
+                    - CODE PRINT(.\objs\ssc.lst) TABS(2) OBJECT(.\objs\ssc.obj) 
+
+ stmt lvl     source
+
+    1         #include "ssc.h"
+    2         #include "hw.h"
+    3         #include "mcu1_imp.h"
+    4         
+    5         extern volatile u16 g_ms_uw;
+    6         
+    7         void spi_setting(void)
+    8         {
+    9  1        // Single MCU
+   10  1        spi_mcu2_setting();
+   11  1      #ifdef EE_HW_SPI
+                spi_eeprom_setting();
+              #endif
+   14  1      }
+   15         
+   16         /////////////////////////////////////////////////////////
+   17         /*
+   18         
+   19         */
+   20         /////////////////////////////////////////////////////////
+   21         void spi_mcu2_setting(void)
+   22         {
+   23  1      // Single MCU
+   24  1      #if 0
+                ////////////////////////////////////
+                U0C0_KSCFG = 0x0003;
+                _nop_(); _nop_();
+                
+                U0C0_CCR       =  0x0000;
+                
+                // DX0F selected
+                U0C0_DX0CR     =  0x0013;      // IN: Data
+                
+                U0C0_INPRL     =  0x0000;      // Interrupt Node Pointer register 
+                U0C0_INPRH     =  0x0000;
+                
+                U0C0_SCTRL     =  0x0103;      // shift control register
+                U0C0_SCTRH     =  0x0707;
+                
+                U0C0_TCSRL     =  0x0500;      // transmit control/status register
+                U0C0_TCSRH     =  0x0000;
+                
+                U0C0_PSR      |=  0x2000;      // protocol status register
+                
+                U0C0_0IC       =  0x005E;
+                
+                P2_IOCR03      =  0x0090;  // MOSI
+                P2_IOCR04      =  0x0000;  // MISO
+                P2_IOCR05      =  0x0090;  // SCK
+                P2_IOCR06      =  0x0090;  // SS
+                
+                U0C0_CCR       =  0xC001;
+              
+C166 COMPILER V7.57.0, SSC                                                                 01/03/2020 16:20:07 PAGE 2   
+
+              #endif
+   55  1      }
+   56         
+   57         // Single MCU
+   58         #if 0
+              void isr_spi_mcu2_rx(void) interrupt U0C0_0INT
+              {
+                // SLVSS can be used to ensure data integration
+                u8 ch;
+                if (U0C0_PSR & 0xc000)          //Receive Interrupt flag
+                {
+                  U0C0_PSCR|= 0xc000;         //clear PSR_RIF
+                  ch=(u8)U0C0_RBUF;
+                  do_spi_char(ch);
+                }
+              }
+              #endif
+   71         
+   72         /////////////////////////////////////////////////////////
+   73         u16 spi_mcu2_trans(u16 ch)
+   74         {
+   75  1        UNUSED_PARA(ch);
+   76  1        
+   77  1        return 0;
+   78  1      }
+   79         
+   80         /////////////////////////////////////////////////////////
+   81         void spi_mcu2_putc(u16 ch)
+   82         {
+   83  1        U0C0_PSCR |= 0x2000;
+   84  1        U0C0_TBUF00=ch;
+   85  1      }
+   86         
+   87         /////////////////////////////////////////////////////////
+   88         /*
+   89         
+   90         */
+   91         /////////////////////////////////////////////////////////
+   92         // Not needed if IO Sim
+   93         void spi_eeprom_setting(void)
+   94         {
+   95  1        U0C1_KSCFG = 0x0003;
+   96  1        _nop_();_nop_();
+   97  1        U0C1_CCR   = 0x0000;
+   98  1      
+   99  1        // Generate baudrate (4MHz)
+  100  1        // 80MHz*(0x39a/1024)/(8+1)/2=4MHz
+  101  1        U0C1_FDRL      =  0x439a;
+  102  1        U0C1_BRGH      =  0x8008;
+  103  1        U0C1_BRGL      =  0x0000;
+  104  1        
+  105  1        //DX0C is selected
+  106  1        U0C1_DX0CR     =  0x0012;
+  107  1      
+  108  1        // Disable Interrupt  
+  109  1        U0C1_INPRL     =  0x0000;
+  110  1        U0C1_INPRH     =  0x0000;
+  111  1      
+  112  1        // Shift Control
+  113  1        U0C1_SCTRL     =  0x0103;
+  114  1        // Frame & Word Length
+  115  1        U0C1_SCTRH     =  0x0707;
+C166 COMPILER V7.57.0, SSC                                                                 01/03/2020 16:20:07 PAGE 3   
+
+  116  1      
+  117  1        // Transmission Control 
+  118  1        U0C1_TCSRL     =  0x0500;
+  119  1        U0C1_TCSRH     =  0x0000;
+  120  1        
+  121  1        // Protocol Control (Delay Control etc., fppp selected as fctqin)
+  122  1        U0C1_PCRL      =  0x0f17;
+  123  1        U0C1_PCRH      =  0x0000;
+  124  1      
+  125  1        // For the First Transmission
+  126  1        U0C1_PSR      |=  0x2000;
+  127  1        
+  128  1        // Pin Control  
+  129  1        P10_IOCR14 = 0x0020; // EE_SDO
+  130  1        P10_IOCR15 = 0x00A0; // EE_SDI
+  131  1        P10_IOCR05 = 0x0090; // EE_SCK
+  132  1        P10_IOCR08 = 0x00A0; // EE_CS
+  133  1      
+  134  1        // SPI in GPIO mode: see gpio_setting
+  135  1        
+  136  1        // Function as SSC/SPI  
+  137  1        U0C1_CCR   = 0x0001;    
+  138  1      }
+  139         
+  140         /////////////////////////////////////////////////////////
+  141         u16 spi_eeprom_trans(u16 ch)
+  142         {
+  143  1        WAIT_EVENT_READY((U0C1_PSR & 0x2000),2);
+  144  1      
+  145  1        U0C1_PSCR     |= 0x2000;
+  146  1        U0C1_TBUF00    = ch;
+  147  1      
+  148  1        //2ms: enough to transmit a char
+  149  1        WAIT_EVENT_READY(((U0C1_PSR & 0x8000) || (U0C1_PSR & 0x4000)),2);
+  150  1        U0C1_PSCR     |= 0xC000;
+  151  1        return(U0C1_RBUF);
+  152  1      }
+  153         /////////////////////////////////////////////////////////
+  154         
+  155         
+C166 COMPILER V7.57.0, SSC                                                                 01/03/2020 16:20:07 PAGE 4   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION spi_setting (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 7
+                                           ; SOURCE LINE # 10
+0000 DA000000 R    CALLS     SEG (spi_mcu2_setting),spi_mcu2_setting
+                                           ; SOURCE LINE # 14
+0004 DB00          RETS      
+             ; FUNCTION spi_setting (END    RMASK = @0x7FFF)
+
+             ; FUNCTION spi_mcu2_setting (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 21
+                                           ; SOURCE LINE # 55
+0006 DB00          RETS      
+             ; FUNCTION spi_mcu2_setting (END    RMASK = @0x8000)
+
+             ; FUNCTION spi_mcu2_trans (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 73
+;---- Variable 'ch' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 77
+0008 E004          MOV       R4,#00H
+                                           ; SOURCE LINE # 78
+000A DB00          RETS      
+             ; FUNCTION spi_mcu2_trans (END    RMASK = @0x4010)
+
+             ; FUNCTION spi_mcu2_putc (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 81
+;---- Variable 'ch' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 83
+000C D7002000      EXTS      #020H,#01H
+0010 F2F44840      MOV       R4,04048H
+0014 DFF4          BSET      R4.13
+0016 D7102000      EXTS      #020H,#02H
+001A F6F44840      MOV       04048H,R4
+                                           ; SOURCE LINE # 84
+001E F6F88040      MOV       04080H,R8
+                                           ; SOURCE LINE # 85
+0022 DB00          RETS      
+             ; FUNCTION spi_mcu2_putc (END    RMASK = @0x4010)
+
+             ; FUNCTION spi_eeprom_setting (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 93
+                                           ; SOURCE LINE # 95
+0024 E034          MOV       R4,#03H
+0026 D7002000      EXTS      #020H,#01H
+002A F6F40C42      MOV       0420CH,R4
+                                           ; SOURCE LINE # 96
+002E CC00          NOP       
+0030 CC00          NOP       
+                                           ; SOURCE LINE # 97
+0032 E004          MOV       R4,#00H
+0034 D7002000      EXTS      #020H,#01H
+0038 F6F41042      MOV       04210H,R4
+                                           ; SOURCE LINE # 101
+003C E6F49A43      MOV       R4,#0439AH
+0040 D7002000      EXTS      #020H,#01H
+0044 F6F40442      MOV       04204H,R4
+                                           ; SOURCE LINE # 102
+0048 E6F40880      MOV       R4,#08008H
+004C D7002000      EXTS      #020H,#01H
+0050 F6F41E42      MOV       0421EH,R4
+C166 COMPILER V7.57.0, SSC                                                                 01/03/2020 16:20:07 PAGE 5   
+
+                                           ; SOURCE LINE # 103
+0054 E004          MOV       R4,#00H
+0056 D7002000      EXTS      #020H,#01H
+005A F6F41C42      MOV       0421CH,R4
+                                           ; SOURCE LINE # 106
+005E E6F41200      MOV       R4,#012H
+0062 D7002000      EXTS      #020H,#01H
+0066 F6F42042      MOV       04220H,R4
+                                           ; SOURCE LINE # 109
+006A E004          MOV       R4,#00H
+006C D7102000      EXTS      #020H,#02H
+0070 F6F41442      MOV       04214H,R4
+                                           ; SOURCE LINE # 110
+0074 F6F41642      MOV       04216H,R4
+                                           ; SOURCE LINE # 113
+0078 E6F40301      MOV       R4,#0103H
+007C D7002000      EXTS      #020H,#01H
+0080 F6F43042      MOV       04230H,R4
+                                           ; SOURCE LINE # 115
+0084 E6F40707      MOV       R4,#0707H
+0088 D7002000      EXTS      #020H,#01H
+008C F6F43242      MOV       04232H,R4
+                                           ; SOURCE LINE # 118
+0090 E6F40005      MOV       R4,#0500H
+0094 D7002000      EXTS      #020H,#01H
+0098 F6F43C42      MOV       0423CH,R4
+                                           ; SOURCE LINE # 119
+009C E004          MOV       R4,#00H
+009E D7002000      EXTS      #020H,#01H
+00A2 F6F43E42      MOV       0423EH,R4
+                                           ; SOURCE LINE # 122
+00A6 E6F4170F      MOV       R4,#0F17H
+00AA D7002000      EXTS      #020H,#01H
+00AE F6F44042      MOV       04240H,R4
+                                           ; SOURCE LINE # 123
+00B2 E004          MOV       R4,#00H
+00B4 D7102000      EXTS      #020H,#02H
+00B8 F6F44242      MOV       04242H,R4
+                                           ; SOURCE LINE # 126
+00BC F2F44442      MOV       R4,04244H
+00C0 DFF4          BSET      R4.13
+00C2 D7002000      EXTS      #020H,#01H
+00C6 F6F44442      MOV       04244H,R4
+                                           ; SOURCE LINE # 129
+00CA E6F42000      MOV       R4,#020H
+00CE F6F45CE9      MOV       0E95CH,R4
+                                           ; SOURCE LINE # 130
+00D2 E6F4A000      MOV       R4,#0A0H
+00D6 F6F45EE9      MOV       0E95EH,R4
+                                           ; SOURCE LINE # 131
+00DA E6F49000      MOV       R4,#090H
+00DE F6F44AE9      MOV       0E94AH,R4
+                                           ; SOURCE LINE # 132
+00E2 E6F4A000      MOV       R4,#0A0H
+00E6 F6F450E9      MOV       0E950H,R4
+                                           ; SOURCE LINE # 137
+00EA E014          MOV       R4,#01H
+00EC D7002000      EXTS      #020H,#01H
+00F0 F6F41042      MOV       04210H,R4
+                                           ; SOURCE LINE # 138
+00F4 DB00          RETS      
+             ; FUNCTION spi_eeprom_setting (END    RMASK = @0x4010)
+C166 COMPILER V7.57.0, SSC                                                                 01/03/2020 16:20:07 PAGE 6   
+
+
+             ; FUNCTION spi_eeprom_trans (BEGIN  RMASK = @0x40D0)
+                                           ; SOURCE LINE # 141
+;---- Variable 'ch' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 143
+00F6 F2F60000 E    MOV       R6,g_ms_uw
+;---- Variable 'tm1' assigned to Register 'R6' ----
+00FA F076          MOV       R7,R6
+;---- Variable 'tm0' assigned to Register 'R7' ----
+00FC 0D07          JMPR      cc_UC,?C0002
+00FE         ?C0004:
+00FE F2F60000 E    MOV       R6,g_ms_uw
+0102 2067          SUB       R6,R7
+0104 4862          CMP       R6,#02H
+0106 ED08          JMPR      cc_UGT,?C0003
+0108         ?C0006:
+0108 A758A7A7      SRVWDT    
+010C         ?C0002:
+010C D7002000      EXTS      #020H,#01H
+0110 F2F44442      MOV       R4,04244H
+0114 9AF4F3D0      JNB       R4.13,?C0004
+0118         ?C0003:
+                                           ; SOURCE LINE # 145
+0118 D7002000      EXTS      #020H,#01H
+011C F2F44842      MOV       R4,04248H
+0120 DFF4          BSET      R4.13
+0122 D7102000      EXTS      #020H,#02H
+0126 F6F44842      MOV       04248H,R4
+                                           ; SOURCE LINE # 146
+012A F6F88042      MOV       04280H,R8
+                                           ; SOURCE LINE # 149
+012E F2F60000 E    MOV       R6,g_ms_uw
+;---- Variable 'tm1' assigned to Register 'R6' ----
+0132 F076          MOV       R7,R6
+;---- Variable 'tm0' assigned to Register 'R7' ----
+0134 0D07          JMPR      cc_UC,?C0007
+0136         ?C0009:
+0136 F2F60000 E    MOV       R6,g_ms_uw
+013A 2067          SUB       R6,R7
+013C 4862          CMP       R6,#02H
+013E ED0E          JMPR      cc_UGT,?C0008
+0140         ?C0011:
+0140 A758A7A7      SRVWDT    
+0144         ?C0007:
+0144 D7002000      EXTS      #020H,#01H
+0148 F2F44442      MOV       R4,04244H
+014C 8AF406F0      JB        R4.15,?C0008
+0150 D7002000      EXTS      #020H,#01H
+0154 F2F44442      MOV       R4,04244H
+0158 9AF4EDE0      JNB       R4.14,?C0009
+015C         ?C0008:
+                                           ; SOURCE LINE # 150
+015C D7002000      EXTS      #020H,#01H
+0160 F2F44842      MOV       R4,04248H
+0164 76F400C0      OR        R4,#0C000H
+0168 D7102000      EXTS      #020H,#02H
+016C F6F44842      MOV       04248H,R4
+                                           ; SOURCE LINE # 151
+0170 F2F45C42      MOV       R4,0425CH
+                                           ; SOURCE LINE # 152
+0174 DB00          RETS      
+             ; FUNCTION spi_eeprom_trans (END    RMASK = @0x40D0)
+C166 COMPILER V7.57.0, SSC                                                                 01/03/2020 16:20:07 PAGE 7   
+
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         374     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

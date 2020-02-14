@@ -1,0 +1,130 @@
+C166 COMPILER V7.57.0, MCU2_IMP                                                            01/03/2020 16:20:09 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE MCU2_IMP
+OBJECT MODULE PLACED IN .\objs\mcu2_imp.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu2_prot\mcu2_imp.c MODV2 LARGE BROWSE INCDIR(.\src\hardware
+                    -;.\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logi
+                    -c) MODV2 DEBUG CODE PRINT(.\objs\mcu2_imp.lst) TABS(2) OBJECT(.\objs\mcu2_imp.obj) 
+
+ stmt lvl     source
+
+    1         ///////////////////////////////////////////////////////////////////////////////////////
+    2         /*
+    3         
+    4         */
+    5         ///////////////////////////////////////////////////////////////////////////////////////
+    6         #include "mcu2_imp.h"
+    7         #include "hw.h"
+    8         #include "board.h"
+    9         #include "prot_imp.h"
+   10         #include "dtc_man.h"
+   11         #include "task_man.h"
+   12         
+   13         extern u8 calc_chksum(u8 *buf,u8 buflen);
+   14         ///////////////////////////////////////////////////////////////////////////////////////
+   15         extern u8 diag_mode;
+   16         extern u8 gact_task_stat;
+   17         ///////////////////////////////////////////////////////////////////////////////////////
+   18         // MCU1 message buffer (Rx)
+   19         extern MCUMSG1 mcumsg1;
+   20         // MCU2 message buffer (Tx)
+   21         extern MCUMSG2 mcumsg2;
+   22         // Dat message buffer
+   23         extern MCUMSGDAT mcumsgdat;
+   24         // Temp receive buffer
+   25         
+   26         extern u8 gee_dat[];
+   27         extern u8 gee_cmd;
+   28         extern u8 gee_cmd_bak;
+   29         extern u8 gee_stat; // Bit 0: EEPROM read ok, 1: EEPROM write ok
+   30         
+   31         u8 diag_on_bak=0;
+   32         ///////////////////////////////////////////////////////////////////////////////////////
+   33         //
+   34         void mcu2_imp_init(void)
+   35         {
+   36  1          mcumsg1.misc_status|=MSTAT_SYSFAIL;  // default state until cleared
+   37  1      }
+   38         
+   39         ///////////////////////////////////////////////////////////////////////////////////////
+   40         // Generate new transmitt message
+   41         void do_mcu2(void)
+   42         {
+   43  1      
+   44  1      }
+   45         
+   46         ///////////////////////////////////////////////////////////////////////////////////////
+   47         // Parse the message from MCU1
+   48         void do_mcu1_msg(void)
+   49         {
+   50  1      }
+   51         
+   52         ///////////////////////////////////////////////////////////////////////////////////////
+   53         void submit_task(u8 task_id,u8 *para,u8 len)
+C166 COMPILER V7.57.0, MCU2_IMP                                                            01/03/2020 16:20:09 PAGE 2   
+
+   54         {
+   55  1        UNUSED_PARA(task_id);
+   56  1        UNUSED_PARA(para);
+   57  1        UNUSED_PARA(len);
+   58  1      }
+C166 COMPILER V7.57.0, MCU2_IMP                                                            01/03/2020 16:20:09 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION mcu2_imp_init (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 34
+                                           ; SOURCE LINE # 36
+0000 D7400000 E    EXTP      #PAG (mcumsg1),#01H
+0004 F3F81000 E    MOVB      RL4,POF (mcumsg1+010H)
+0008 77F80800      ORB       RL4,#08H
+000C D7400000 E    EXTP      #PAG (mcumsg1),#01H
+0010 F7F81000 E    MOVB      POF (mcumsg1+010H),RL4
+                                           ; SOURCE LINE # 37
+0014 DB00          RETS      
+             ; FUNCTION mcu2_imp_init (END    RMASK = @0x0010)
+
+             ; FUNCTION do_mcu2 (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 41
+                                           ; SOURCE LINE # 44
+0016 DB00          RETS      
+             ; FUNCTION do_mcu2 (END    RMASK = @0x8000)
+
+             ; FUNCTION do_mcu1_msg (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 48
+                                           ; SOURCE LINE # 50
+0018 DB00          RETS      
+             ; FUNCTION do_mcu1_msg (END    RMASK = @0x8000)
+
+             ; FUNCTION submit_task (BEGIN  RMASK = @0x4000)
+                                           ; SOURCE LINE # 53
+;---- Variable 'len' assigned to Register 'R11' ----
+;---- Variable 'para' assigned to Register 'R9/R10' ----
+;---- Variable 'task_id' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 58
+001A DB00          RETS      
+             ; FUNCTION submit_task (END    RMASK = @0x4000)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          28     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           1     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =           6     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

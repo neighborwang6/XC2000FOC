@@ -1,0 +1,128 @@
+C166 COMPILER V7.57.0, MOTORCTRLSET                                                        01/03/2020 16:20:13 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE MOTORCTRLSET
+OBJECT MODULE PLACED IN .\objs\MotorCtrlSet.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE EBS_Ctrl_Logic\MotorCtrlSet.c MODV2 LARGE BROWSE INCDIR(.\src\hardware
+                    -;.\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logi
+                    -c) MODV2 DEBUG CODE PRINT(.\objs\MotorCtrlSet.lst) TABS(2) OBJECT(.\objs\MotorCtrlSet.obj) 
+
+ stmt lvl     source
+
+    1         #include "MotorCtrlSet.h"
+    2         #include "std_defs.h"
+    3         #include "ctrl_if.h"
+    4         
+    5         u16 Forward=0,Backward=1;
+    6         u16 MotorOffset=0;
+    7         u16  MotorModeSet=0;
+    8         void MotorCtrlSet(void)
+    9         {
+   10  1        switch(MotorModeSet)
+   11  1        {
+   12  2        case 0:
+   13  2          break;
+   14  2      
+   15  2        case 100:
+   16  2          MotorOffset=650;//820;//820
+   17  2          set_motor_ctrl_enable(2);
+   18  2          set_motor_dir(Forward);
+   19  2          set_motor_offset(MotorOffset);//630
+   20  2          break;
+   21  2          
+   22  2        case 500:
+   23  2          MotorOffset=630;//375;//375
+   24  2          set_motor_ctrl_enable(2);
+   25  2          set_motor_dir(Backward);
+   26  2          set_motor_offset(MotorOffset);//550
+   27  2          break;
+   28  2          
+   29  2        case 900:
+   30  2          set_motor_ctrl_enable(0);
+   31  2          break;
+   32  2        }
+   33  1      }
+C166 COMPILER V7.57.0, MOTORCTRLSET                                                        01/03/2020 16:20:13 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION MotorCtrlSet (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 8
+                                           ; SOURCE LINE # 10
+0000 F2F40200 R    MOV       R4,MotorModeSet
+0004 06F40CFE      ADD       R4,#0FE0CH
+0008 2D16          JMPR      cc_Z,?C0004
+000A 06F470FE      ADD       R4,#0FE70H
+000E 2D23          JMPR      cc_Z,?C0005
+0010 06F42003      ADD       R4,#0320H
+0014 3D23          JMPR      cc_NZ,?C0001
+                                           ; SOURCE LINE # 12
+                                           ; SOURCE LINE # 13
+                                           ; SOURCE LINE # 15
+0016         ?C0003:
+                                           ; SOURCE LINE # 16
+0016 E6F48A02      MOV       R4,#028AH
+001A F6F40600 R    MOV       MotorOffset,R4
+                                           ; SOURCE LINE # 17
+001E E028          MOV       R8,#02H
+0020 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
+                                           ; SOURCE LINE # 18
+0024 F2F80000 R    MOV       R8,Forward
+0028 DA000000 E    CALLS     SEG (set_motor_dir),set_motor_dir
+                                           ; SOURCE LINE # 19
+002C F2F80600 R    MOV       R8,MotorOffset
+0030 DA000000 E    CALLS     SEG (set_motor_offset),set_motor_offset
+                                           ; SOURCE LINE # 20
+0034 DB00          RETS      
+                                           ; SOURCE LINE # 22
+0036         ?C0004:
+                                           ; SOURCE LINE # 23
+0036 E6F47602      MOV       R4,#0276H
+003A F6F40600 R    MOV       MotorOffset,R4
+                                           ; SOURCE LINE # 24
+003E E028          MOV       R8,#02H
+0040 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
+                                           ; SOURCE LINE # 25
+0044 F2F80400 R    MOV       R8,Backward
+0048 DA000000 E    CALLS     SEG (set_motor_dir),set_motor_dir
+                                           ; SOURCE LINE # 26
+004C F2F80600 R    MOV       R8,MotorOffset
+0050 DA000000 E    CALLS     SEG (set_motor_offset),set_motor_offset
+                                           ; SOURCE LINE # 27
+0054 DB00          RETS      
+                                           ; SOURCE LINE # 29
+0056         ?C0005:
+                                           ; SOURCE LINE # 30
+0056 E008          MOV       R8,#00H
+0058 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
+                                           ; SOURCE LINE # 31
+                                           ; SOURCE LINE # 32
+005C         ?C0001:
+                                           ; SOURCE LINE # 33
+005C DB00          RETS      
+             ; FUNCTION MotorCtrlSet (END    RMASK = @0x7FFF)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+C166 COMPILER V7.57.0, MOTORCTRLSET                                                        01/03/2020 16:20:13 PAGE 3   
+
+  CODE SIZE        =          94     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           8     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          24     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

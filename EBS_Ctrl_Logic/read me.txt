@@ -1,0 +1,5 @@
+这一个文件夹中的源文件、头文件，是针对eBooster控制所写的。
+ebooster控制程序包含eBooster所需要的原始传感器信号（主缸压力，踏板位移信号）的滤波、PID的程序实现、争取做到硬件无关
+高度抽象，可移植性高。
+PIDcontrol.c 之前为整个eBooster的逻辑控制，现在将其更名为ebooster_ctrl.c。
+将PID控制控制孤立出来成为一个单独的模块。

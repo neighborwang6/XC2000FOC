@@ -1,0 +1,3 @@
+TRANSFER
+"..\objs\hican.obj" 
+TO ".\obj\HiCAN_Driver.LIB"

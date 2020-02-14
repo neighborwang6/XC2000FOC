@@ -1,0 +1,49 @@
+C166 COMPILER V7.57.0, GVAR                                                                01/03/2020 16:20:09 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE GVAR
+OBJECT MODULE PLACED IN .\objs\gvar.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CalTool\gvar.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_Di
+                    -ag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG 
+                    -CODE PRINT(.\objs\gvar.lst) TABS(2) OBJECT(.\objs\gvar.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         * Global Variables for Calibration [TBD, reserved]
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "gvar.h"
+   11         
+   12         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, GVAR                                                                01/03/2020 16:20:09 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =    --------     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

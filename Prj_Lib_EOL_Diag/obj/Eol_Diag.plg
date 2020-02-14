@@ -1,0 +1,12 @@
+Build Project 'Eol_Diag' - Target 'Eol Diag'
+creating library .\obj\Eol_Diag.LIB...
+TRANSFER
+"..\objs\can_test.obj",
+"..\objs\kline_test.obj",
+"..\objs\xc2k_can.obj",
+"..\objs\xc2k_kline.obj" 
+TO ".\obj\Eol_Diag.LIB"
+LIB166 LIBRARY MANAGER V4.26
+COPYRIGHT KEIL ELEKTRONIK GmbH 1987 - 2005
+".\obj\Eol_Diag.LIB" - 0 Error(s), 0 Warning(s).
+  

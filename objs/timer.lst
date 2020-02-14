@@ -1,0 +1,256 @@
+C166 COMPILER V7.57.0, TIMER                                                               01/03/2020 16:20:07 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN .\objs\timer.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\timer.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL
+                    -_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEB
+                    -UG CODE PRINT(.\objs\timer.lst) TABS(2) OBJECT(.\objs\timer.obj) 
+
+ stmt lvl     source
+
+    1         #include "hw.h"
+    2         #include "timer.h"
+    3         #include "rtc.h"
+    4         
+    5         #include "hican.h"
+    6         #include "motor_if.h"
+    7         #include "ctrl_if.h"
+    8         
+    9         void isr_timer_hook_user(void);
+   10         void isr_100us_timer_hook_user(void);
+   11         
+   12         ///////////////////////////////////////////////////////////////////////////////
+   13         // Find main loop timer in module: MAIN_TASK.C
+   14         ///////////////////////////////////////////////////////////////////////////////
+   15         void timer_setting(void)
+   16         {
+   17  1        GPT12E_KSCCFG  =  0x0003;      // Module Enable
+   18  1        _nop_(); _nop_();
+   19  1        _nop_(); _nop_();
+   20  1      
+   21  1        GPT12E_T3CON   =  0x0000;      // 0.1us/tick
+   22  1      
+   23  1        // T4: reload to T3, generate 1ms tick
+   24  1        GPT12E_T4CON   =  0x0027;
+   25  1        // GPT12E_T4      =  (u16)(-(125*FSYS_MHZ));  // 1ms
+   26  1        GPT12E_T4      =  (u16)(-(12.5*FSYS_MHZ));  // 0.1ms
+   27  1        GPT12E_T3      =  GPT12E_T4;
+   28  1        
+   29  1        GPT12E_T3IC       =  0x40|(11<<2)|(1);
+   30  1        GPT12E_T3CON_T3R  =  1;
+   31  1      }
+   32         
+   33         ///////////////////////////////////////////////////////////////////////////////
+   34         // Period: 0.1ms
+   35         // High load of this function is absolutely prohibited in order to give real-time base
+   36         
+   37         void isr_systick_timer(void) interrupt T3INT
+   38         {
+   39  1        static u8 tmx=0;
+   40  1      
+   41  1        SET_MCU1_MOSI(0); // Debug only: Time consumption test
+   42  1        if((++tmx)>=10)      // 0.1ms tick: 1ms task (10ms in PC simulation)
+   43  1        {
+   44  2          isr_timer_hook();
+   45  2          isr_timer_hook_user();  //CAN
+   46  2          tmx=0;
+   47  2        }
+   48  1        SET_MCU1_MOSI(1); // Debug only: Time consumption test
+   49  1        isr_100us_timer_hook_user();
+   50  1        SET_MCU1_MOSI(0); // Debug only: Time consumption test
+   51  1      }
+   52         ///////////////////////////////////////////////////////////////////////////////
+   53         // 1ms timer
+C166 COMPILER V7.57.0, TIMER                                                               01/03/2020 16:20:07 PAGE 2   
+
+   54         void isr_timer_hook(void) 
+   55         { 
+   56  1        static u8 tmx=0;
+   57  1        static u8 tmx_5ms=0;
+   58  1      
+   59  1          g_ms_uw++;
+   60  1      
+   61  1        if((++tmx)>=10)
+   62  1        {
+   63  2          tmx=0;
+   64  2          g_overflow_10ms_ub=1;
+   65  2        }
+   66  1      
+   67  1        if((++tmx_5ms)>=5)
+   68  1        {
+   69  2          tmx_5ms=0;
+   70  2          g_overflow_5ms_ub=1;
+   71  2        }
+   72  1      }
+   73         
+   74         ///////////////////////////////////////////////////////////////////////////////
+   75         void isr_timer_hook_user(void)
+   76         {
+   77  1        hican_1ms_hook();
+   78  1        isr_1ms_hook_user();
+   79  1        calc_mot_total_angle();
+   80  1      }
+   81         ///////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, TIMER                                                               01/03/2020 16:20:07 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION timer_setting (BEGIN  RMASK = @0x4000)
+                                           ; SOURCE LINE # 15
+                                           ; SOURCE LINE # 17
+0000 E60E0300      MOV       GPT12E_KSCCFG,#03H
+                                           ; SOURCE LINE # 18
+0004 CC00          NOP       
+0006 CC00          NOP       
+                                           ; SOURCE LINE # 19
+0008 CC00          NOP       
+000A CC00          NOP       
+                                           ; SOURCE LINE # 21
+000C E6A10000      MOV       GPT12E_T3CON,#00H
+                                           ; SOURCE LINE # 24
+0010 E6A22700      MOV       GPT12E_T4CON,#027H
+                                           ; SOURCE LINE # 26
+0014 E62218FC      MOV       GPT12E_T4,#0FC18H
+                                           ; SOURCE LINE # 27
+0018 F22144FE      MOV       GPT12E_T3,GPT12E_T4
+                                           ; SOURCE LINE # 29
+001C E6B16D00      MOV       GPT12E_T3IC,#06DH
+                                           ; SOURCE LINE # 30
+0020 6FA1          BSET      GPT12E_T3CON_T3R
+                                           ; SOURCE LINE # 31
+0022 DB00          RETS      
+             ; FUNCTION timer_setting (END    RMASK = @0x4000)
+
+             ; FUNCTION isr_systick_timer (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 37
+0024 C6030300      SCXT      DPP3,#03H
+0028 EC00          PUSH      DPP0
+002A C6871000      SCXT      MDC,#010H
+002E EC06          PUSH      MDH
+0030 EC07          PUSH      MDL
+0032 ECF1          PUSH      R1
+0034 ECF2          PUSH      R2
+0036 ECF3          PUSH      R3
+0038 ECF4          PUSH      R4
+003A ECF5          PUSH      R5
+003C ECF6          PUSH      R6
+003E ECF7          PUSH      R7
+0040 ECF8          PUSH      R8
+0042 ECF9          PUSH      R9
+0044 ECFA          PUSH      R10
+0046 ECFB          PUSH      R11
+0048 ECFC          PUSH      R12
+                                           ; SOURCE LINE # 38
+                                           ; SOURCE LINE # 41
+004A 3ED3          BCLR      P2_OUT_P3
+                                           ; SOURCE LINE # 42
+004C 258F0200 R    SUBB      tmx,ONES
+0050 F3F80200 R    MOVB      RL4,tmx
+0054 47F80A00      CMPB      RL4,#0AH
+0058 8D06          JMPR      cc_ULT,?C0001
+                                           ; SOURCE LINE # 44
+005A DA000000 R    CALLS     SEG (isr_timer_hook),isr_timer_hook
+                                           ; SOURCE LINE # 45
+005E DA000000 R    CALLS     SEG (isr_timer_hook_user),isr_timer_hook_user
+                                           ; SOURCE LINE # 46
+0062 F78E0200 R    MOVB      tmx,ZEROS
+C166 COMPILER V7.57.0, TIMER                                                               01/03/2020 16:20:07 PAGE 4   
+
+                                           ; SOURCE LINE # 47
+0066         ?C0001:
+                                           ; SOURCE LINE # 48
+0066 3FD3          BSET      P2_OUT_P3
+                                           ; SOURCE LINE # 49
+0068 DA000000 E    CALLS     SEG (isr_100us_timer_hook_user),isr_100us_timer_hook_user
+                                           ; SOURCE LINE # 50
+006C 3ED3          BCLR      P2_OUT_P3
+                                           ; SOURCE LINE # 51
+006E FCFC          POP       R12
+0070 FCFB          POP       R11
+0072 FCFA          POP       R10
+0074 FCF9          POP       R9
+0076 FCF8          POP       R8
+0078 FCF7          POP       R7
+007A FCF6          POP       R6
+007C FCF5          POP       R5
+007E FCF4          POP       R4
+0080 FCF3          POP       R3
+0082 FCF2          POP       R2
+0084 FCF1          POP       R1
+0086 FC07          POP       MDL
+0088 FC06          POP       MDH
+008A FC87          POP       MDC
+008C FC00          POP       DPP0
+008E FC03          POP       DPP3
+0090 FB88          RETI      
+             ; FUNCTION isr_systick_timer (END    RMASK = @0x7FFF)
+
+             ; FUNCTION isr_timer_hook (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 54
+                                           ; SOURCE LINE # 55
+                                           ; SOURCE LINE # 59
+0092 248F0000 E    SUB       g_ms_uw,ONES
+                                           ; SOURCE LINE # 61
+0096 258F0100 R    SUBB      tmx,ONES
+009A F3F80100 R    MOVB      RL4,tmx
+009E 47F80A00      CMPB      RL4,#0AH
+00A2 8D05          JMPR      cc_ULT,?C0002
+                                           ; SOURCE LINE # 63
+00A4 F78E0100 R    MOVB      tmx,ZEROS
+                                           ; SOURCE LINE # 64
+00A8 E118          MOVB      RL4,#01H
+00AA F7F80000 E    MOVB      g_overflow_10ms_ub,RL4
+                                           ; SOURCE LINE # 65
+00AE         ?C0002:
+                                           ; SOURCE LINE # 67
+00AE 258F0000 R    SUBB      tmx_5ms,ONES
+00B2 F3F80000 R    MOVB      RL4,tmx_5ms
+00B6 4985          CMPB      RL4,#05H
+00B8 8D05          JMPR      cc_ULT,?C0003
+                                           ; SOURCE LINE # 69
+00BA F78E0000 R    MOVB      tmx_5ms,ZEROS
+                                           ; SOURCE LINE # 70
+00BE E118          MOVB      RL4,#01H
+00C0 F7F80000 E    MOVB      g_overflow_5ms_ub,RL4
+                                           ; SOURCE LINE # 71
+00C4         ?C0003:
+00C4 DB00          RETS      
+             ; FUNCTION isr_timer_hook (END    RMASK = @0x0010)
+
+             ; FUNCTION isr_timer_hook_user (BEGIN  RMASK = @0x7FFF)
+C166 COMPILER V7.57.0, TIMER                                                               01/03/2020 16:20:07 PAGE 5   
+
+                                           ; SOURCE LINE # 75
+                                           ; SOURCE LINE # 77
+00C6 DA000000 E    CALLS     SEG (hican_1ms_hook),hican_1ms_hook
+                                           ; SOURCE LINE # 78
+00CA DA000000 E    CALLS     SEG (isr_1ms_hook_user),isr_1ms_hook_user
+                                           ; SOURCE LINE # 79
+00CE DA000000 E    CALLS     SEG (calc_mot_total_angle),calc_mot_total_angle
+                                           ; SOURCE LINE # 80
+00D2 DB00          RETS      
+             ; FUNCTION isr_timer_hook_user (END    RMASK = @0x7FFF)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         212     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           3     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          18     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

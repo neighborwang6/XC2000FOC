@@ -1,0 +1,141 @@
+C166 COMPILER V7.57.0, RTC                                                                 01/03/2020 16:20:06 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE RTC
+OBJECT MODULE PLACED IN .\objs\rtc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\rtc.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_D
+                    -iag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG
+                    - CODE PRINT(.\objs\rtc.lst) TABS(2) OBJECT(.\objs\rtc.obj) 
+
+ stmt lvl     source
+
+    1         #include "rtc.h"
+    2         
+    3         ///////////////////////////////////////////////////////////////////////////////
+    4         u16 volatile g_ms_uw=0;
+    5         u16 g_min=0;
+    6         u16 g_hour=0;
+    7         u16 g_day=0;
+    8         
+    9         ///////////////////////////////////////////////////////////////////////////////
+   10         void rtc_setting(void)
+   11         {
+   12  1        RTC_KSCCFG     =  0x0003;      // Module Enable
+   13  1        _nop_(); _nop_();
+   14  1        SCU_RTCCLKCON  =  0x0005; 
+   15  1        
+   16  1        // FOSC=8MHz => 31.250kHz
+   17  1        while(!(RTC_CON & 0x8000));    // Wait until access is possible
+   18  1        RTC_CON        =  0x0002;
+   19  1        
+   20  1        // Overflow period on T14,CNT0-CNT3:  1.0240 [ms] 1.0486 [s] 1.1185 [min] 1.1930 [h] 1.6968 [months]
+   21  1        
+   22  1        RTC_T14REL     =  0xFFE0;
+   23  1        RTC_T14        =  RTC_T14REL;
+   24  1        RTC_RTCL       =  0x0000;
+   25  1        RTC_RELL       =  0x0000;
+   26  1        RTC_RTCH       =  0x0000;
+   27  1        RTC_RELH       =  0x0000;
+   28  1        
+   29  1        RTC_IC         =  0x005C;     
+   30  1        RTC_ISNC       =  0x0001;
+   31  1        
+   32  1        RTC_CON_RUN    =  1;
+   33  1      }
+   34         
+   35         ///////////////////////////////////////////////////////////////////////////////
+   36         // Period: 1.024ms reserved for future use
+   37         void isr_rtc(void) interrupt RTCINT
+   38         {
+   39  1        if(RTC_ISNC_T14IR)
+   40  1        {
+   41  2          RTC_ISNC_T14IR = 0;
+   42  2        }
+   43  1      }
+   44         ///////////////////////////////////////////////////////////////////////////////
+   45         
+C166 COMPILER V7.57.0, RTC                                                                 01/03/2020 16:20:06 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION rtc_setting (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 10
+                                           ; SOURCE LINE # 12
+0000 D180          EXTR      #01H
+0002 E6080300      MOV       RTC_KSCCFG,#03H
+                                           ; SOURCE LINE # 13
+0006 CC00          NOP       
+0008 CC00          NOP       
+                                           ; SOURCE LINE # 14
+000A E6A70500      MOV       SCU_RTCCLKCON,#05H
+                                           ; SOURCE LINE # 17
+000E         ?C0001:
+000E F2F410F1      MOV       R4,RTC_CON
+0012 9AF4FCF0      JNB       R4.15,?C0001
+0016         ?C0002:
+                                           ; SOURCE LINE # 18
+0016 D1B0          EXTR      #04H
+0018 E6880200      MOV       RTC_CON,#02H
+                                           ; SOURCE LINE # 22
+001C E668E0FF      MOV       RTC_T14REL,#0FFE0H
+                                           ; SOURCE LINE # 23
+0020 F668D2F0      MOV       RTC_T14,RTC_T14REL
+                                           ; SOURCE LINE # 24
+0024 E66A0000      MOV       RTC_RTCL,#00H
+                                           ; SOURCE LINE # 25
+0028 D1B0          EXTR      #04H
+002A E6660000      MOV       RTC_RELL,#00H
+                                           ; SOURCE LINE # 26
+002E E66B0000      MOV       RTC_RTCH,#00H
+                                           ; SOURCE LINE # 27
+0032 E6670000      MOV       RTC_RELH,#00H
+                                           ; SOURCE LINE # 29
+0036 E6CE5C00      MOV       RTC_IC,#05CH
+                                           ; SOURCE LINE # 30
+003A D190          EXTR      #02H
+003C E6860100      MOV       RTC_ISNC,#01H
+                                           ; SOURCE LINE # 32
+0040 0F88          BSET      RTC_CON_RUN
+                                           ; SOURCE LINE # 33
+0042 DB00          RETS      
+             ; FUNCTION rtc_setting (END    RMASK = @0x4010)
+
+             ; FUNCTION isr_rtc (BEGIN  RMASK = @0x4000)
+                                           ; SOURCE LINE # 37
+0044 C6030300      SCXT      DPP3,#03H
+                                           ; SOURCE LINE # 39
+0048 D180          EXTR      #01H
+004A 9A860210      JNB       RTC_ISNC_T14IR,?C0005
+                                           ; SOURCE LINE # 41
+004E D180          EXTR      #01H
+0050 1E86          BCLR      RTC_ISNC_T14IR
+                                           ; SOURCE LINE # 42
+0052         ?C0005:
+0052 FC03          POP       DPP3
+0054 FB88          RETI      
+             ; FUNCTION isr_rtc (END    RMASK = @0x4000)
+
+
+
+C166 COMPILER V7.57.0, RTC                                                                 01/03/2020 16:20:06 PAGE 3   
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          86     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           8     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          24     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

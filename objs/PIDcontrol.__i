@@ -1,0 +1,1 @@
+"EBS_Ctrl_Logic\PIDcontrol.c" MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Logic) MODV2 DEBUG CODE PRINT(.\objs\PIDcontrol.lst) TABS (2) OBJECT(.\objs\PIDcontrol.obj)

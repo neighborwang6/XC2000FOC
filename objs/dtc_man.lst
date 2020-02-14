@@ -1,0 +1,247 @@
+C166 COMPILER V7.57.0, DTC_MAN                                                             01/03/2020 16:20:08 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE DTC_MAN
+OBJECT MODULE PLACED IN .\objs\dtc_man.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\dtc_man.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EO
+                    -L_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DE
+                    -BUG CODE PRINT(.\objs\dtc_man.lst) TABS(2) OBJECT(.\objs\dtc_man.obj) 
+
+ stmt lvl     source
+
+    1         #include "stdlib.h"
+    2         #include "string.h"
+    3         #include "dtc_man.h"
+    4         #include "recfmt.h"
+    5         
+    6         ///////////////////////////////////////////////////////////////////////////////////////
+    7         // EEPROM About
+    8         // Mirror of EEPROM
+    9         u8 gee_buf[EE_SIZE];
+   10         
+   11         // Mirror of EEPROM DTC erea
+   12         u8 *gdtc_buf=NULL; // DTC num: 12, 4bytes per DTC
+   13         // From MCUMSG2
+   14         u8 gee_cmd=EE_CMD_NONE;
+   15         u8 gee_cmd_bak=EE_CMD_NONE;
+   16         u8 gee_dat[32];  // First byte: address info
+   17         // EEPROM operation result
+   18         u8 gee_stat=0;
+   19         // Mark EEPROM chagnes
+   20         u16 gee_dirty=0;  // every bit => one DTC memory position
+   21         u16 gee_dirty1=0; // Calibration Parameter, 8bytes/bit (LSB->MSB), use u32 for more Parameter
+   22         u8 gee_dirty2=0;  // bit0: Used for dtc_byte && dtc_byte_bak
+   23         u8 gdtc_num=0;    // all DTCs
+   24         u8 gdtc_num_active=0;   // DTCs that active (present now)
+   25         
+   26         // Point to gdtc_buf
+   27         SDTC *dtc_pt;
+   28         
+   29         u8 *gpara_buf=NULL;
+   30         
+   31         const char EE_VER[]="Y001";
+   32         
+   33         extern u8 dtc_byte[];
+   34         extern u8 dtc_byte_bak[];
+   35         extern u8 calc_chksum(u8 *buf,u8 len);
+   36         
+   37         ///////////////////////////////////////////////////////////////////////////////////////
+   38         //
+   39         u8 dtc_man_init(void)
+   40         {
+   41  1        return 0;
+   42  1      }
+   43         
+   44         ///////////////////////////////////////////////////////////////////////////////////////
+   45         // Add a DTC
+   46         u8 dtc_add(u8 id,u8 fm,u8 env)
+   47         {
+   48  1        UNUSED_PARA(id);
+   49  1        UNUSED_PARA(fm);
+   50  1        UNUSED_PARA(env);
+   51  1        
+   52  1        return 0;
+   53  1      }
+C166 COMPILER V7.57.0, DTC_MAN                                                             01/03/2020 16:20:08 PAGE 2   
+
+   54         ///////////////////////////////////////////////////////////////////////////////////////
+   55         // Del a DTC
+   56         // flag: 0 delete, 1 make no present
+   57         u8 dtc_del(u8 id,u8 flag)
+   58         {
+   59  1        UNUSED_PARA(id);
+   60  1        UNUSED_PARA(flag);
+   61  1        
+   62  1        return 0;
+   63  1      }
+   64         ///////////////////////////////////////////////////////////////////////////////////////
+   65         //
+   66         u8 dtc_del_all(void)
+   67         {
+   68  1        return 0;
+   69  1      }
+   70         
+   71         ///////////////////////////////////////////////////////////////////////////////////////
+   72         // List all active/de-active DTC 
+   73         // type: 0x60 active,0x40 de-active
+   74         // return DTC number requested
+   75         u8 dtc_list(u8 type,u8 *buf)
+   76         {
+   77  1        UNUSED_PARA(type);
+   78  1        UNUSED_PARA(buf);
+   79  1      
+   80  1        return 0;
+   81  1      }
+   82         
+   83         ///////////////////////////////////////////////////////////////////////////////////////
+   84         // Retrieve a DTC info
+   85         u8 dtc_info(u8 id,u8 *buf)
+   86         {
+   87  1        UNUSED_PARA(id);
+   88  1        UNUSED_PARA(buf);
+   89  1        
+   90  1        return 0;
+   91  1      }
+   92         
+   93         ///////////////////////////////////////////////////////////////////////////////////////
+   94         // Return ignition number before
+   95         u8 ign_add(void)
+   96         {
+   97  1        return 0;
+   98  1      }
+   99         ///////////////////////////////////////////////////////////////////////////////////////
+  100         // DTC manager routine
+  101         u8 dtc_man_nsr(void)
+  102         {
+  103  1        return 0;
+  104  1      }
+  105         
+  106         ///////////////////////////////////////////////////////////////////////////////////////
+  107         // update the image of EEPROM
+  108         u8 eeprom_wr_hook(u16 addr,u8 len,u8 *buf)
+  109         {
+  110  1        memcpy(gee_buf+addr,buf,len);
+  111  1        return 0;
+  112  1      }
+C166 COMPILER V7.57.0, DTC_MAN                                                             01/03/2020 16:20:08 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION dtc_man_init (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 39
+                                           ; SOURCE LINE # 41
+0000 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 42
+0002 DB00          RETS      
+             ; FUNCTION dtc_man_init (END    RMASK = @0x0010)
+
+             ; FUNCTION dtc_add (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 46
+;---- Variable 'env' assigned to Register 'R10' ----
+;---- Variable 'fm' assigned to Register 'R9' ----
+;---- Variable 'id' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 52
+0004 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 53
+0006 DB00          RETS      
+             ; FUNCTION dtc_add (END    RMASK = @0x4010)
+
+             ; FUNCTION dtc_del (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 57
+;---- Variable 'flag' assigned to Register 'R9' ----
+;---- Variable 'id' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 62
+0008 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 63
+000A DB00          RETS      
+             ; FUNCTION dtc_del (END    RMASK = @0x4010)
+
+             ; FUNCTION dtc_del_all (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 66
+                                           ; SOURCE LINE # 68
+000C E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 69
+000E DB00          RETS      
+             ; FUNCTION dtc_del_all (END    RMASK = @0x0010)
+
+             ; FUNCTION dtc_list (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 75
+;---- Variable 'buf' assigned to Register 'R9/R10' ----
+;---- Variable 'type' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 80
+0010 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 81
+0012 DB00          RETS      
+             ; FUNCTION dtc_list (END    RMASK = @0x4010)
+
+             ; FUNCTION dtc_info (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 85
+;---- Variable 'buf' assigned to Register 'R9/R10' ----
+;---- Variable 'id' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 90
+0014 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 91
+0016 DB00          RETS      
+             ; FUNCTION dtc_info (END    RMASK = @0x4010)
+
+             ; FUNCTION ign_add (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 95
+C166 COMPILER V7.57.0, DTC_MAN                                                             01/03/2020 16:20:08 PAGE 4   
+
+                                           ; SOURCE LINE # 97
+0018 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 98
+001A DB00          RETS      
+             ; FUNCTION ign_add (END    RMASK = @0x0010)
+
+             ; FUNCTION dtc_man_nsr (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 101
+                                           ; SOURCE LINE # 103
+001C E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 104
+001E DB00          RETS      
+             ; FUNCTION dtc_man_nsr (END    RMASK = @0x0010)
+
+             ; FUNCTION eeprom_wr_hook (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 108
+0020 F06A          MOV       R6,R10
+0022 F07B          MOV       R7,R11
+;---- Variable 'buf' assigned to Register 'R6/R7' ----
+;---- Variable 'len' assigned to Register 'R9' ----
+0024 F058          MOV       R5,R8
+;---- Variable 'addr' assigned to Register 'R5' ----
+                                           ; SOURCE LINE # 110
+0026 F049          MOV       R4,R9
+0028 C08C          MOVBZ     R12,RL4
+002A E6F80000 R    MOV       R8,#POF (gee_buf)
+002E E6F90000 R    MOV       R9,#PAG (gee_buf)
+0032 0085          ADD       R8,R5
+0034 DA000000 E    CALLS     SEG (memcpy),memcpy
+                                           ; SOURCE LINE # 111
+0038 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 112
+003A DB00          RETS      
+             ; FUNCTION eeprom_wr_hook (END    RMASK = @0x7FFF)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          60     --------
+  NEAR-CONST SIZE  =           5     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          22     --------
+  FAR-DATA SIZE    =         160     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          64     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

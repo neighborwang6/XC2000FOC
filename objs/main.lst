@@ -1,0 +1,377 @@
+C166 COMPILER V7.57.0, MAIN                                                                01/03/2020 16:20:11 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\objs\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\main.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_Diag;.
+                    -\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG CODE
+                    - PRINT(.\objs\main.lst) TABS(2) OBJECT(.\objs\main.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "std_defs.h" 
+   11         #include "board.h"
+   12         #include "main_task.h"
+   13         #include "diag_hw.h"
+   14         #include "hican.h"
+   15         
+   16         #include "resolver_ad2s.h"
+   17         #include "pwm.h"
+   18         
+   19         #include "ctrl.h"
+   20         #include "ctrl_if.h"
+   21         
+   22         #ifdef WIN32
+              #include "pc_hw.h"
+              #endif
+   25         
+   26         ////////////////////////////////////////////////////////////////////////////////
+   27         // Global functions
+   28         void app_init(void);
+   29         void app_10ms_task(void);
+   30         void app_5ms_task(void);
+   31         void app_mainloop_task(void);
+   32         
+   33         u16 TryValue1=0,TryValue2=0,TryValue3=0,TryValue4=0,TryValue5=0,TryValue6=0,TryValue7=0,TryValue9=0,TryVal
+             -ue10=0,TryValue11=0,TryValue12=0;
+   34         s16 TryValue8=0;
+   35         s32 TryValue13;
+   36         extern u16 g_ctrl_test_timer_uw;
+   37         extern u16 test_dir;
+   38         extern u16 motor_offset;
+   39         extern u16 TryVqs;
+   40         extern u16 g_disp_value_sent; //Relative Displacement - RT (Origional:CC2_CC22(PWM_EX3)) Relstive Displace
+             -ment define in ccu2_ccu6.c
+   41         ////////////////////////////////////////////////////////////////////////////////
+   42         // Main entry
+   43         ////////////////////////////////////////////////////////////////////////////////
+   44         void main(void)
+   45         {
+   46  1        app_init();
+   47  1      
+   48  1          while (1)
+   49  1        {   
+   50  2          //////////////////////////////////////////////////////
+   51  2          // 5ms task
+C166 COMPILER V7.57.0, MAIN                                                                01/03/2020 16:20:11 PAGE 2   
+
+   52  2          if (g_overflow_5ms_ub == 1)
+   53  2          {
+   54  3            g_overflow_5ms_ub=0;
+   55  3            app_5ms_task();
+   56  3            
+   57  3            TryValue1=get_disp_sensor0();  //PWM_EX0
+   58  3            TryValue2=get_mc_pressure();  //PWM_EX1
+   59  3            TryValue3=get_brk_pedal_state();//PWM_EX2
+   60  3            TryValue4=g_disp_value_sent;  //PWM_EX3
+   61  3            //TryValue3=get_brk_pedal_volt();
+   62  3            //TryValue4=get_bat_volt();
+   63  3            //TryValue5=get_ign_volt();
+   64  3            TryValue6=get_motor_angle_m();
+   65  3            //TryValue7=get_motor_angle_e();
+   66  3            //TryValue8=get_motor_speed();
+   67  3            //TryValue9=get_temp_sensor_pcb();
+   68  3            //TryValue10=get_temp_sensor_mosfet();
+   69  3            //TryValue9=g_ctrl_test_timer_uw;
+   70  3            //TryValue10=test_dir;
+   71  3            //TryValue11=motor_offset;
+   72  3            //TryValue12=TryVqs;
+   73  3            TryValue13 = get_motor_total_angle();
+   74  3            
+   75  3          }
+   76  2      
+   77  2          //////////////////////////////////////////////////////
+   78  2          // 10ms task
+   79  2          if (g_overflow_10ms_ub == 1)
+   80  2              {  
+   81  3            g_overflow_10ms_ub = 0;
+   82  3            app_10ms_task();
+   83  3              }
+   84  2      
+   85  2          //////////////////////////////////////////////////////
+   86  2          // Mainloop task
+   87  2          app_mainloop_task();
+   88  2          
+   89  2          //////////////////////////////////////////////////////
+   90  2          } // while(1)...
+   91  1      }
+   92         
+   93         ////////////////////////////////////////////////////////////////////////////////
+   94         //
+   95         ////////////////////////////////////////////////////////////////////////////////
+   96         void app_init(void)
+   97         {
+   98  1      #ifdef WIN32
+                pc_hw_init();
+              #else 
+  101  1        hw_init();
+  102  1      #endif
+  103  1        
+  104  1        diag_hw_init();
+  105  1      
+  106  1        //////////////////////////////////////////////////////
+  107  1        // Special instruction for XC2000 MCU
+  108  1          _einit_(); 
+  109  1        
+  110  1        //////////////////////////////////////////////////////
+  111  1        // FIXED: yly
+  112  1        keep_alive(1);
+  113  1        
+C166 COMPILER V7.57.0, MAIN                                                                01/03/2020 16:20:11 PAGE 3   
+
+  114  1        //////////////////////////////////////////////////////
+  115  1        // Wait the power stable
+  116  1        SET_BAT12V_SW(1); delay_ms(10);
+  117  1        SET_AD2S_RESET(1); delay_ms(10);
+  118  1        
+  119  1        // Motor control OFF
+  120  1        set_motor_ctrl_enable(0);
+  121  1        
+  122  1        // MCU2 Power ON / TLE7189F INH
+  123  1        SET_VCC5B_EN(1);
+  124  1        
+  125  1        // VCC5 for Torque sensor ON
+  126  1        SET_VCC5_SS(1);
+  127  1        
+  128  1        SET_SCDL_DIS(0);
+  129  1        
+  130  1        //////////////////////////////////////////////////////
+  131  1        // EEPROM Init
+  132  1        g_sys_dtc_uw |= eeprom_init();
+  133  1        
+  134  1        //////////////////////////////////////////////////////
+  135  1        // Init the resolver decoder
+  136  1        resolver_ad2s_init(0);
+  137  1        
+  138  1        // PWM Init
+  139  1        pwm_init();
+  140  1        
+  141  1        //////////////////////////////////////////////////////
+  142  1        // Motor control OFF (But enable)
+  143  1        set_motor_ctrl_enable(1);
+  144  1        
+  145  1        //////////////////////////////////////////////////////
+  146  1      }
+  147         
+  148         ////////////////////////////////////////////////////////////////////////////////
+  149         //
+  150         ////////////////////////////////////////////////////////////////////////////////
+  151         void app_10ms_task(void)
+  152         {
+  153  1        diag_timer_10ms_hook();
+  154  1        // Reset watchdog timer
+  155  1        _srvwdt_();
+  156  1        
+  157  1        /////////////////////////////////////////////////
+  158  1        isr_10ms_hook_user();
+  159  1        
+  160  1        do_boff_recovery();
+  161  1        /////////////////////////////////////////////////
+  162  1        // IGN Off?
+  163  1        if(!GET_IGN())
+  164  1        {
+  165  2          // Save something to EEPROM...
+  166  2          // power_down_hook_user();
+  167  2          SET_BAT12V_SW(0);
+  168  2          
+  169  2          keep_alive(0);
+  170  2        }
+  171  1        /////////////////////////////////////////////////
+  172  1      }
+  173         
+  174         ////////////////////////////////////////////////////////////////////////////////
+  175         //
+C166 COMPILER V7.57.0, MAIN                                                                01/03/2020 16:20:11 PAGE 4   
+
+  176         ////////////////////////////////////////////////////////////////////////////////
+  177         void app_5ms_task(void)
+  178         {
+  179  1        isr_5ms_hook_user();
+  180  1      }
+  181         
+  182         ////////////////////////////////////////////////////////////////////////////////
+  183         //
+  184         ////////////////////////////////////////////////////////////////////////////////
+  185         void app_mainloop_task(void)
+  186         {
+  187  1      #ifdef WIN32
+                delay_ms_pc(1);
+                do_vcan_msg();
+              #endif
+  191  1        //////////////////////////////////////////////////////
+  192  1        //
+  193  1        diag_main_loop_hook(); 
+  194  1      }
+  195         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, MAIN                                                                01/03/2020 16:20:11 PAGE 5   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION main (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 44
+                                           ; SOURCE LINE # 46
+0000 DA000000 R    CALLS     SEG (app_init),app_init
+                                           ; SOURCE LINE # 48
+0004         ?C0003:
+                                           ; SOURCE LINE # 52
+0004 F3F80000 E    MOVB      RL4,g_overflow_5ms_ub
+0008 4981          CMPB      RL4,#01H
+000A 3D1E          JMPR      cc_NZ,?C0005
+                                           ; SOURCE LINE # 54
+000C F78E0000 E    MOVB      g_overflow_5ms_ub,ZEROS
+                                           ; SOURCE LINE # 55
+0010 DA000000 R    CALLS     SEG (app_5ms_task),app_5ms_task
+                                           ; SOURCE LINE # 57
+0014 DA000000 E    CALLS     SEG (get_disp_sensor0),get_disp_sensor0
+0018 F6F41000 R    MOV       TryValue1,R4
+                                           ; SOURCE LINE # 58
+001C DA000000 E    CALLS     SEG (get_mc_pressure),get_mc_pressure
+0020 F6F40E00 R    MOV       TryValue2,R4
+                                           ; SOURCE LINE # 59
+0024 DA000000 E    CALLS     SEG (get_brk_pedal_state),get_brk_pedal_state
+0028 F6F40C00 R    MOV       TryValue3,R4
+                                           ; SOURCE LINE # 60
+002C F2F40000 E    MOV       R4,g_disp_value_sent
+0030 F6F40A00 R    MOV       TryValue4,R4
+                                           ; SOURCE LINE # 64
+0034 DA000000 E    CALLS     SEG (get_motor_angle_m),get_motor_angle_m
+0038 F6F40600 R    MOV       TryValue6,R4
+                                           ; SOURCE LINE # 73
+003C DA000000 E    CALLS     SEG (get_motor_total_angle),get_motor_total_angle
+0040 F6F41200 R    MOV       TryValue13,R4
+0044 F6F51400 R    MOV       TryValue13+02H,R5
+                                           ; SOURCE LINE # 75
+0048         ?C0005:
+                                           ; SOURCE LINE # 79
+0048 F3F80000 E    MOVB      RL4,g_overflow_10ms_ub
+004C 4981          CMPB      RL4,#01H
+004E 3D04          JMPR      cc_NZ,?C0006
+                                           ; SOURCE LINE # 81
+0050 F78E0000 E    MOVB      g_overflow_10ms_ub,ZEROS
+                                           ; SOURCE LINE # 82
+0054 DA000000 R    CALLS     SEG (app_10ms_task),app_10ms_task
+                                           ; SOURCE LINE # 83
+0058         ?C0006:
+                                           ; SOURCE LINE # 87
+0058 DA000000 R    CALLS     SEG (app_mainloop_task),app_mainloop_task
+                                           ; SOURCE LINE # 90
+005C 0DD3          JMPR      cc_UC,?C0003
+             ; FUNCTION main (END    RMASK = @0x7FFF)
+
+             ; FUNCTION app_init (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 96
+                                           ; SOURCE LINE # 101
+005E DA000000 E    CALLS     SEG (hw_init),hw_init
+                                           ; SOURCE LINE # 104
+0062 DA000000 E    CALLS     SEG (diag_hw_init),diag_hw_init
+                                           ; SOURCE LINE # 108
+0066 B54AB5B5      EINIT     
+C166 COMPILER V7.57.0, MAIN                                                                01/03/2020 16:20:11 PAGE 6   
+
+                                           ; SOURCE LINE # 112
+006A E018          MOV       R8,#01H
+006C DA000000 E    CALLS     SEG (keep_alive),keep_alive
+                                           ; SOURCE LINE # 116
+0070 4FDB          BSET      P10_OUT_P4
+0072 E0A8          MOV       R8,#0AH
+0074 DA000000 E    CALLS     SEG (delay_ms),delay_ms
+                                           ; SOURCE LINE # 117
+0078 3FD8          BSET      P7_OUT_P3
+007A E0A8          MOV       R8,#0AH
+007C DA000000 E    CALLS     SEG (delay_ms),delay_ms
+                                           ; SOURCE LINE # 120
+0080 E008          MOV       R8,#00H
+0082 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
+                                           ; SOURCE LINE # 123
+0086 2FD8          BSET      P7_OUT_P2
+                                           ; SOURCE LINE # 126
+0088 4FD8          BSET      P7_OUT_P4
+                                           ; SOURCE LINE # 128
+008A 2ED3          BCLR      P2_OUT_P2
+                                           ; SOURCE LINE # 132
+008C DA000000 E    CALLS     SEG (eeprom_init),eeprom_init
+0090 C084          MOVBZ     R4,RL4
+0092 74F40000 E    OR        g_sys_dtc_uw,R4
+                                           ; SOURCE LINE # 136
+0096 E008          MOV       R8,#00H
+0098 DA000000 E    CALLS     SEG (resolver_ad2s_init),resolver_ad2s_init
+                                           ; SOURCE LINE # 139
+009C DA000000 E    CALLS     SEG (pwm_init),pwm_init
+                                           ; SOURCE LINE # 143
+00A0 E018          MOV       R8,#01H
+00A2 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
+                                           ; SOURCE LINE # 146
+00A6 DB00          RETS      
+             ; FUNCTION app_init (END    RMASK = @0x7FFF)
+
+             ; FUNCTION app_10ms_task (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 151
+                                           ; SOURCE LINE # 153
+00A8 DA000000 E    CALLS     SEG (diag_timer_10ms_hook),diag_timer_10ms_hook
+                                           ; SOURCE LINE # 155
+00AC A758A7A7      SRVWDT    
+                                           ; SOURCE LINE # 158
+00B0 DA000000 E    CALLS     SEG (isr_10ms_hook_user),isr_10ms_hook_user
+                                           ; SOURCE LINE # 160
+00B4 DA000000 E    CALLS     SEG (do_boff_recovery),do_boff_recovery
+                                           ; SOURCE LINE # 163
+00B8 8AC40410      JB        P4_IN_P1,?C0007
+                                           ; SOURCE LINE # 167
+00BC 4EDB          BCLR      P10_OUT_P4
+                                           ; SOURCE LINE # 169
+00BE E008          MOV       R8,#00H
+00C0 DA000000 E    CALLS     SEG (keep_alive),keep_alive
+                                           ; SOURCE LINE # 170
+00C4         ?C0007:
+00C4 DB00          RETS      
+             ; FUNCTION app_10ms_task (END    RMASK = @0x7FFF)
+
+             ; FUNCTION app_5ms_task (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 177
+                                           ; SOURCE LINE # 179
+00C6 DA000000 E    CALLS     SEG (isr_5ms_hook_user),isr_5ms_hook_user
+C166 COMPILER V7.57.0, MAIN                                                                01/03/2020 16:20:11 PAGE 7   
+
+                                           ; SOURCE LINE # 180
+00CA DB00          RETS      
+             ; FUNCTION app_5ms_task (END    RMASK = @0x7FFF)
+
+             ; FUNCTION app_mainloop_task (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 185
+                                           ; SOURCE LINE # 193
+00CC DA000000 E    CALLS     SEG (diag_main_loop_hook),diag_main_loop_hook
+                                           ; SOURCE LINE # 194
+00D0 DB00          RETS      
+             ; FUNCTION app_mainloop_task (END    RMASK = @0x7FFF)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         210     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          28     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          72     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

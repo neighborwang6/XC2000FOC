@@ -1,0 +1,383 @@
+C166 COMPILER V7.57.0, MOTOR_PMSM                                                          01/03/2020 16:20:12 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE MOTOR_PMSM
+OBJECT MODULE PLACED IN .\objs\motor_pmsm.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_pmsm.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_
+                    -Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBU
+                    -G CODE PRINT(.\objs\motor_pmsm.lst) TABS(2) OBJECT(.\objs\motor_pmsm.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "motor_if.h"
+   11         #include "motor_pmsm.h"
+   12         #include "resolver_ad2s.h"
+   13         
+   14         #include "filters.h"
+   15         
+   16         ///////////////////////////////////////////////////////////////////////////////
+   17         //
+   18         void calc_motor_pos(void);
+   19         ///////////////////////////////////////////////////////////////////////////////
+   20         extern u16 g_duty_uw;
+   21         extern u16 g_pos_offset_pmsm_uw;
+   22         
+   23         extern u16 g_time_inh;
+   24         ///////////////////////////////////////////////////////////////////////////////
+   25         //  
+   26         I_CLARK_PARK I={0,0,0,0,0,0,0,0,0,0};
+   27         V_CLARK_PARK V={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+   28         
+   29         s16 Vqs_cmd=0;
+   30         
+   31         u16 g_angle_sensor=0;
+   32         u16 g_angle_eiq=0;
+   33         s16 g_angle_offset=0;
+   34         
+   35         ///////////////////////////////////////////////////////////////////////////////
+   36         // Called very 0.1ms
+   37         //
+   38         ///////////////////////////////////////////////////////////////////////////////
+   39         void do_motor_pmsm_ctrl(void)
+   40         {
+   41  1        s16 l_vqs;
+   42  1        
+   43  1        if(g_time_inh)
+   44  1        {
+   45  2          if(g_time_inh!=(u16)0xFFFF)
+   46  2            g_time_inh--;
+   47  2          
+   48  2          return;
+   49  2        }
+   50  1        
+   51  1        // Calculate the Mechanical and Electrical angle
+   52  1        calc_motor_pos();
+   53  1        
+C166 COMPILER V7.57.0, MOTOR_PMSM                                                          01/03/2020 16:20:12 PAGE 2   
+
+   54  1        // Calculate the angle sum in the rotational direction
+   55  1        // calc_motor_angle(&g_motor_angle);
+   56  1      
+   57  1        I.Angle=g_angle_eiq;
+   58  1        
+   59  1        Park(&I);
+   60  1        V.Angle = I.Angle;
+   61  1        V.Sine  = I.Sine;
+   62  1        V.Cosine= I.Cosine;
+   63  1        
+   64  1        if(g_duty_uw>1000)  // Limit to 100% of Udc (Const nominal value: 12V)
+   65  1          g_duty_uw=1000;
+   66  1      
+   67  1        // 0.001V/bit
+   68  1        l_vqs=(Udc/1000)*g_duty_uw; //Should be: 'Udc*g_duty_uw/1000';
+   69  1        Vqs_cmd=vqs_cmd_filter(l_vqs);
+   70  1        
+   71  1        // Debug only: More than 8V is prohibited to protect the hardware before PMSM control verified.
+   72  1        if(Vqs_cmd>F_MOT_VOLT(8))
+   73  1          Vqs_cmd=F_MOT_VOLT(8);
+   74  1      
+   75  1        // Set Vd to ZERO
+   76  1        V.Ds=0;
+   77  1        // Set Vq according to direction: 0.001V/bit
+   78  1        V.Qs=(g_dir_ub==0)?(Vqs_cmd):(-Vqs_cmd);
+   79  1      
+   80  1        // Inverse Park Transform
+   81  1        IPark(&V);
+   82  1        // Sector Selection
+   83  1        motor_sector_cal(&V);
+   84  1        // SVPWM
+   85  1        motor_sector_switch_cal(&V);
+   86  1      }
+   87         
+   88         ////////////////////////////////////////////////////////////////////////////////
+   89         //
+   90         ////////////////////////////////////////////////////////////////////////////////
+   91         void calc_motor_pos(void)
+   92         {
+   93  1        u32 tmpu32;
+   94  1        u16 l_pole_pair_idx;
+   95  1        s16 tmps16;
+   96  1        
+   97  1        // 1. Calculate the rotator angle (Mechanical angle): 0.1degree/bit (scale factor: 10)
+   98  1        tmpu32=g_resolver_pos_uw;  // Measurement from resolver: 12bit
+   99  1        tmpu32*=F_ANGLE(360);
+  100  1        tmpu32>>=12;
+  101  1        g_angle_sensor=(u16)tmpu32;
+  102  1        
+  103  1        // 2. Set offset
+  104  1        g_angle_offset=(s16)g_pos_offset_pmsm_uw;
+  105  1      
+  106  1        // 3. Adjust to Electrical angle
+  107  1        // Find the sector number
+  108  1        l_pole_pair_idx=(u16)(tmpu32/ANGLE_PER_POLE_PAIR);
+  109  1        // Span to 360 degree
+  110  1        tmps16 = (g_angle_sensor - l_pole_pair_idx*ANGLE_PER_POLE_PAIR)*POLE_PAIR_NUM;
+  111  1        // Add offset
+  112  1        tmps16 += g_angle_offset;
+  113  1        
+  114  1        // Reasonable check
+  115  1        if (tmps16 >= F_ANGLE(360))
+C166 COMPILER V7.57.0, MOTOR_PMSM                                                          01/03/2020 16:20:12 PAGE 3   
+
+  116  1          g_angle_eiq = tmps16 - F_ANGLE(360);
+  117  1        else if (tmps16 < 0)
+  118  1          g_angle_eiq = tmps16 + F_ANGLE(360);
+  119  1        else
+  120  1          g_angle_eiq=tmps16;
+  121  1      
+  122  1        //////////////////////////////////////////////////////
+  123  1        // Debug only
+  124  1        // g_angle_eiq=1500;
+  125  1      }
+  126         ////////////////////////////////////////////////////////////////////////////////
+  127         //
+  128         ////////////////////////////////////////////////////////////////////////////////
+  129         s32 g_sum_vqs_sl=0;
+  130         
+  131         s16 vqs_cmd_filter(s16 vqs)
+  132         {
+  133  1        s16 l_vqs;
+  134  1        
+  135  1        l_vqs=vqs;
+  136  1        
+  137  1      #if 0 
+                s32 sum_temp;
+              
+                g_sum_vqs_sl+=vqs;
+                g_sum_vqs_sl-=Vqs_cmd;
+                sum_temp=g_sum_vqs_sl;
+                sum_temp=(sum_temp*1)>>8;
+                if(vqs<Vqs_cmd) // Decrease torque, do it right away
+                  l_vqs=vqs;
+                else
+                  l_vqs=(s16)sum_temp;
+              #endif
+  149  1        
+  150  1        return l_vqs;
+  151  1      }
+  152         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, MOTOR_PMSM                                                          01/03/2020 16:20:12 PAGE 4   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION do_motor_pmsm_ctrl (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 39
+                                           ; SOURCE LINE # 40
+                                           ; SOURCE LINE # 43
+0000 F2F50000 E    MOV       R5,g_time_inh
+0004 2D06          JMPR      cc_Z,?C0001
+                                           ; SOURCE LINE # 45
+0006 46F5FFFF      CMP       R5,#0FFFFH
+000A 2D6A          JMPR      cc_Z,?C0003
+                                           ; SOURCE LINE # 46
+000C 048F0000 E    ADD       g_time_inh,ONES
+                                           ; SOURCE LINE # 48
+0010 DB00          RETS      
+                                           ; SOURCE LINE # 49
+0012         ?C0001:
+                                           ; SOURCE LINE # 52
+0012 DA000000 R    CALLS     SEG (calc_motor_pos),calc_motor_pos
+                                           ; SOURCE LINE # 57
+0016 F2F40000 R    MOV       R4,g_angle_eiq
+001A D7400000 R    EXTP      #PAG (I),#01H
+001E F6F40E00 R    MOV       POF (I+0EH),R4
+                                           ; SOURCE LINE # 59
+0022 E6F80000 R    MOV       R8,#POF (I)
+0026 E6F90000 R    MOV       R9,#PAG (I)
+002A DA000000 E    CALLS     SEG (Park),Park
+                                           ; SOURCE LINE # 60
+002E D7700000 R    EXTP      #PAG (I),#04H
+0032 F2F40E00 R    MOV       R4,POF (I+0EH)
+0036 F6F41200 R    MOV       POF (V+012H),R4
+                                           ; SOURCE LINE # 61
+003A F2F41000 R    MOV       R4,POF (I+010H)
+003E F2F51200 R    MOV       R5,POF (I+012H)
+0042 D7700000 R    EXTP      #PAG (V),#04H
+0046 F6F41400 R    MOV       POF (V+014H),R4
+004A F6F51600 R    MOV       POF (V+016H),R5
+                                           ; SOURCE LINE # 62
+004E F2F41400 R    MOV       R4,POF (I+014H)
+0052 F2F51600 R    MOV       R5,POF (I+016H)
+0056 D7500000 R    EXTP      #PAG (V),#02H
+005A F6F41800 R    MOV       POF (V+018H),R4
+005E F6F51A00 R    MOV       POF (V+01AH),R5
+                                           ; SOURCE LINE # 64
+0062 F2F40000 E    MOV       R4,g_duty_uw
+0066 46F4E803      CMP       R4,#03E8H
+006A FD04          JMPR      cc_ULE,?C0004
+                                           ; SOURCE LINE # 65
+006C E6F4E803      MOV       R4,#03E8H
+0070 F6F40000 E    MOV       g_duty_uw,R4
+0074         ?C0004:
+                                           ; SOURCE LINE # 68
+0074 F2F50000 E    MOV       R5,g_duty_uw
+0078 F045          MOV       R4,R5
+007A 5C24          SHL       R4,#02H
+007C 2045          SUB       R4,R5
+007E 5C24          SHL       R4,#02H
+;---- Variable 'l_vqs' assigned to Register 'R4' ----
+                                           ; SOURCE LINE # 69
+0080 F084          MOV       R8,R4
+0082 DA000000 R    CALLS     SEG (vqs_cmd_filter),vqs_cmd_filter
+C166 COMPILER V7.57.0, MOTOR_PMSM                                                          01/03/2020 16:20:12 PAGE 5   
+
+0086 F054          MOV       R5,R4
+0088 F6F40200 R    MOV       Vqs_cmd,R4
+                                           ; SOURCE LINE # 72
+008C 46F5401F      CMP       R5,#01F40H
+0090 BD04          JMPR      cc_SLE,?C0005
+                                           ; SOURCE LINE # 73
+0092 E6F4401F      MOV       R4,#01F40H
+0096 F6F40200 R    MOV       Vqs_cmd,R4
+009A         ?C0005:
+                                           ; SOURCE LINE # 76
+009A D7400000 R    EXTP      #PAG (V),#01H
+009E F68E0E00 R    MOV       POF (V+0EH),ZEROS
+                                           ; SOURCE LINE # 78
+00A2 F3F80000 E    MOVB      RL4,g_dir_ub
+00A6 3D03          JMPR      cc_NZ,?C0006
+00A8 F2F40200 R    MOV       R4,Vqs_cmd
+00AC 0D03          JMPR      cc_UC,?C0007
+00AE         ?C0006:
+00AE F2F40200 R    MOV       R4,Vqs_cmd
+00B2 8140          NEG       R4
+00B4         ?C0007:
+00B4 D7400000 R    EXTP      #PAG (V),#01H
+00B8 F6F41000 R    MOV       POF (V+010H),R4
+                                           ; SOURCE LINE # 81
+00BC E6F80000 R    MOV       R8,#POF (V)
+00C0 E6F90000 R    MOV       R9,#PAG (V)
+00C4 DA000000 E    CALLS     SEG (IPark),IPark
+                                           ; SOURCE LINE # 83
+00C8 E6F80000 R    MOV       R8,#POF (V)
+00CC E6F90000 R    MOV       R9,#PAG (V)
+00D0 DA000000 E    CALLS     SEG (motor_sector_cal),motor_sector_cal
+                                           ; SOURCE LINE # 85
+00D4 E6F80000 R    MOV       R8,#POF (V)
+00D8 E6F90000 R    MOV       R9,#PAG (V)
+00DC DA000000 E    CALLS     SEG (motor_sector_switch_cal),motor_sector_switch_cal
+                                           ; SOURCE LINE # 86
+00E0         ?C0003:
+00E0 DB00          RETS      
+             ; FUNCTION do_motor_pmsm_ctrl (END    RMASK = @0x7FFF)
+
+             ; FUNCTION calc_motor_pos (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 91
+                                           ; SOURCE LINE # 92
+                                           ; SOURCE LINE # 98
+00E2 F2F80000 E    MOV       R8,g_resolver_pos_uw
+00E6 E009          MOV       R9,#00H
+;---- Variable 'tmpu32' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 99
+00E8 E6F6100E      MOV       R6,#0E10H
+00EC E007          MOV       R7,#00H
+00EE F048          MOV       R4,R8
+00F0 F059          MOV       R5,R9
+00F2 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+00F6 F084          MOV       R8,R4
+00F8 F095          MOV       R9,R5
+                                           ; SOURCE LINE # 100
+00FA F065          MOV       R6,R5
+00FC 7CC8          SHR       R8,#0CH
+00FE 7CC9          SHR       R9,#0CH
+0100 5C46          SHL       R6,#04H
+0102 7086          OR        R8,R6
+                                           ; SOURCE LINE # 101
+C166 COMPILER V7.57.0, MOTOR_PMSM                                                          01/03/2020 16:20:12 PAGE 6   
+
+0104 F078          MOV       R7,R8
+0106 F6F80400 R    MOV       g_angle_sensor,R8
+                                           ; SOURCE LINE # 104
+010A F2F40000 E    MOV       R4,g_pos_offset_pmsm_uw
+010E F6F40600 R    MOV       g_angle_offset,R4
+                                           ; SOURCE LINE # 108
+0112 E6F6100E      MOV       R6,#0E10H
+0116 F6F80EFE      MOV       MDL,R8
+011A F6F90CFE      MOV       MDH,R9
+011E 7B66          DIVLU     R6
+0120 F2F40EFE      MOV       R4,MDL
+0124 F064          MOV       R6,R4
+;---- Variable 'l_pole_pair_idx' assigned to Register 'R6' ----
+                                           ; SOURCE LINE # 110
+0126 F056          MOV       R5,R6
+0128 F065          MOV       R6,R5
+012A 5C35          SHL       R5,#03H
+012C 2056          SUB       R5,R6
+012E 5C55          SHL       R5,#05H
+0130 0056          ADD       R5,R6
+0132 5C45          SHL       R5,#04H
+0134 2075          SUB       R7,R5
+0136 F057          MOV       R5,R7
+;---- Variable 'tmps16' assigned to Register 'R5' ----
+                                           ; SOURCE LINE # 112
+0138 02F50600 R    ADD       R5,g_angle_offset
+                                           ; SOURCE LINE # 115
+013C 46F5100E      CMP       R5,#0E10H
+0140 CD06          JMPR      cc_SLT,?C0008
+                                           ; SOURCE LINE # 116
+0142 F045          MOV       R4,R5
+0144 26F4100E      SUB       R4,#0E10H
+0148 F6F40000 R    MOV       g_angle_eiq,R4
+014C DB00          RETS      
+014E         ?C0008:
+                                           ; SOURCE LINE # 117
+014E 4850          CMP       R5,#00H
+0150 DD06          JMPR      cc_SGE,?C0010
+                                           ; SOURCE LINE # 118
+0152 F045          MOV       R4,R5
+0154 06F4100E      ADD       R4,#0E10H
+0158 F6F40000 R    MOV       g_angle_eiq,R4
+015C DB00          RETS      
+015E         ?C0010:
+                                           ; SOURCE LINE # 120
+015E F6F50000 R    MOV       g_angle_eiq,R5
+0162         ?C0009:
+                                           ; SOURCE LINE # 125
+0162 DB00          RETS      
+             ; FUNCTION calc_motor_pos (END    RMASK = @0x63F0)
+
+             ; FUNCTION vqs_cmd_filter (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 131
+;---- Variable 'vqs' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 132
+                                           ; SOURCE LINE # 135
+;---- Variable 'l_vqs' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 150
+0164 F048          MOV       R4,R8
+                                           ; SOURCE LINE # 151
+0166 DB00          RETS      
+             ; FUNCTION vqs_cmd_filter (END    RMASK = @0x4010)
+C166 COMPILER V7.57.0, MOTOR_PMSM                                                          01/03/2020 16:20:12 PAGE 7   
+
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         360     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          12     --------
+  FAR-DATA SIZE    =          88     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =         132     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

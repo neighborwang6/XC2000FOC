@@ -1,0 +1,882 @@
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE CCU2_CCU6
+OBJECT MODULE PLACED IN .\objs\ccu2_ccu6.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ccu2_ccu6.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.
+                    -\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2
+                    - DEBUG CODE PRINT(.\objs\ccu2_ccu6.lst) TABS(2) OBJECT(.\objs\ccu2_ccu6.obj) 
+
+ stmt lvl     source
+
+    1         #include "ccu2_ccu6.h"
+    2         #include "pwm.h"
+    3         #include "sent_decode.h"
+    4         
+    5         ///////////////////////////////////////////////////////////////////////////////
+    6         // CC20,CC21,CC23,CC22,CC26,CC27: CC23 <=> CC22 (swap)
+    7         // 0~10000: => 0~100%
+    8         u16 g_pwm_ex_duty_uw[6]={0,0,0,0,0,0};
+    9         
+   10         // 0.2us/bit
+   11         u16 g_pwm_ex_period_uw[6]={20000,20000,40000,25000,0,0};
+   12         const u16 G_PWM_EX_PERIOD_STD[6]={20000,20000,40000,25000,0,0};
+   13         
+   14         // Time of previous edge
+   15         u16 g_pwm_ex_timestamp0[6]={0,0,0,0,0,0};
+   16         // Time of previous rising edge
+   17         u16 g_pwm_ex_timestamp0_r[6]={0,0,0,0,0,0};
+   18         
+   19         // Time of current edge
+   20         u16 g_pwm_ex_timestamp[6]={0,0,0,0,0,0};
+   21         
+   22         u16 g_disp_value_sent=0; //The Relative Displacement of the initial position of the pedal.(Origional:CC2_C
+             -C22(PWM_EX3))
+   23         ///////////////////////////////////////////////////////////////////////////////
+   24         // WGY comment out the function void cc2_setting(void) in 2019/11/26
+   25         /*void cc2_setting(void)
+   26         {
+   27           // Staggered mode, FSYS = 80MHz: T7: 50ns/tick, T8: 0.2us/tick
+   28           CC2_KSCCFG     =  0x0003;
+   29           _nop_(); _nop_(); 
+   30           _nop_(); _nop_();
+   31           
+   32           CC2_T78CON     =  0x0401;
+   33           CC2_M5         =  0xB333; // CC20~CC23: CC23 assigned to T8
+   34           CC2_M6         =  0x3300; // CC26~CC27
+   35         
+   36           // Wheel Speed Input
+   37           CC2_CC20IC     =  0x40|(8<<2)|(0);
+   38           CC2_CC21IC     =  0x40|(8<<2)|(1);
+   39           CC2_CC22IC     =  0x40|(8<<2)|(2);
+   40           CC2_CC23IC     =  0x40|(8<<2)|(3);
+   41           
+   42           CC2_CC26IC     =  0x40|(9<<2)|(0);
+   43           CC2_CC27IC     =  0x40|(9<<2)|(1);
+   44           
+   45           CC2_IOC        =  0x0004; // Non-Staggered Mode
+   46         
+   47           CC2_T78CON_T7R    = 1;
+   48           CC2_T78CON_T8R    = 1;
+   49         }*/
+   50         void cc2_setting(void)
+   51         {
+   52  1        volatile unsigned int uwTemp;
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 2   
+
+   53  1      
+   54  1        ///  -----------------------------------------------------------------------
+   55  1        ///  Configuration of  Kernel state configuration Control:
+   56  1        ///  -----------------------------------------------------------------------
+   57  1        ///  - the Peripheral is supplied with clock signal for CAPCOM2 unit
+   58  1        ///  - the CC2 module clock = 80.00 MHz
+   59  1      
+   60  1        CC2_KSCCFG     =  0x0003;      // load CAPCOM2 Kernel state configuration 
+   61  1                                       // register
+   62  1      
+   63  1        uwTemp         =  CC2_KSCCFG;  // dummy read to avoid pipeline effects
+   64  1      
+   65  1        ///  -----------------------------------------------------------------------
+   66  1        ///  Configuration of CAPCOM2 Control:
+   67  1        ///  -----------------------------------------------------------------------
+   68  1        ///  - staggered mode is disabled
+   69  1      
+   70  1        CC2_IOC        =  0x0004;      // load CAPCOM2 I/O control register
+   71  1      
+   72  1        ///  -----------------------------------------------------------------------
+   73  1        ///  Configuration of CAPCOM2 Timer 7:
+   74  1        ///  -----------------------------------------------------------------------
+   75  1        ///  - timer 7 works in timer mode
+   76  1        ///  - prescaler factor is 2
+   77  1        ///  - timer 7 run bit is set
+   78  1      
+   79  1        ///  -----------------------------------------------------------------------
+   80  1        ///  Configuration of CAPCOM2 Timer 8:
+   81  1        ///  -----------------------------------------------------------------------
+   82  1        ///  - timer 8 works in timer mode
+   83  1        ///  - prescaler factor is 1
+   84  1        ///  - timer 8 run bit is reset
+   85  1      
+   86  1      
+   87  1        CC2_T78CON     =  0x0001;      // load CAPCOM2 timer 7 and timer 8 control 
+   88  1                                       // register
+   89  1      
+   90  1        CC2_T7         =  0x0001;      // load CAPCOM2 timer 7 register
+   91  1      
+   92  1        CC2_T7REL      =  0x0001;      // load CAPCOM2 timer 7 reload register
+   93  1      
+   94  1        ///  -----------------------------------------------------------------------
+   95  1        ///  Configuration of the used CAPCOM2 Timer Port Pins:
+   96  1        ///  -----------------------------------------------------------------------
+   97  1      
+   98  1      
+   99  1        ///  -----------------------------------------------------------------------
+  100  1        ///  Configuration of the used CAPCOM2 Timer Interrupts:
+  101  1        ///  -----------------------------------------------------------------------
+  102  1      
+  103  1      
+  104  1        ///  -----------------------------------------------------------------------
+  105  1        ///  Configuration of the used CAPCOM2 Channel 16:
+  106  1        ///  -----------------------------------------------------------------------
+  107  1        ///  - channel 16 is disabled
+  108  1      
+  109  1        ///  -----------------------------------------------------------------------
+  110  1        ///  Configuration of the used CAPCOM2 Channel 17:
+  111  1        ///  -----------------------------------------------------------------------
+  112  1        ///  - channel 17 is disabled
+  113  1      
+  114  1        ///  -----------------------------------------------------------------------
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 3   
+
+  115  1        ///  Configuration of the used CAPCOM2 Channel 18:
+  116  1        ///  -----------------------------------------------------------------------
+  117  1        ///  - channel 18 is disabled
+  118  1      
+  119  1        ///  -----------------------------------------------------------------------
+  120  1        ///  Configuration of the used CAPCOM2 Channel 19:
+  121  1        ///  -----------------------------------------------------------------------
+  122  1        ///  - channel 19 is disabled
+  123  1      
+  124  1        ///  -----------------------------------------------------------------------
+  125  1        ///  Configuration of the used CAPCOM2 Channel 20:
+  126  1        ///  -----------------------------------------------------------------------
+  127  1        ///  - channel 20 is disabled
+  128  1      
+  129  1        ///  -----------------------------------------------------------------------
+  130  1        ///  Configuration of the used CAPCOM2 Channel 21:
+  131  1        ///  -----------------------------------------------------------------------
+  132  1        ///  - channel 21 is disabled
+  133  1      
+  134  1        ///  -----------------------------------------------------------------------
+  135  1        ///  Configuration of the used CAPCOM2 Channel 22:
+  136  1        ///  -----------------------------------------------------------------------
+  137  1        ///  - capture on negative transition (falling edge) at pin CC22IO (P2.9)
+  138  1        ///  - CC22 allocated to CAPCOM2 timer 7
+  139  1        ///  - single event mode is disabled
+  140  1      
+  141  1      
+  142  1        ///  -----------------------------------------------------------------------
+  143  1        ///  Configuration of the used CAPCOM2 Channel 23:
+  144  1        ///  -----------------------------------------------------------------------
+  145  1        ///  - channel 23 is disabled
+  146  1      
+  147  1        ///  -----------------------------------------------------------------------
+  148  1        ///  Configuration of the used CAPCOM2 Channel 24:
+  149  1        ///  -----------------------------------------------------------------------
+  150  1        ///  - channel 24 is disabled
+  151  1      
+  152  1        ///  -----------------------------------------------------------------------
+  153  1        ///  Configuration of the used CAPCOM2 Channel 25:
+  154  1        ///  -----------------------------------------------------------------------
+  155  1        ///  - channel 25 is disabled
+  156  1      
+  157  1        ///  -----------------------------------------------------------------------
+  158  1        ///  Configuration of the used CAPCOM2 Channel 26:
+  159  1        ///  -----------------------------------------------------------------------
+  160  1        ///  - channel 26 is disabled
+  161  1      
+  162  1        ///  -----------------------------------------------------------------------
+  163  1        ///  Configuration of the used CAPCOM2 Channel 27:
+  164  1        ///  -----------------------------------------------------------------------
+  165  1        ///  - channel 27 is disabled
+  166  1      
+  167  1        ///  -----------------------------------------------------------------------
+  168  1        ///  Configuration of the used CAPCOM2 Channel 28:
+  169  1        ///  -----------------------------------------------------------------------
+  170  1        ///  - channel 28 is disabled
+  171  1      
+  172  1        ///  -----------------------------------------------------------------------
+  173  1        ///  Configuration of the used CAPCOM2 Channel 29:
+  174  1        ///  -----------------------------------------------------------------------
+  175  1        ///  - channel 29 is disabled
+  176  1      
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 4   
+
+  177  1        ///  -----------------------------------------------------------------------
+  178  1        ///  Configuration of the used CAPCOM2 Channel 30:
+  179  1        ///  -----------------------------------------------------------------------
+  180  1        ///  - channel 30 is disabled
+  181  1      
+  182  1        ///  -----------------------------------------------------------------------
+  183  1        ///  Configuration of the used CAPCOM2 Channel 31:
+  184  1        ///  -----------------------------------------------------------------------
+  185  1        ///  - channel 31 is disabled
+  186  1      
+  187  1        CC2_M5         =  0x0200;      // load CAPCOM2 mode register 5
+  188  1      
+  189  1        ///  -----------------------------------------------------------------------
+  190  1        ///  Configuration of the used CAPCOM2 Channel Port Pins:
+  191  1        ///  -----------------------------------------------------------------------
+  192  1        ///  - P2.9 is used for CAPCOM2 input(CC2_22)
+  193  1      
+  194  1      
+  195  1        ///  -----------------------------------------------------------------------
+  196  1        ///  Configuration of the used CAPCOM2 Channels Interrupts:
+  197  1        ///  -----------------------------------------------------------------------
+  198  1        ///  CC22 service request node configuration:
+  199  1        ///  - CC22 interrupt priority level (ILVL) = 13
+  200  1        ///  - CC22 interrupt group level (GLVL) = 0
+  201  1        ///  - CC22 group priority extension (GPX) = 0
+  202  1      
+  203  1        CC2_CC22IC     =  0x0074;     
+  204  1        CC2_T78CON_T7R    = 1;    // set CAPCOM2 timer 7 run bit
+  205  1      
+  206  1      }
+  207         
+  208         
+  209         ///////////////////////////////////////////////////////////////////////////////
+  210         // CCU6: fcc6=fsys=80MHz 
+  211         void cc6_setting(void)
+  212         {
+  213  1        CCU61_KSCFG    =  0x0003;      // Kernel State Configuration Register
+  214  1        _nop_(); _nop_(); 
+  215  1        _nop_(); _nop_();
+  216  1        
+  217  1        CCU61_PISELH   =  0x0003;
+  218  1        
+  219  1        CCU61_T12PR    =  MOT_PWM_PERIOD-1;  // MOT_PWM_PERIOD=8000-1 or 4000-1: 10KHz PWM (Edge/Center-aligned m
+             -ode)
+  220  1        CCU61_T13PR    =  MOT_PWM_PERIOD-1;
+  221  1        
+  222  1        CCU61_TCTR0    =  0x0080; // Center-aligned Mode
+  223  1        CCU61_TCTR2    =  0x0020; // T12 is counting up.
+  224  1        
+  225  1        CCU61_CC60SR   =  0; // 0% duty
+  226  1        CCU61_CC61SR   =  0; // 0% duty
+  227  1        CCU61_CC62SR   =  0; // 0% duty
+  228  1        
+  229  1        CCU61_T12DTC   =  0x0750; // Dead-time Control: 0x50: 80ticks@80MHz: 1us
+  230  1        CCU61_T12MSEL  =  0x0111; // Compare mode
+  231  1        CCU61_CMPSTAT  =  0x2A00; // Passive state: 
+  232  1        CCU61_MODCTR   =  0x003F;
+  233  1        CCU61_PSLR     =  0x0015; // Passive Level: 101010
+  234  1        
+  235  1        CCU61_TCTR4    =  0x4242;
+  236  1        
+  237  1        // Done in gpio_setting() 
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 5   
+
+  238  1        // P0_IOCR00      =  0x00B0;  // IH1
+  239  1        // P0_IOCR01      =  0x00B0;  // IH2
+  240  1        // P0_IOCR02      =  0x00B0;  // IH3
+  241  1        // P0_IOCR03      =  0x00B0;  // IL1
+  242  1        // P0_IOCR04      =  0x00B0;  // IL2
+  243  1        // P0_IOCR05      =  0x00B0;  // IL3
+  244  1        
+  245  1        CCU61_PISELL   =  0xFF00;
+  246  1      }
+  247         
+  248         ///////////////////////////////////////////////////////////////////////////////
+  249         // 
+  250         #define DO_CC_PARSE(tm,index,pin_state)                                            \
+  251         {                                                                                  \
+  252           u16 tmpu16;                                                                    \
+  253           u32 tmpu32;                                                                    \
+  254                                                                                          \
+  255           g_pwm_ex_timestamp[index]=tm;                                                  \
+  256           if(pin_state==0)                                                               \
+  257           {                                                                              \
+  258             tmpu16=g_pwm_ex_timestamp[index]-g_pwm_ex_timestamp0[index];               \
+  259             if(tmpu16<g_pwm_ex_period_uw[index])                                       \
+  260             {                                                                          \
+  261               tmpu32=tmpu16;                                                         \
+  262               tmpu32*=10000;                                                         \
+  263               if(g_pwm_ex_period_uw[index])                                          \
+  264               {                                                                      \
+  265                 tmpu32/=g_pwm_ex_period_uw[index];                                 \
+  266                 g_pwm_ex_duty_uw[index]=(u16)tmpu32;                               \
+  267               }                                                                      \
+  268             }                                                                          \
+  269           }                                                                              \
+  270           else                                                                           \
+  271           {                                                                              \
+  272             tmpu16=tm-g_pwm_ex_timestamp0_r[index];                                    \
+  273             if(tmpu16<G_PWM_EX_PERIOD_STD[index]+(G_PWM_EX_PERIOD_STD[index]>>2)       \
+  274               && tmpu16>G_PWM_EX_PERIOD_STD[index]-(G_PWM_EX_PERIOD_STD[index]>>2))  \
+  275             {                                                                          \
+  276               g_pwm_ex_period_uw[index]=tmpu16;                                      \
+  277             }                                                                    \
+  278             g_pwm_ex_timestamp0_r[index]=tm;                                           \
+  279           }                                                                              \
+  280           g_pwm_ex_timestamp0[index]=g_pwm_ex_timestamp[index];                        \
+  281         }
+  282         
+  283         
+  284         void isr_cc20(void) interrupt CC2_CC20INT
+  285         {
+  286  1        DO_CC_PARSE(CC2_CC20,0,GET_CC20_PIN());
+  287  1      }
+  288         
+  289         /////////////////////////////////////////////////
+  290         void isr_cc21(void) interrupt CC2_CC21INT
+  291         {
+  292  1        DO_CC_PARSE(CC2_CC21,1,GET_CC21_PIN());
+  293  1      }
+  294         
+  295         /////////////////////////////////////////////////
+  296         u16 timer7_val = 0;
+  297         u32 tmpu32;
+  298         extern u16 g_disp_value_sent;
+  299         
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 6   
+
+  300         void isr_cc22(void) interrupt CC2_CC22INT
+  301         {
+  302  1         // USER CODE BEGIN (CC22,2)
+  303  1        if(P2_IN_P9 == 0)
+  304  1        {
+  305  2          timer7_val = CC2_CC22;
+  306  2          CC2_T7 = 0;
+  307  2          if(sent_decode(timer7_val,0)==0)
+  308  2          {
+  309  3            tmpu32=sent_data[1];
+  310  3            tmpu32<<=4;
+  311  3            tmpu32|=sent_data[2];
+  312  3            tmpu32<<=4;
+  313  3            tmpu32|=sent_data[3];
+  314  3            g_disp_value_sent = (u16)tmpu32;
+  315  3        }
+  316  2        }
+  317  1      
+  318  1        // USER CODE END
+  319  1        //DO_CC_PARSE(CC2_CC22,2,GET_CC22_PIN());
+  320  1      }
+  321         
+  322         /////////////////////////////////////////////////
+  323         void isr_cc23(void) interrupt CC2_CC23INT
+  324         {
+  325  1        DO_CC_PARSE(CC2_CC23,3,GET_CC23_PIN());
+  326  1      }
+  327         
+  328         /////////////////////////////////////////////////
+  329         void isr_cc26(void) interrupt CC2_CC26INT
+  330         {
+  331  1      }
+  332         
+  333         /////////////////////////////////////////////////
+  334         void isr_cc27(void) interrupt CC2_CC27INT
+  335         {
+  336  1      }
+  337         
+  338         ///////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 7   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION cc2_setting (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 50
+0000 2802          SUB       R0,#02H
+                                           ; SOURCE LINE # 51
+                                           ; SOURCE LINE # 60
+0002 E6120300      MOV       CC2_KSCCFG,#03H
+                                           ; SOURCE LINE # 63
+0006 F2F424FE      MOV       R4,CC2_KSCCFG
+000A B840          MOV       [R0],R4       ; uwTemp
+                                           ; SOURCE LINE # 70
+000C D180          EXTR      #01H
+000E E6330400      MOV       CC2_IOC,#04H
+                                           ; SOURCE LINE # 87
+0012 E6900100      MOV       CC2_T78CON,#01H
+                                           ; SOURCE LINE # 90
+0016 D190          EXTR      #02H
+0018 E6280100      MOV       CC2_T7,#01H
+                                           ; SOURCE LINE # 92
+001C E62A0100      MOV       CC2_T7REL,#01H
+                                           ; SOURCE LINE # 187
+0020 E6920002      MOV       CC2_M5,#0200H
+                                           ; SOURCE LINE # 203
+0024 D180          EXTR      #01H
+0026 E6E67400      MOV       CC2_CC22IC,#074H
+                                           ; SOURCE LINE # 204
+002A 6F90          BSET      CC2_T78CON_T7R
+                                           ; SOURCE LINE # 206
+002C 0802          ADD       R0,#02H
+002E DB00          RETS      
+             ; FUNCTION cc2_setting (END    RMASK = @0x4010)
+
+             ; FUNCTION cc6_setting (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 211
+                                           ; SOURCE LINE # 213
+0030 E034          MOV       R4,#03H
+0032 F6F480EA      MOV       0EA80H,R4
+                                           ; SOURCE LINE # 214
+0036 CC00          NOP       
+0038 CC00          NOP       
+                                           ; SOURCE LINE # 215
+003A CC00          NOP       
+003C CC00          NOP       
+                                           ; SOURCE LINE # 217
+003E E034          MOV       R4,#03H
+0040 F6F486EA      MOV       0EA86H,R4
+                                           ; SOURCE LINE # 219
+0044 E6F49F0F      MOV       R4,#0F9FH
+0048 F6F492EA      MOV       0EA92H,R4
+                                           ; SOURCE LINE # 220
+004C F6F4B2EA      MOV       0EAB2H,R4
+                                           ; SOURCE LINE # 222
+0050 E6F48000      MOV       R4,#080H
+0054 F6F4ACEA      MOV       0EAACH,R4
+                                           ; SOURCE LINE # 223
+0058 E6F42000      MOV       R4,#020H
+005C F6F4AEEA      MOV       0EAAEH,R4
+                                           ; SOURCE LINE # 225
+0060 E004          MOV       R4,#00H
+0062 F6F4A0EA      MOV       0EAA0H,R4
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 8   
+
+                                           ; SOURCE LINE # 226
+0066 F6F4A2EA      MOV       0EAA2H,R4
+                                           ; SOURCE LINE # 227
+006A F6F4A4EA      MOV       0EAA4H,R4
+                                           ; SOURCE LINE # 229
+006E E6F45007      MOV       R4,#0750H
+0072 F6F494EA      MOV       0EA94H,R4
+                                           ; SOURCE LINE # 230
+0076 E6F41101      MOV       R4,#0111H
+007A F6F4C6EA      MOV       0EAC6H,R4
+                                           ; SOURCE LINE # 231
+007E E6F4002A      MOV       R4,#02A00H
+0082 F6F4A8EA      MOV       0EAA8H,R4
+                                           ; SOURCE LINE # 232
+0086 E6F43F00      MOV       R4,#03FH
+008A F6F4C0EA      MOV       0EAC0H,R4
+                                           ; SOURCE LINE # 233
+008E E6F41500      MOV       R4,#015H
+0092 F6F4C4EA      MOV       0EAC4H,R4
+                                           ; SOURCE LINE # 235
+0096 E6F44242      MOV       R4,#04242H
+009A F6F4A6EA      MOV       0EAA6H,R4
+                                           ; SOURCE LINE # 245
+009E E6F400FF      MOV       R4,#0FF00H
+00A2 F6F484EA      MOV       0EA84H,R4
+                                           ; SOURCE LINE # 246
+00A6 DB00          RETS      
+             ; FUNCTION cc6_setting (END    RMASK = @0x4010)
+
+             ; FUNCTION isr_cc20 (BEGIN  RMASK = @0x7DFE)
+                                           ; SOURCE LINE # 284
+00A8 C6030300      SCXT      DPP3,#03H
+00AC C6871000      SCXT      MDC,#010H
+00B0 EC06          PUSH      MDH
+00B2 EC07          PUSH      MDL
+00B4 ECF1          PUSH      R1
+00B6 ECF2          PUSH      R2
+00B8 ECF3          PUSH      R3
+00BA ECF4          PUSH      R4
+00BC ECF5          PUSH      R5
+00BE ECF6          PUSH      R6
+00C0 ECF7          PUSH      R7
+00C2 ECF8          PUSH      R8
+00C4 ECFA          PUSH      R10
+00C6 ECFB          PUSH      R11
+00C8 ECFC          PUSH      R12
+;---- Variable 'tmpu16' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 286
+00CA D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp),#01H
+00CE F6340000 R    MOV       POF (g_pwm_ex_timestamp),CC2_CC20
+00D2 8AC22470      JB        P2_IN_P7,?C0001
+00D6 D7500000 R    EXTP      #PAG (g_pwm_ex_timestamp0),#02H
+00DA F2F50000 R    MOV       R5,POF (g_pwm_ex_timestamp0)
+00DE F2F40000 R    MOV       R4,POF (g_pwm_ex_timestamp)
+00E2 F084          MOV       R8,R4
+00E4 2085          SUB       R8,R5
+00E6 D7400000 R    EXTP      #PAG (g_pwm_ex_period_uw),#01H
+00EA F2FC0000 R    MOV       R12,POF (g_pwm_ex_period_uw)
+00EE 40C8          CMP       R12,R8
+00F0 FD33          JMPR      cc_ULE,?C0004
+00F2 F0A8          MOV       R10,R8
+00F4 E00B          MOV       R11,#00H
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 9   
+
+;---- Variable 'tmpu32' assigned to Register 'R10/R11' ----
+00F6 E6F61027      MOV       R6,#02710H
+00FA E007          MOV       R7,#00H
+00FC F048          MOV       R4,R8
+00FE F05B          MOV       R5,R11
+0100 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+0104 F0A4          MOV       R10,R4
+0106 F0B5          MOV       R11,R5
+0108 48C0          CMP       R12,#00H
+010A 2D26          JMPR      cc_Z,?C0004
+010C F06C          MOV       R6,R12
+010E E007          MOV       R7,#00H
+0110 DA000000 E    CALLS     SEG (?C_ULDIV),?C_ULDIV
+0114 D7400000 R    EXTP      #PAG (g_pwm_ex_duty_uw),#01H
+0118 F6F40000 R    MOV       POF (g_pwm_ex_duty_uw),R4
+011C 0D1D          JMPR      cc_UC,?C0004
+011E         ?C0001:
+011E D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp0_r),#01H
+0122 F2F50000 R    MOV       R5,POF (g_pwm_ex_timestamp0_r)
+0126 F2F468FE      MOV       R4,CC2_CC20
+012A F084          MOV       R8,R4
+012C 2085          SUB       R8,R5
+012E D7400000 R    EXTP      #PAG (G_PWM_EX_PERIOD_STD),#01H
+0132 F2F70000 R    MOV       R7,POF (G_PWM_EX_PERIOD_STD)
+0136 F067          MOV       R6,R7
+0138 7C26          SHR       R6,#02H
+013A F057          MOV       R5,R7
+013C 0056          ADD       R5,R6
+013E 4058          CMP       R5,R8
+0140 FD07          JMPR      cc_ULE,?C0005
+0142 2076          SUB       R7,R6
+0144 4078          CMP       R7,R8
+0146 9D04          JMPR      cc_UGE,?C0005
+0148 D7400000 R    EXTP      #PAG (g_pwm_ex_period_uw),#01H
+014C F6F80000 R    MOV       POF (g_pwm_ex_period_uw),R8
+0150         ?C0005:
+0150 D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp0_r),#01H
+0154 F6340000 R    MOV       POF (g_pwm_ex_timestamp0_r),CC2_CC20
+0158         ?C0004:
+0158 D7500000 R    EXTP      #PAG (g_pwm_ex_timestamp),#02H
+015C F2F40000 R    MOV       R4,POF (g_pwm_ex_timestamp)
+0160 F6F40000 R    MOV       POF (g_pwm_ex_timestamp0),R4
+                                           ; SOURCE LINE # 287
+0164 FCFC          POP       R12
+0166 FCFB          POP       R11
+0168 FCFA          POP       R10
+016A FCF8          POP       R8
+016C FCF7          POP       R7
+016E FCF6          POP       R6
+0170 FCF5          POP       R5
+0172 FCF4          POP       R4
+0174 FCF3          POP       R3
+0176 FCF2          POP       R2
+0178 FCF1          POP       R1
+017A FC07          POP       MDL
+017C FC06          POP       MDH
+017E FC87          POP       MDC
+0180 FC03          POP       DPP3
+0182 FB88          RETI      
+             ; FUNCTION isr_cc20 (END    RMASK = @0x7DFE)
+
+             ; FUNCTION isr_cc21 (BEGIN  RMASK = @0x7DFE)
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 10  
+
+                                           ; SOURCE LINE # 290
+0184 C6030300      SCXT      DPP3,#03H
+0188 C6871000      SCXT      MDC,#010H
+018C EC06          PUSH      MDH
+018E EC07          PUSH      MDL
+0190 ECF1          PUSH      R1
+0192 ECF2          PUSH      R2
+0194 ECF3          PUSH      R3
+0196 ECF4          PUSH      R4
+0198 ECF5          PUSH      R5
+019A ECF6          PUSH      R6
+019C ECF7          PUSH      R7
+019E ECF8          PUSH      R8
+01A0 ECFA          PUSH      R10
+01A2 ECFB          PUSH      R11
+01A4 ECFC          PUSH      R12
+;---- Variable 'tmpu16' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 292
+01A6 D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp),#01H
+01AA F6350200 R    MOV       POF (g_pwm_ex_timestamp+02H),CC2_CC21
+01AE 8AC22480      JB        P2_IN_P8,?C0006
+01B2 D7500000 R    EXTP      #PAG (g_pwm_ex_timestamp0),#02H
+01B6 F2F50200 R    MOV       R5,POF (g_pwm_ex_timestamp0+02H)
+01BA F2F40200 R    MOV       R4,POF (g_pwm_ex_timestamp+02H)
+01BE F084          MOV       R8,R4
+01C0 2085          SUB       R8,R5
+01C2 D7400000 R    EXTP      #PAG (g_pwm_ex_period_uw),#01H
+01C6 F2FC0200 R    MOV       R12,POF (g_pwm_ex_period_uw+02H)
+01CA 40C8          CMP       R12,R8
+01CC FD33          JMPR      cc_ULE,?C0009
+01CE F0A8          MOV       R10,R8
+01D0 E00B          MOV       R11,#00H
+;---- Variable 'tmpu32' assigned to Register 'R10/R11' ----
+01D2 E6F61027      MOV       R6,#02710H
+01D6 E007          MOV       R7,#00H
+01D8 F048          MOV       R4,R8
+01DA F05B          MOV       R5,R11
+01DC DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+01E0 F0A4          MOV       R10,R4
+01E2 F0B5          MOV       R11,R5
+01E4 48C0          CMP       R12,#00H
+01E6 2D26          JMPR      cc_Z,?C0009
+01E8 F06C          MOV       R6,R12
+01EA E007          MOV       R7,#00H
+01EC DA000000 E    CALLS     SEG (?C_ULDIV),?C_ULDIV
+01F0 D7400000 R    EXTP      #PAG (g_pwm_ex_duty_uw),#01H
+01F4 F6F40200 R    MOV       POF (g_pwm_ex_duty_uw+02H),R4
+01F8 0D1D          JMPR      cc_UC,?C0009
+01FA         ?C0006:
+01FA D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp0_r),#01H
+01FE F2F50200 R    MOV       R5,POF (g_pwm_ex_timestamp0_r+02H)
+0202 F2F46AFE      MOV       R4,CC2_CC21
+0206 F084          MOV       R8,R4
+0208 2085          SUB       R8,R5
+020A D7400000 R    EXTP      #PAG (G_PWM_EX_PERIOD_STD),#01H
+020E F2F70200 R    MOV       R7,POF (G_PWM_EX_PERIOD_STD+02H)
+0212 F067          MOV       R6,R7
+0214 7C26          SHR       R6,#02H
+0216 F057          MOV       R5,R7
+0218 0056          ADD       R5,R6
+021A 4058          CMP       R5,R8
+021C FD07          JMPR      cc_ULE,?C0010
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 11  
+
+021E 2076          SUB       R7,R6
+0220 4078          CMP       R7,R8
+0222 9D04          JMPR      cc_UGE,?C0010
+0224 D7400000 R    EXTP      #PAG (g_pwm_ex_period_uw),#01H
+0228 F6F80200 R    MOV       POF (g_pwm_ex_period_uw+02H),R8
+022C         ?C0010:
+022C D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp0_r),#01H
+0230 F6350200 R    MOV       POF (g_pwm_ex_timestamp0_r+02H),CC2_CC21
+0234         ?C0009:
+0234 D7500000 R    EXTP      #PAG (g_pwm_ex_timestamp),#02H
+0238 F2F40200 R    MOV       R4,POF (g_pwm_ex_timestamp+02H)
+023C F6F40200 R    MOV       POF (g_pwm_ex_timestamp0+02H),R4
+                                           ; SOURCE LINE # 293
+0240 FCFC          POP       R12
+0242 FCFB          POP       R11
+0244 FCFA          POP       R10
+0246 FCF8          POP       R8
+0248 FCF7          POP       R7
+024A FCF6          POP       R6
+024C FCF5          POP       R5
+024E FCF4          POP       R4
+0250 FCF3          POP       R3
+0252 FCF2          POP       R2
+0254 FCF1          POP       R1
+0256 FC07          POP       MDL
+0258 FC06          POP       MDH
+025A FC87          POP       MDC
+025C FC03          POP       DPP3
+025E FB88          RETI      
+             ; FUNCTION isr_cc21 (END    RMASK = @0x7DFE)
+
+             ; FUNCTION isr_cc22 (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 300
+0260 C6030300      SCXT      DPP3,#03H
+0264 EC00          PUSH      DPP0
+0266 C6871000      SCXT      MDC,#010H
+026A EC06          PUSH      MDH
+026C EC07          PUSH      MDL
+026E ECF1          PUSH      R1
+0270 ECF2          PUSH      R2
+0272 ECF3          PUSH      R3
+0274 ECF4          PUSH      R4
+0276 ECF5          PUSH      R5
+0278 ECF6          PUSH      R6
+027A ECF7          PUSH      R7
+027C ECF8          PUSH      R8
+027E ECF9          PUSH      R9
+0280 ECFA          PUSH      R10
+0282 ECFB          PUSH      R11
+0284 ECFC          PUSH      R12
+                                           ; SOURCE LINE # 303
+0286 8AC24490      JB        P2_IN_P9,?C0011
+                                           ; SOURCE LINE # 305
+028A F6360600 R    MOV       timer7_val,CC2_CC22
+                                           ; SOURCE LINE # 306
+028E D180          EXTR      #01H
+0290 E6280000      MOV       CC2_T7,#00H
+                                           ; SOURCE LINE # 307
+0294 E00A          MOV       R10,#00H
+0296 F2F80600 R    MOV       R8,timer7_val
+029A E009          MOV       R9,#00H
+029C DA000000 E    CALLS     SEG (sent_decode),sent_decode
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 12  
+
+02A0 4980          CMPB      RL4,#00H
+02A2 3D37          JMPR      cc_NZ,?C0011
+                                           ; SOURCE LINE # 309
+02A4 D7400000 E    EXTP      #PAG (sent_data),#01H
+02A8 C2F80100 E    MOVBZ     R8,POF (sent_data+01H)
+02AC E009          MOV       R9,#00H
+02AE F6F80000 R    MOV       tmpu32,R8
+02B2 F6F90200 R    MOV       tmpu32+02H,R9
+                                           ; SOURCE LINE # 310
+02B6 F048          MOV       R4,R8
+02B8 F059          MOV       R5,R9
+02BA F068          MOV       R6,R8
+02BC 5C45          SHL       R5,#04H
+02BE 5C44          SHL       R4,#04H
+02C0 7CC6          SHR       R6,#0CH
+02C2 7056          OR        R5,R6
+02C4 F6F40000 R    MOV       tmpu32,R4
+02C8 F6F50200 R    MOV       tmpu32+02H,R5
+                                           ; SOURCE LINE # 311
+02CC D7400000 E    EXTP      #PAG (sent_data),#01H
+02D0 C2F40200 E    MOVBZ     R4,POF (sent_data+02H)
+02D4 E005          MOV       R5,#00H
+02D6 74F40000 R    OR        tmpu32,R4
+02DA 74F90200 R    OR        tmpu32+02H,R9
+                                           ; SOURCE LINE # 312
+02DE F2F40000 R    MOV       R4,tmpu32
+02E2 F2F50200 R    MOV       R5,tmpu32+02H
+02E6 F064          MOV       R6,R4
+02E8 5C45          SHL       R5,#04H
+02EA 5C44          SHL       R4,#04H
+02EC 7CC6          SHR       R6,#0CH
+02EE 7056          OR        R5,R6
+02F0 F6F40000 R    MOV       tmpu32,R4
+02F4 F6F50200 R    MOV       tmpu32+02H,R5
+                                           ; SOURCE LINE # 313
+02F8 D7400000 E    EXTP      #PAG (sent_data),#01H
+02FC C2F40300 E    MOVBZ     R4,POF (sent_data+03H)
+0300 E005          MOV       R5,#00H
+0302 74F40000 R    OR        tmpu32,R4
+0306 74F90200 R    OR        tmpu32+02H,R9
+                                           ; SOURCE LINE # 314
+030A F2F40000 R    MOV       R4,tmpu32
+030E F6F40400 R    MOV       g_disp_value_sent,R4
+                                           ; SOURCE LINE # 315
+0312         ?C0011:
+                                           ; SOURCE LINE # 320
+0312 FCFC          POP       R12
+0314 FCFB          POP       R11
+0316 FCFA          POP       R10
+0318 FCF9          POP       R9
+031A FCF8          POP       R8
+031C FCF7          POP       R7
+031E FCF6          POP       R6
+0320 FCF5          POP       R5
+0322 FCF4          POP       R4
+0324 FCF3          POP       R3
+0326 FCF2          POP       R2
+0328 FCF1          POP       R1
+032A FC07          POP       MDL
+032C FC06          POP       MDH
+032E FC87          POP       MDC
+0330 FC00          POP       DPP0
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 13  
+
+0332 FC03          POP       DPP3
+0334 FB88          RETI      
+             ; FUNCTION isr_cc22 (END    RMASK = @0x7FFF)
+
+             ; FUNCTION isr_cc23 (BEGIN  RMASK = @0x7DFE)
+                                           ; SOURCE LINE # 323
+0336 C6030300      SCXT      DPP3,#03H
+033A C6871000      SCXT      MDC,#010H
+033E EC06          PUSH      MDH
+0340 EC07          PUSH      MDL
+0342 ECF1          PUSH      R1
+0344 ECF2          PUSH      R2
+0346 ECF3          PUSH      R3
+0348 ECF4          PUSH      R4
+034A ECF5          PUSH      R5
+034C ECF6          PUSH      R6
+034E ECF7          PUSH      R7
+0350 ECF8          PUSH      R8
+0352 ECFA          PUSH      R10
+0354 ECFB          PUSH      R11
+0356 ECFC          PUSH      R12
+;---- Variable 'tmpu16' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 325
+0358 D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp),#01H
+035C F6370600 R    MOV       POF (g_pwm_ex_timestamp+06H),CC2_CC23
+0360 8AC224A0      JB        P2_IN_P10,?C0013
+0364 D7500000 R    EXTP      #PAG (g_pwm_ex_timestamp0),#02H
+0368 F2F50600 R    MOV       R5,POF (g_pwm_ex_timestamp0+06H)
+036C F2F40600 R    MOV       R4,POF (g_pwm_ex_timestamp+06H)
+0370 F084          MOV       R8,R4
+0372 2085          SUB       R8,R5
+0374 D7400000 R    EXTP      #PAG (g_pwm_ex_period_uw),#01H
+0378 F2FC0600 R    MOV       R12,POF (g_pwm_ex_period_uw+06H)
+037C 40C8          CMP       R12,R8
+037E FD33          JMPR      cc_ULE,?C0016
+0380 F0A8          MOV       R10,R8
+0382 E00B          MOV       R11,#00H
+;---- Variable 'tmpu32' assigned to Register 'R10/R11' ----
+0384 E6F61027      MOV       R6,#02710H
+0388 E007          MOV       R7,#00H
+038A F048          MOV       R4,R8
+038C F05B          MOV       R5,R11
+038E DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+0392 F0A4          MOV       R10,R4
+0394 F0B5          MOV       R11,R5
+0396 48C0          CMP       R12,#00H
+0398 2D26          JMPR      cc_Z,?C0016
+039A F06C          MOV       R6,R12
+039C E007          MOV       R7,#00H
+039E DA000000 E    CALLS     SEG (?C_ULDIV),?C_ULDIV
+03A2 D7400000 R    EXTP      #PAG (g_pwm_ex_duty_uw),#01H
+03A6 F6F40600 R    MOV       POF (g_pwm_ex_duty_uw+06H),R4
+03AA 0D1D          JMPR      cc_UC,?C0016
+03AC         ?C0013:
+03AC D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp0_r),#01H
+03B0 F2F50600 R    MOV       R5,POF (g_pwm_ex_timestamp0_r+06H)
+03B4 F2F46EFE      MOV       R4,CC2_CC23
+03B8 F084          MOV       R8,R4
+03BA 2085          SUB       R8,R5
+03BC D7400000 R    EXTP      #PAG (G_PWM_EX_PERIOD_STD),#01H
+03C0 F2F70600 R    MOV       R7,POF (G_PWM_EX_PERIOD_STD+06H)
+03C4 F067          MOV       R6,R7
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 14  
+
+03C6 7C26          SHR       R6,#02H
+03C8 F057          MOV       R5,R7
+03CA 0056          ADD       R5,R6
+03CC 4058          CMP       R5,R8
+03CE FD07          JMPR      cc_ULE,?C0017
+03D0 2076          SUB       R7,R6
+03D2 4078          CMP       R7,R8
+03D4 9D04          JMPR      cc_UGE,?C0017
+03D6 D7400000 R    EXTP      #PAG (g_pwm_ex_period_uw),#01H
+03DA F6F80600 R    MOV       POF (g_pwm_ex_period_uw+06H),R8
+03DE         ?C0017:
+03DE D7400000 R    EXTP      #PAG (g_pwm_ex_timestamp0_r),#01H
+03E2 F6370600 R    MOV       POF (g_pwm_ex_timestamp0_r+06H),CC2_CC23
+03E6         ?C0016:
+03E6 D7500000 R    EXTP      #PAG (g_pwm_ex_timestamp),#02H
+03EA F2F40600 R    MOV       R4,POF (g_pwm_ex_timestamp+06H)
+03EE F6F40600 R    MOV       POF (g_pwm_ex_timestamp0+06H),R4
+                                           ; SOURCE LINE # 326
+03F2 FCFC          POP       R12
+03F4 FCFB          POP       R11
+03F6 FCFA          POP       R10
+03F8 FCF8          POP       R8
+03FA FCF7          POP       R7
+03FC FCF6          POP       R6
+03FE FCF5          POP       R5
+0400 FCF4          POP       R4
+0402 FCF3          POP       R3
+0404 FCF2          POP       R2
+0406 FCF1          POP       R1
+0408 FC07          POP       MDL
+040A FC06          POP       MDH
+040C FC87          POP       MDC
+040E FC03          POP       DPP3
+0410 FB88          RETI      
+             ; FUNCTION isr_cc23 (END    RMASK = @0x7DFE)
+
+             ; FUNCTION isr_cc26 (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 329
+                                           ; SOURCE LINE # 331
+0412 FB88          RETI      
+             ; FUNCTION isr_cc26 (END    RMASK = @0x8000)
+
+             ; FUNCTION isr_cc27 (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 334
+                                           ; SOURCE LINE # 336
+0414 FB88          RETI      
+             ; FUNCTION isr_cc27 (END    RMASK = @0x8000)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =        1046     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =          12     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           8     --------
+  FAR-DATA SIZE    =          60     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           01/03/2020 16:20:08 PAGE 15  
+
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =         102     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

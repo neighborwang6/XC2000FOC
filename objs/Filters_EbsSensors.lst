@@ -1,0 +1,160 @@
+C166 COMPILER V7.57.0, FILTERS_EBSSENSORS                                                  01/03/2020 16:20:14 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE FILTERS_EBSSENSORS
+OBJECT MODULE PLACED IN .\objs\Filters_EbsSensors.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE EBS_Ctrl_Logic\Filters_EbsSensors.c MODV2 LARGE BROWSE INCDIR(.\src\ha
+                    -rdware;.\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctr
+                    -l_Logic) MODV2 DEBUG CODE PRINT(.\objs\Filters_EbsSensors.lst) TABS(2) OBJECT(.\objs\Filters_EbsSensors.obj) 
+
+ stmt lvl     source
+
+    1         
+    2         /**********************************************************************************
+    3             Author: DAE, Tsinghua Univ.
+    4             Date: 2016.12.30
+    5             Version:
+    6                 1.0
+    7         **********************************************************************************/
+    8         #include "Filters_EbsSensors.h"
+    9         
+   10         u32 g_sum_pres_sense=0;
+   11         u16 g_pres_sense_val=0;  //1V == 5Mpa
+   12         
+   13         u32 g_sum_disp_sense=0;
+   14         u32 g_disp_sense_val=0;
+   15         
+   16         //filt the press
+   17         u16 filter_pres_sense(u16 pres_sense_get)
+   18         {
+   19  1        u32 sum_temp;
+   20  1        
+   21  1        g_sum_pres_sense+=pres_sense_get;
+   22  1        g_sum_pres_sense-=g_pres_sense_val;
+   23  1        sum_temp=g_sum_pres_sense;
+   24  1        sum_temp=(sum_temp*160)>>8;
+   25  1        g_pres_sense_val=(u16)(sum_temp);
+   26  1        
+   27  1        return g_pres_sense_val;
+   28  1      }
+   29         
+   30         //filt the disp
+   31         s32 filter_disp_sense(s32 disp_sense_get)
+   32         {
+   33  1        s32 sum_temp;
+   34  1      
+   35  1        g_sum_disp_sense+=disp_sense_get;
+   36  1        g_sum_disp_sense-=g_disp_sense_val;
+   37  1        sum_temp=g_sum_disp_sense;
+   38  1        sum_temp=(sum_temp*160)>>8;
+   39  1        g_disp_sense_val=sum_temp;
+   40  1      
+   41  1        return g_disp_sense_val;
+   42  1      }
+   43         
+   44         
+   45         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, FILTERS_EBSSENSORS                                                  01/03/2020 16:20:14 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION filter_pres_sense (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 17
+;---- Variable 'pres_sense_get' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 18
+                                           ; SOURCE LINE # 21
+0000 F048          MOV       R4,R8
+0002 E005          MOV       R5,#00H
+0004 04F80000 R    ADD       g_sum_pres_sense,R8
+0008 14F50200 R    ADDC      g_sum_pres_sense+02H,R5
+                                           ; SOURCE LINE # 22
+000C F2F40800 R    MOV       R4,g_pres_sense_val
+0010 24F40000 R    SUB       g_sum_pres_sense,R4
+0014 34F50200 R    SUBC      g_sum_pres_sense+02H,R5
+                                           ; SOURCE LINE # 23
+0018 F2F80000 R    MOV       R8,g_sum_pres_sense
+001C F2F90200 R    MOV       R9,g_sum_pres_sense+02H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 24
+0020 E6F6A000      MOV       R6,#0A0H
+0024 E007          MOV       R7,#00H
+0026 F048          MOV       R4,R8
+0028 F059          MOV       R5,R9
+002A DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+002E F084          MOV       R8,R4
+0030 F095          MOV       R9,R5
+0032 F065          MOV       R6,R5
+0034 7C88          SHR       R8,#08H
+0036 5C86          SHL       R6,#08H
+0038 7086          OR        R8,R6
+                                           ; SOURCE LINE # 25
+003A F048          MOV       R4,R8
+003C F6F80800 R    MOV       g_pres_sense_val,R8
+                                           ; SOURCE LINE # 27
+                                           ; SOURCE LINE # 28
+0040 DB00          RETS      
+             ; FUNCTION filter_pres_sense (END    RMASK = @0x63F0)
+
+             ; FUNCTION filter_disp_sense (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 31
+;---- Variable 'disp_sense_get' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 32
+                                           ; SOURCE LINE # 35
+0042 04F80400 R    ADD       g_sum_disp_sense,R8
+0046 14F90600 R    ADDC      g_sum_disp_sense+02H,R9
+                                           ; SOURCE LINE # 36
+004A F2F40A00 R    MOV       R4,g_disp_sense_val
+004E F2F50C00 R    MOV       R5,g_disp_sense_val+02H
+0052 24F40400 R    SUB       g_sum_disp_sense,R4
+0056 34F50600 R    SUBC      g_sum_disp_sense+02H,R5
+                                           ; SOURCE LINE # 37
+005A F2F80400 R    MOV       R8,g_sum_disp_sense
+005E F2F90600 R    MOV       R9,g_sum_disp_sense+02H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 38
+0062 E6F6A000      MOV       R6,#0A0H
+0066 E007          MOV       R7,#00H
+0068 F048          MOV       R4,R8
+006A F059          MOV       R5,R9
+006C DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+C166 COMPILER V7.57.0, FILTERS_EBSSENSORS                                                  01/03/2020 16:20:14 PAGE 3   
+
+0070 F084          MOV       R8,R4
+0072 F095          MOV       R9,R5
+0074 F065          MOV       R6,R5
+0076 7C88          SHR       R8,#08H
+0078 BC89          ASHR      R9,#08H
+007A 5C86          SHL       R6,#08H
+007C 7086          OR        R8,R6
+                                           ; SOURCE LINE # 39
+007E F6F80A00 R    MOV       g_disp_sense_val,R8
+0082 F6F90C00 R    MOV       g_disp_sense_val+02H,R9
+                                           ; SOURCE LINE # 41
+0086 F2F40A00 R    MOV       R4,g_disp_sense_val
+008A F2F50C00 R    MOV       R5,g_disp_sense_val+02H
+                                           ; SOURCE LINE # 42
+008E DB00          RETS      
+             ; FUNCTION filter_disp_sense (END    RMASK = @0x63F0)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         144     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          14     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          30     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

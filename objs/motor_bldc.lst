@@ -1,0 +1,1393 @@
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE MOTOR_BLDC
+OBJECT MODULE PLACED IN .\objs\motor_bldc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_
+                    -Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBU
+                    -G CODE PRINT(.\objs\motor_bldc.lst) TABS(2) OBJECT(.\objs\motor_bldc.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "motor_if.h"
+   11         #include "motor_bldc.h"
+   12         #include "motor_pmsm.h"
+   13         #include "resolver_ad2s.h"
+   14         
+   15         ////////////////////////////////////////////////////////////////////////////////
+   16         //
+   17         u8 g_motor_type_ub=MOTOR_TYPE_PMSM;
+   18         
+   19         ////////////////////////////////////////////////////////////////////////////////
+   20         // Variables for Motor Control
+   21         u32 g_pos=0;
+   22         u32 g_posx_uw=0;
+   23         u16 g_slot_idx=0;
+   24         u16 g_time_run=0;
+   25         u8 g_dir_ub=0;
+   26         u8 g_timer_250us=0;
+   27         
+   28         u16 g_slot_idx_ss=0;
+   29         ////////////////////////////////////////////////////////////////////////////////
+   30         #define DUTY_LIMIT 300
+   31         #define STALL_SPEED_LIMIT 100
+   32         #define STALL_TIME_LIMIT 1000
+   33         
+   34         u16 g_duty_max=DUTY_LIMIT;
+   35         u16 g_stall_speed=STALL_SPEED_LIMIT;
+   36         u16 g_stall_time=STALL_TIME_LIMIT;
+   37         
+   38         u16 g_duty_uw=0;
+   39         u16 g_step_mode_ub=1;
+   40         
+   41         u16 g_pos_offset_pmsm_uw=F_ANGLE(65);
+   42         u16 g_pos_offset_bldc_uw=F_ANGLE(60);
+   43         
+   44         u16 g_turns=0;
+   45         u16 g_turns_cmd=0;
+   46         u16 g_slot_bits=0;
+   47         u16 g_slot_bits0=0;
+   48         
+   49         u16 g_time_inh=0xFFFF;
+   50         u16 g_timeout=0;
+   51         s16 g_mot_speed_sw=0; //RPM
+   52         u16 g_timer_calc_speed_ub=0;
+   53         extern void calc_motor_pos(void);
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 2   
+
+   54         #define FDEGREE(x) (4096UL*(x)/360)
+   55         
+   56         #ifdef WIN32
+              extern u16 pc_sim_get_resolver_pos(u16 para);
+              
+              #endif
+   60         ///////////////////////////////////////////////////////////////////////////////
+   61         //
+   62         
+   63         ///////////////////////////////////////////////////////////////////////////////
+   64         // Command from CAN bus
+   65         void do_motor_bldc_debug(u8 *buf)
+   66         {
+   67  1        u16 l_buf[4];
+   68  1        u16 *pt;
+   69  1        u16 l_duty_uw;
+   70  1      
+   71  1        // Backup Duty
+   72  1        l_duty_uw=g_duty_uw;
+   73  1        
+   74  1        // Compatible with Motorola Order of BYTEs.
+   75  1        l_buf[1]=buf[0];
+   76  1        l_buf[1]<<=8;
+   77  1        l_buf[1]|=buf[1];
+   78  1        l_buf[0]=buf[2];
+   79  1        l_buf[0]<<=8;
+   80  1        l_buf[0]|=buf[3];
+   81  1        l_buf[3]=buf[4];
+   82  1        l_buf[3]<<=8;
+   83  1        l_buf[3]|=buf[5];
+   84  1        l_buf[2]=buf[6];
+   85  1        l_buf[2]<<=8;
+   86  1        l_buf[2]|=buf[7];
+   87  1        
+   88  1        pt=(u16 *)l_buf;
+   89  1        
+   90  1        if(pt[2]!=0x55aa)
+   91  1          return;
+   92  1        
+   93  1        switch(pt[1])
+   94  1        {
+   95  2        case 0x5501:  // Set Offset
+   96  2          g_pos_offset_bldc_uw=pt[0];
+   97  2          g_pos_offset_pmsm_uw=pt[0];
+   98  2          break;
+   99  2          
+  100  2        case 0x5502:  // Set Duty
+  101  2          l_duty_uw=pt[0];
+  102  2          break;
+  103  2          
+  104  2        case 0x5503:  // Set Dir
+  105  2          g_dir_ub=pt[0]?1:0;
+  106  2          break;
+  107  2          
+  108  2        case 0x5504:  // Set Step Mode (Dir also valid)
+  109  2          g_step_mode_ub=1;
+  110  2          g_dir_ub=pt[3]?1:0;
+  111  2          g_time_inh=0;
+  112  2          g_turns=pt[0]*4;
+  113  2          g_turns_cmd=g_turns;
+  114  2          break;
+  115  2          
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 3   
+
+  116  2        case 0x5505:  // Set Continuous Mode (Dir also valid)
+  117  2          g_time_inh=0;
+  118  2          g_step_mode_ub=0;
+  119  2          g_dir_ub=pt[3]?1:0;
+  120  2        
+  121  2          set_phase_on(0,1);
+  122  2          set_phase_on(1,1);
+  123  2          set_phase_on(2,1);
+  124  2          break;
+  125  2          
+  126  2        case 0x5506:  // Set Continuous Mode (Dir and Duty also valid)
+  127  2          g_time_inh=0;
+  128  2          g_step_mode_ub=0;
+  129  2          g_dir_ub=pt[3]?1:0;
+  130  2          l_duty_uw=pt[0];
+  131  2          break;
+  132  2          
+  133  2        case 0x5507:  // Set Step Mode (Dir and Duty also valid)
+  134  2          g_step_mode_ub=1;
+  135  2          g_dir_ub=(pt[3] & 0x01)?1:0;
+  136  2          pt[3]>>=1;
+  137  2          l_duty_uw=pt[3];
+  138  2          
+  139  2          g_time_inh=0;
+  140  2          g_turns=pt[0]*4;
+  141  2          g_turns_cmd=g_turns;
+  142  2          break;
+  143  2      
+  144  2        case 0x5508:  // Change motor type (control mode)
+  145  2          g_motor_type_ub=(u8)pt[0];
+  146  2          if(g_motor_type_ub!=MOTOR_TYPE_BLDC)
+  147  2            g_motor_type_ub=MOTOR_TYPE_PMSM;
+  148  2      
+  149  2          break;
+  150  2          
+  151  2        case 0x5570:  // Emergency Stop
+  152  2          g_step_mode_ub=1;
+  153  2          g_time_inh=(u16)0xFFFF;
+  154  2          g_time_run=0;
+  155  2          
+  156  2          set_phase_on(1,0);
+  157  2          set_phase_on(2,0);
+  158  2          set_phase_on(3,0);
+  159  2          pwm_setduty(0,0);
+  160  2          pwm_setduty(1,0);
+  161  2          pwm_setduty(2,0);
+  162  2          
+  163  2          break;
+  164  2          
+  165  2        case 0x557F:  // Keep Link
+  166  2          g_timeout=20000; // 2s
+  167  2          break;
+  168  2          
+  169  2        default:
+  170  2          break;
+  171  2        }
+  172  1      
+  173  1        ///////////////////////////////////////////////////////
+  174  1        // Update Duty
+  175  1        if(l_duty_uw!=g_duty_uw)
+  176  1        {
+  177  2          if(pt[3]<=950)  // Test only: FIXME
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 4   
+
+  178  2            g_duty_uw=l_duty_uw;
+  179  2        }
+  180  1        ///////////////////////////////////////////////////////
+  181  1      }
+  182         
+  183         ///////////////////////////////////////////////////////////////////////////////
+  184         // Called very 0.1ms
+  185         
+  186         void do_motor_bldc_ctrl(void)
+  187         {
+  188  1        //calc_motor_pos();
+  189  1        
+  190  1        u16 gate_bits=0;
+  191  1        u16 slot_idx=0;
+  192  1        u16 slot_idx_bak=0;
+  193  1        u16 event_flag=0;
+  194  1        u16 tmpu16;
+  195  1        
+  196  1        ////////////////////////////////////////////////////////////////////////
+  197  1        //
+  198  1        const u8 SLOT_IDX_F[6]={0,1,2,3,4,5};
+  199  1        // const u8 SLOT_IDX_B[6]={2,1,0,5,4,3};
+  200  1        const u8 SLOT_IDX_B[6]={3,4,5,0,1,2};
+  201  1        ////////////////////////////////////////////////////////////////////////
+  202  1        //
+  203  1        if(g_time_run<10000)
+  204  1          g_time_run++;
+  205  1        
+  206  1        /**************************************************************************************
+  207  1        if(g_duty_uw>g_duty_max && ((g_mot_speed_sw)?g_mot_speed_sw:(-g_mot_speed_sw))<=g_stall_speed 
+  208  1          && g_time_run>=g_stall_time) // 250ms
+  209  1          g_duty_uw=200; // Max: ?% when stall
+  210  1        
+  211  1        **************************************************************************************/
+  212  1        
+  213  1        if(g_timeout)
+  214  1        {
+  215  2          /*********************************
+  216  2          g_timeout--;
+  217  2          if(g_timeout==0)
+  218  2          {
+  219  2            g_time_inh=(u16)0xFFFF;
+  220  2            set_phase_on(1,0);
+  221  2            set_phase_on(2,0);
+  222  2            set_phase_on(3,0);
+  223  2            g_step_mode_ub=1;
+  224  2            g_time_run=0;
+  225  2          }
+  226  2          *********************************/
+  227  2        }
+  228  1      
+  229  1        ////////////////////////////////////////////////////////////////////////
+  230  1        if(g_time_inh)
+  231  1        {
+  232  2          if(g_time_inh!=(u16)0xFFFF)
+  233  2            g_time_inh--;
+  234  2          
+  235  2          goto func_exit;
+  236  2        }
+  237  1        
+  238  1        // Calculate Slot Index (6-Steps/Slots for BLDC)
+  239  1        tmpu16 = g_resolver_pos_uw;
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 5   
+
+  240  1        tmpu16 += g_pos_offset_bldc_uw;
+  241  1        tmpu16 &= 0x0FFF;
+  242  1        
+  243  1        g_slot_idx_ss=(u8)(tmpu16/683);
+  244  1        g_slot_idx_ss++;
+  245  1        g_slot_idx_ss=(g_slot_idx_ss%6);
+  246  1        
+  247  1        if(g_dir_ub==0) // Forward
+  248  1          g_slot_idx=SLOT_IDX_F[g_slot_idx_ss];
+  249  1        else            // Backward
+  250  1          g_slot_idx=SLOT_IDX_B[g_slot_idx_ss];
+  251  1        
+  252  1        gate_bits=0;
+  253  1        
+  254  1        // A: Phase 0, B: Phase 1, C: Phase 2
+  255  1        switch(g_slot_idx)
+  256  1        {
+  257  2        case 0: // B+C-
+  258  2          set_phase_on(0,0);
+  259  2          pwm_setduty(2,0);
+  260  2          pwm_setduty(1,g_duty_uw);
+  261  2          set_phase_on(1,1);
+  262  2          set_phase_on(2,1);
+  263  2          
+  264  2          gate_bits = gate_bits | 0x0010;
+  265  2          gate_bits = gate_bits | 0x0008;
+  266  2          
+  267  2          g_slot_bits|=0x01;
+  268  2          break;
+  269  2          
+  270  2        case 1: // B+A-
+  271  2          set_phase_on(2,0);
+  272  2          pwm_setduty(0,0);
+  273  2          pwm_setduty(1,g_duty_uw);
+  274  2          set_phase_on(1,1);
+  275  2          set_phase_on(0,1);
+  276  2          
+  277  2          gate_bits = gate_bits | 0x0008;
+  278  2          gate_bits = gate_bits | 0x0001;
+  279  2          
+  280  2          g_slot_bits|=0x02;
+  281  2          break;
+  282  2          
+  283  2        case 2: // C+A-
+  284  2          set_phase_on(1,0);
+  285  2          pwm_setduty(0,0);
+  286  2          pwm_setduty(2,g_duty_uw);
+  287  2          set_phase_on(0,1);
+  288  2          set_phase_on(2,1);
+  289  2          
+  290  2          gate_bits = gate_bits | 0x0001;
+  291  2          gate_bits = gate_bits | 0x0020;
+  292  2          
+  293  2          g_slot_bits|=0x04;
+  294  2          break;
+  295  2          
+  296  2        case 3: // C+B-
+  297  2          set_phase_on(0,0);
+  298  2          pwm_setduty(1,0);
+  299  2          pwm_setduty(2,g_duty_uw);
+  300  2          set_phase_on(1,1);
+  301  2          set_phase_on(2,1);
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 6   
+
+  302  2          
+  303  2          gate_bits = gate_bits | 0x0020;
+  304  2          gate_bits = gate_bits | 0x0004;
+  305  2          
+  306  2          g_slot_bits|=0x08;
+  307  2          break;
+  308  2          
+  309  2        case 4: // A+B-
+  310  2          set_phase_on(2,0);
+  311  2          pwm_setduty(1,0);
+  312  2          pwm_setduty(0,g_duty_uw);
+  313  2          set_phase_on(1,1);
+  314  2          set_phase_on(0,1);
+  315  2          
+  316  2          gate_bits = gate_bits | 0x0004;
+  317  2          gate_bits = gate_bits | 0x0002;
+  318  2          
+  319  2          g_slot_bits|=0x10;
+  320  2          break;
+  321  2          
+  322  2        case 5: // A+C-
+  323  2          set_phase_on(1,0);
+  324  2          pwm_setduty(2,0);
+  325  2          pwm_setduty(0,g_duty_uw);
+  326  2          set_phase_on(0,1);
+  327  2          set_phase_on(2,1);
+  328  2          
+  329  2          gate_bits = gate_bits | 0x0002;
+  330  2          gate_bits = gate_bits | 0x0010;
+  331  2          
+  332  2          g_slot_bits|=0x20;
+  333  2          break;
+  334  2          
+  335  2        default:
+  336  2          break;
+  337  2        }
+  338  1        
+  339  1        // Legacy: the turns of rotation might not accurate at high speed.
+  340  1        // Use more appropriate calculation method, if resolver presents.
+  341  1        if(g_slot_bits==0x3F && g_slot_idx==0)
+  342  1        {
+  343  2          g_slot_bits=0;
+  344  2          
+  345  2          if(g_turns)
+  346  2          {
+  347  3            g_turns--;
+  348  3            if(g_turns==0)
+  349  3            {
+  350  4              if(g_step_mode_ub==1)
+  351  4              {
+  352  5                /************************************/
+  353  5                g_time_inh=(u16)0xFFFF;
+  354  5                pwm_setduty(0,0);
+  355  5                pwm_setduty(1,0);
+  356  5                pwm_setduty(2,0);
+  357  5                
+  358  5                g_time_run=0;
+  359  5                /************************************/
+  360  5              }
+  361  4            }
+  362  3          }
+  363  2        }
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 7   
+
+  364  1        g_slot_bits0=g_slot_bits;
+  365  1        
+  366  1      func_exit:
+  367  1        return;
+  368  1      }
+  369         
+  370         ////////////////////////////////////////////////////////////////////////////////
+  371         //
+  372         void calc_mot_total_angle(void)
+  373         {
+  374  1        s32 tmps32_a;
+  375  1        s32 tmps32_b;
+  376  1        
+  377  1        ////////////////////////////////////////////////////////
+  378  1        if(g_resolver_pos_uw>=g_resolver_pos0_uw) // Forward
+  379  1        {
+  380  2          /**********************************************************************
+  381  2           The number of 1000: large jump indicates the overflow of resolver output.
+  382  2           If motor speed is very fast, large jump can also be observed in a calculation period (1ms).
+  383  2           e.g. 4 pair-pole@6000RPM => 100 revolutions/second => (100*4096*4/1000)/ms => 409/ms
+  384  2           So, 1000 chosed: 1000>409
+  385  2          **********************************************************************/
+  386  2          if(g_resolver_pos_uw>=g_resolver_pos0_uw+1000) // Large jump => overflow
+  387  2          {
+  388  3            tmps32_a=(s32)(4096-g_resolver_pos_uw); // 4096: Resolver 12bit
+  389  3            tmps32_b=(s32)g_resolver_pos0_uw;
+  390  3            tmps32_a=-(tmps32_a+tmps32_b);
+  391  3          }
+  392  2          else
+  393  2          {
+  394  3            tmps32_a=(s32)g_resolver_pos_uw;
+  395  3            tmps32_b=(s32)g_resolver_pos0_uw;
+  396  3            tmps32_a-=tmps32_b;
+  397  3          }
+  398  2        }
+  399  1        else
+  400  1        {
+  401  2          if(g_resolver_pos_uw+1000<=g_resolver_pos0_uw) // Large jump => overflow
+  402  2          {
+  403  3            tmps32_a=(s32)(4096-g_resolver_pos0_uw); // 4096: Resolver 12bit
+  404  3            tmps32_b=(s32)g_resolver_pos_uw;
+  405  3            tmps32_a+=tmps32_b;
+  406  3          }
+  407  2          else
+  408  2          {
+  409  3            tmps32_a=(s32)g_resolver_pos_uw;
+  410  3            tmps32_b=(s32)g_resolver_pos0_uw;
+  411  3            tmps32_a-=tmps32_b;
+  412  3          }
+  413  2        }
+  414  1          
+  415  1        g_total_angle_sl+=tmps32_a;
+  416  1        g_resolver_pos0_uw=g_resolver_pos_uw;
+  417  1        ////////////////////////////////////////////////////////
+  418  1      }
+  419         
+  420         ////////////////////////////////////////////////////////////////////////////////
+  421         //
+  422         void calc_mot_speed(void)
+  423         {
+  424  1        static u16 tmx_calc_speed_cnt=0;
+  425  1        s32 tmps32;
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 8   
+
+  426  1        
+  427  1        ////////////////////////////////////////////////////////////////////////
+  428  1        //
+  429  1        tmx_calc_speed_cnt++;
+  430  1        if(tmx_calc_speed_cnt>=200) // 20ms
+  431  1        {
+  432  2          tmx_calc_speed_cnt=0;
+  433  2          g_timer_calc_speed_ub=1;
+  434  2        }
+  435  1        else
+  436  1        {
+  437  2          return;
+  438  2        }
+  439  1        
+  440  1        ////////////////////////////////////////////////////////////////////////
+  441  1        // Calculation rotational speed
+  442  1        if(g_timer_calc_speed_ub)  // 20ms
+  443  1        {
+  444  2          g_timer_calc_speed_ub=0;
+  445  2          
+  446  2          tmps32=(s32)(g_total_angle_sl-g_total_angle0_sl);
+  447  2          g_total_angle0_sl=g_total_angle_sl;
+  448  2          
+  449  2          g_mot_speed_sw=(s16)((tmps32*375)>>11); // (tmps32*50*60)/(4096*4);
+  450  2          // FIXME: Max RPM
+  451  2          if(g_mot_speed_sw>5000)
+  452  2            g_mot_speed_sw=5000;
+  453  2          else if(g_mot_speed_sw<-5000)
+  454  2            g_mot_speed_sw=-5000;
+  455  2        }
+  456  1      }
+  457         
+  458         ////////////////////////////////////////////////////////////////////////////////
+  459         // 0.1ms (100us) timer callback function
+  460         //
+  461         void isr_100us_timer_hook_user(void)
+  462         {
+  463  1        g_resolver_pos_uw=resolver_ad2s_read_pos(0);
+  464  1      
+  465  1      #ifdef WIN32
+                g_resolver_pos_uw=pc_sim_get_resolver_pos(0);
+              #endif
+  468  1        
+  469  1        if(g_motor_type_ub==MOTOR_TYPE_PMSM)
+  470  1          do_motor_pmsm_ctrl();
+  471  1      
+  472  1        if(g_motor_type_ub==MOTOR_TYPE_BLDC)
+  473  1          do_motor_bldc_ctrl();
+  474  1        calc_motor_pos();
+  475  1        calc_mot_speed();
+  476  1      }
+  477         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 9   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION do_motor_bldc_debug (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 65
+0000 ECFD          PUSH      R13
+0002 ECFE          PUSH      R14
+0004 ECFF          PUSH      R15
+;---- Variable 'buf' assigned to Register 'R8/R9' ----
+0006 06F0F8FF      ADD       R0,#0FFF8H
+                                           ; SOURCE LINE # 66
+                                           ; SOURCE LINE # 72
+000A F2FD0C00 R    MOV       R13,g_duty_uw
+;---- Variable 'l_duty_uw' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 75
+000E DC49          EXTP      R9,#01H
+0010 A988          MOVB      RL4,[R8]
+0012 C084          MOVBZ     R4,RL4
+0014 C4400200      MOV       [R0+#02H],R4  ; l_buf+2
+                                           ; SOURCE LINE # 76
+0018 F064          MOV       R6,R4
+001A 5C86          SHL       R6,#08H
+001C C4600200      MOV       [R0+#02H],R6  ; l_buf+2
+                                           ; SOURCE LINE # 77
+0020 DC49          EXTP      R9,#01H
+0022 F4880100      MOVB      RL4,[R8+#POF(01H)]
+0026 C085          MOVBZ     R5,RL4
+0028 7065          OR        R6,R5
+002A C4600200      MOV       [R0+#02H],R6  ; l_buf+2
+                                           ; SOURCE LINE # 78
+002E DC49          EXTP      R9,#01H
+0030 F4880200      MOVB      RL4,[R8+#POF(02H)]
+0034 C084          MOVBZ     R4,RL4
+0036 B840          MOV       [R0],R4       ; l_buf
+                                           ; SOURCE LINE # 79
+0038 F054          MOV       R5,R4
+003A 5C85          SHL       R5,#08H
+003C B850          MOV       [R0],R5       ; l_buf
+                                           ; SOURCE LINE # 80
+003E DC49          EXTP      R9,#01H
+0040 F4880300      MOVB      RL4,[R8+#POF(03H)]
+0044 C084          MOVBZ     R4,RL4
+0046 7045          OR        R4,R5
+0048 B840          MOV       [R0],R4       ; l_buf
+                                           ; SOURCE LINE # 81
+004A DC49          EXTP      R9,#01H
+004C F4880400      MOVB      RL4,[R8+#POF(04H)]
+0050 C084          MOVBZ     R4,RL4
+0052 C4400600      MOV       [R0+#06H],R4  ; l_buf+6
+                                           ; SOURCE LINE # 82
+0056 F064          MOV       R6,R4
+0058 5C86          SHL       R6,#08H
+005A C4600600      MOV       [R0+#06H],R6  ; l_buf+6
+                                           ; SOURCE LINE # 83
+005E DC49          EXTP      R9,#01H
+0060 F4880500      MOVB      RL4,[R8+#POF(05H)]
+0064 C085          MOVBZ     R5,RL4
+0066 7065          OR        R6,R5
+0068 C4600600      MOV       [R0+#06H],R6  ; l_buf+6
+                                           ; SOURCE LINE # 84
+006C DC49          EXTP      R9,#01H
+006E F4880600      MOVB      RL4,[R8+#POF(06H)]
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 10  
+
+0072 C084          MOVBZ     R4,RL4
+0074 C4400400      MOV       [R0+#04H],R4  ; l_buf+4
+                                           ; SOURCE LINE # 85
+0078 F064          MOV       R6,R4
+007A 5C86          SHL       R6,#08H
+007C C4600400      MOV       [R0+#04H],R6  ; l_buf+4
+                                           ; SOURCE LINE # 86
+0080 DC49          EXTP      R9,#01H
+0082 F4880700      MOVB      RL4,[R8+#POF(07H)]
+0086 C085          MOVBZ     R5,RL4
+0088 7065          OR        R6,R5
+008A C4600400      MOV       [R0+#04H],R6  ; l_buf+4
+                                           ; SOURCE LINE # 88
+008E F040          MOV       R4,R0
+0090 66F4FF3F      AND       R4,#03FFFH
+0094 F2F504FE      MOV       R5,DPP2
+0098 F0E4          MOV       R14,R4
+009A F0F5          MOV       R15,R5
+;---- Variable 'pt' assigned to Register 'R14/R15' ----
+                                           ; SOURCE LINE # 90
+009C DC45          EXTP      R5,#01H
+009E D4440400      MOV       R4,[R4+#POF(04H)]
+00A2 46F4AA55      CMP       R4,#055AAH
+00A6 EA304C02 R    JMPA      cc_NZ,?C0002
+                                           ; SOURCE LINE # 91
+00AA         ?C0001:
+                                           ; SOURCE LINE # 93
+00AA DC4F          EXTP      R15,#01H
+00AC D44E0200      MOV       R4,[R14+#POF(02H)]
+00B0 06F490AA      ADD       R4,#0AA90H
+00B4 EA20EE01 R    JMPA      cc_Z,?C0013
+00B8 06F4F1FF      ADD       R4,#0FFF1H
+00BC EA202E02 R    JMPA      cc_Z,?C0014
+00C0 06F47E00      ADD       R4,#07EH
+00C4 46F40800      CMP       R4,#08H
+00C8 EA903602 R    JMPA      cc_NC,?C0003
+00CC 5C24          SHL       R4,#02H
+00CE 06F4D400 R    ADD       R4,#?C0064
+00D2 9C04          JMPI      cc_UC,[R4]
+00D4         ?C0064:
+00D4 EA00F400 R    JMPA      cc_UC,?C0004
+00D8 EA000401 R    JMPA      cc_UC,?C0006
+00DC EA000C01 R    JMPA      cc_UC,?C0007
+00E0 EA002001 R    JMPA      cc_UC,?C0008
+00E4 EA004C01 R    JMPA      cc_UC,?C0009
+00E8 EA008001 R    JMPA      cc_UC,?C0010
+00EC EA00A001 R    JMPA      cc_UC,?C0011
+00F0 EA00D801 R    JMPA      cc_UC,?C0012
+                                           ; SOURCE LINE # 95
+00F4         ?C0004:
+                                           ; SOURCE LINE # 96
+00F4 DC4F          EXTP      R15,#01H
+00F6 A84E          MOV       R4,[R14]
+00F8 F6F41400 R    MOV       g_pos_offset_bldc_uw,R4
+                                           ; SOURCE LINE # 97
+00FC F6F40400 R    MOV       g_pos_offset_pmsm_uw,R4
+                                           ; SOURCE LINE # 98
+0100 EA003602 R    JMPA      cc_UC,?C0003
+                                           ; SOURCE LINE # 100
+0104         ?C0006:
+                                           ; SOURCE LINE # 101
+0104 DC4F          EXTP      R15,#01H
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 11  
+
+0106 A8DE          MOV       R13,[R14]
+                                           ; SOURCE LINE # 102
+0108 EA003602 R    JMPA      cc_UC,?C0003
+                                           ; SOURCE LINE # 104
+010C         ?C0007:
+                                           ; SOURCE LINE # 105
+010C DC4F          EXTP      R15,#01H
+010E A84E          MOV       R4,[R14]
+0110 2D02          JMPR      cc_Z,?C0015
+0112 E118          MOVB      RL4,#01H
+0114 0D01          JMPR      cc_UC,?C0016
+0116         ?C0015:
+0116 E108          MOVB      RL4,#00H
+0118         ?C0016:
+0118 F7F83000 R    MOVB      g_dir_ub,RL4
+                                           ; SOURCE LINE # 106
+011C EA003602 R    JMPA      cc_UC,?C0003
+                                           ; SOURCE LINE # 108
+0120         ?C0008:
+                                           ; SOURCE LINE # 109
+0120 E014          MOV       R4,#01H
+0122 F6F41600 R    MOV       g_step_mode_ub,R4
+                                           ; SOURCE LINE # 110
+0126 DC4F          EXTP      R15,#01H
+0128 D44E0600      MOV       R4,[R14+#POF(06H)]
+012C 2D02          JMPR      cc_Z,?C0017
+012E E118          MOVB      RL4,#01H
+0130 0D01          JMPR      cc_UC,?C0018
+0132         ?C0017:
+0132 E108          MOVB      RL4,#00H
+0134         ?C0018:
+0134 F7F83000 R    MOVB      g_dir_ub,RL4
+                                           ; SOURCE LINE # 111
+0138 F68E2800 R    MOV       g_time_inh,ZEROS
+                                           ; SOURCE LINE # 112
+013C DC4F          EXTP      R15,#01H
+013E A84E          MOV       R4,[R14]
+0140 5C24          SHL       R4,#02H
+0142 F6F42C00 R    MOV       g_turns,R4
+                                           ; SOURCE LINE # 113
+0146 F6F42200 R    MOV       g_turns_cmd,R4
+                                           ; SOURCE LINE # 114
+014A 0D75          JMPR      cc_UC,?C0003
+                                           ; SOURCE LINE # 116
+014C         ?C0009:
+                                           ; SOURCE LINE # 117
+014C F68E2800 R    MOV       g_time_inh,ZEROS
+                                           ; SOURCE LINE # 118
+0150 F68E1600 R    MOV       g_step_mode_ub,ZEROS
+                                           ; SOURCE LINE # 119
+0154 DC4F          EXTP      R15,#01H
+0156 D44E0600      MOV       R4,[R14+#POF(06H)]
+015A 2D02          JMPR      cc_Z,?C0019
+015C E118          MOVB      RL4,#01H
+015E 0D01          JMPR      cc_UC,?C0020
+0160         ?C0019:
+0160 E108          MOVB      RL4,#00H
+0162         ?C0020:
+0162 F7F83000 R    MOVB      g_dir_ub,RL4
+                                           ; SOURCE LINE # 121
+0166 E019          MOV       R9,#01H
+0168 E008          MOV       R8,#00H
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 12  
+
+016A DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 122
+016E E019          MOV       R9,#01H
+0170 E018          MOV       R8,#01H
+0172 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 123
+0176 E019          MOV       R9,#01H
+0178 E028          MOV       R8,#02H
+017A DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 124
+017E 0D5B          JMPR      cc_UC,?C0003
+                                           ; SOURCE LINE # 126
+0180         ?C0010:
+                                           ; SOURCE LINE # 127
+0180 F68E2800 R    MOV       g_time_inh,ZEROS
+                                           ; SOURCE LINE # 128
+0184 F68E1600 R    MOV       g_step_mode_ub,ZEROS
+                                           ; SOURCE LINE # 129
+0188 DC4F          EXTP      R15,#01H
+018A D44E0600      MOV       R4,[R14+#POF(06H)]
+018E 2D02          JMPR      cc_Z,?C0021
+0190 E118          MOVB      RL4,#01H
+0192 0D01          JMPR      cc_UC,?C0022
+0194         ?C0021:
+0194 E108          MOVB      RL4,#00H
+0196         ?C0022:
+0196 F7F83000 R    MOVB      g_dir_ub,RL4
+                                           ; SOURCE LINE # 130
+019A DC4F          EXTP      R15,#01H
+019C A8DE          MOV       R13,[R14]
+                                           ; SOURCE LINE # 131
+019E 0D4B          JMPR      cc_UC,?C0003
+                                           ; SOURCE LINE # 133
+01A0         ?C0011:
+                                           ; SOURCE LINE # 134
+01A0 E014          MOV       R4,#01H
+01A2 F6F41600 R    MOV       g_step_mode_ub,R4
+                                           ; SOURCE LINE # 135
+01A6 DC4F          EXTP      R15,#01H
+01A8 D45E0600      MOV       R5,[R14+#POF(06H)]
+01AC 9AF50100      JNB       R5.0,?C0023
+01B0 0D01          JMPR      cc_UC,?C0024
+01B2         ?C0023:
+01B2 E108          MOVB      RL4,#00H
+01B4         ?C0024:
+01B4 F7F83000 R    MOVB      g_dir_ub,RL4
+                                           ; SOURCE LINE # 136
+01B8 7C15          SHR       R5,#01H
+01BA DC5F          EXTP      R15,#02H
+01BC C45E0600      MOV       [R14+#POF(06H)],R5
+                                           ; SOURCE LINE # 137
+01C0 D4DE0600      MOV       R13,[R14+#POF(06H)]
+                                           ; SOURCE LINE # 139
+01C4 F68E2800 R    MOV       g_time_inh,ZEROS
+                                           ; SOURCE LINE # 140
+01C8 DC4F          EXTP      R15,#01H
+01CA A84E          MOV       R4,[R14]
+01CC 5C24          SHL       R4,#02H
+01CE F6F42C00 R    MOV       g_turns,R4
+                                           ; SOURCE LINE # 141
+01D2 F6F42200 R    MOV       g_turns_cmd,R4
+                                           ; SOURCE LINE # 142
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 13  
+
+01D6 0D2F          JMPR      cc_UC,?C0003
+                                           ; SOURCE LINE # 144
+01D8         ?C0012:
+                                           ; SOURCE LINE # 145
+01D8 DC4F          EXTP      R15,#01H
+01DA A84E          MOV       R4,[R14]
+01DC F1A8          MOVB      RL5,RL4
+01DE F7FA2E00 R    MOVB      g_motor_type_ub,RL5
+                                           ; SOURCE LINE # 146
+01E2 49A1          CMPB      RL5,#01H
+01E4 2D28          JMPR      cc_Z,?C0003
+                                           ; SOURCE LINE # 147
+01E6 E128          MOVB      RL4,#02H
+01E8 F7F82E00 R    MOVB      g_motor_type_ub,RL4
+                                           ; SOURCE LINE # 149
+01EC 0D24          JMPR      cc_UC,?C0003
+                                           ; SOURCE LINE # 151
+01EE         ?C0013:
+                                           ; SOURCE LINE # 152
+01EE E014          MOV       R4,#01H
+01F0 F6F41600 R    MOV       g_step_mode_ub,R4
+                                           ; SOURCE LINE # 153
+01F4 F68F2800 R    MOV       g_time_inh,ONES
+                                           ; SOURCE LINE # 154
+01F8 F68E1E00 R    MOV       g_time_run,ZEROS
+                                           ; SOURCE LINE # 156
+01FC E009          MOV       R9,#00H
+01FE E018          MOV       R8,#01H
+0200 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 157
+0204 E009          MOV       R9,#00H
+0206 E028          MOV       R8,#02H
+0208 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 158
+020C E009          MOV       R9,#00H
+020E E038          MOV       R8,#03H
+0210 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 159
+0214 E009          MOV       R9,#00H
+0216 E008          MOV       R8,#00H
+0218 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 160
+021C E009          MOV       R9,#00H
+021E E018          MOV       R8,#01H
+0220 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 161
+0224 E009          MOV       R9,#00H
+0226 E028          MOV       R8,#02H
+0228 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 163
+022C 0D04          JMPR      cc_UC,?C0003
+                                           ; SOURCE LINE # 165
+022E         ?C0014:
+                                           ; SOURCE LINE # 166
+022E E6F4204E      MOV       R4,#04E20H
+0232 F6F41000 R    MOV       g_timeout,R4
+                                           ; SOURCE LINE # 167
+                                           ; SOURCE LINE # 169
+                                           ; SOURCE LINE # 170
+                                           ; SOURCE LINE # 171
+0236         ?C0003:
+                                           ; SOURCE LINE # 175
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 14  
+
+0236 42FD0C00 R    CMP       R13,g_duty_uw
+023A 2D08          JMPR      cc_Z,?C0002
+                                           ; SOURCE LINE # 177
+023C DC4F          EXTP      R15,#01H
+023E D44E0600      MOV       R4,[R14+#POF(06H)]
+0242 46F4B603      CMP       R4,#03B6H
+0246 ED02          JMPR      cc_UGT,?C0002
+                                           ; SOURCE LINE # 178
+0248 F6FD0C00 R    MOV       g_duty_uw,R13
+                                           ; SOURCE LINE # 179
+                                           ; SOURCE LINE # 181
+024C         ?C0002:
+024C 06F00800      ADD       R0,#08H
+0250 FCFF          POP       R15
+0252 FCFE          POP       R14
+0254 FCFD          POP       R13
+0256 DB00          RETS      
+             ; FUNCTION do_motor_bldc_debug (END    RMASK = @0x7FFF)
+
+             ; FUNCTION do_motor_bldc_ctrl (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 186
+0258 06F0F4FF      ADD       R0,#0FFF4H
+                                           ; SOURCE LINE # 187
+                                           ; SOURCE LINE # 190
+                                           ; SOURCE LINE # 191
+                                           ; SOURCE LINE # 192
+                                           ; SOURCE LINE # 193
+                                           ; SOURCE LINE # 198
+025C E6F40600 R    MOV       R4,#?tpl?0001
+0260 F060          MOV       R6,R0
+0262 E067          MOV       R7,#06H
+0264         ?C0065:
+0264 E964          MOVB      [R6],[R4+]
+0266 0861          ADD       R6,#01H
+0268 2871          SUB       R7,#01H
+026A 3DFC          JMPR      cc_NZ,?C0065
+                                           ; SOURCE LINE # 200
+026C E6F40000 R    MOV       R4,#?tpl?0002
+0270 E066          MOV       R6,#06H       ; SLOT_IDX_B
+0272 0060          ADD       R6,R0         ; SLOT_IDX_B
+0274 E067          MOV       R7,#06H
+0276         ?C0066:
+0276 E964          MOVB      [R6],[R4+]
+0278 0861          ADD       R6,#01H
+027A 2871          SUB       R7,#01H
+027C 3DFC          JMPR      cc_NZ,?C0066
+                                           ; SOURCE LINE # 203
+027E F2F41E00 R    MOV       R4,g_time_run
+0282 46F41027      CMP       R4,#02710H
+0286 9D02          JMPR      cc_UGE,?C0028
+                                           ; SOURCE LINE # 204
+0288 248F1E00 R    SUB       g_time_run,ONES
+028C         ?C0028:
+                                           ; SOURCE LINE # 213
+                                           ; SOURCE LINE # 227
+                                           ; SOURCE LINE # 230
+028C F2F52800 R    MOV       R5,g_time_inh
+0290 2D08          JMPR      cc_Z,?C0030
+                                           ; SOURCE LINE # 232
+0292 46F5FFFF      CMP       R5,#0FFFFH
+0296 EA20A204 R    JMPA      cc_Z,func_exit
+                                           ; SOURCE LINE # 233
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 15  
+
+029A 048F2800 R    ADD       g_time_inh,ONES
+                                           ; SOURCE LINE # 235
+029E EA00A204 R    JMPA      cc_UC,func_exit
+                                           ; SOURCE LINE # 236
+02A2         ?C0030:
+                                           ; SOURCE LINE # 239
+02A2 F2F60000 E    MOV       R6,g_resolver_pos_uw
+;---- Variable 'tmpu16' assigned to Register 'R6' ----
+                                           ; SOURCE LINE # 240
+02A6 02F61400 R    ADD       R6,g_pos_offset_bldc_uw
+                                           ; SOURCE LINE # 241
+02AA 66F6FF0F      AND       R6,#0FFFH
+                                           ; SOURCE LINE # 243
+02AE E6F4AB02      MOV       R4,#02ABH
+02B2 F6F60EFE      MOV       MDL,R6
+02B6 5B44          DIVU      R4
+02B8 F2F40EFE      MOV       R4,MDL
+02BC C084          MOVBZ     R4,RL4
+02BE F6F40200 R    MOV       g_slot_idx_ss,R4
+                                           ; SOURCE LINE # 244
+02C2 248F0200 R    SUB       g_slot_idx_ss,ONES
+                                           ; SOURCE LINE # 245
+02C6 E065          MOV       R5,#06H
+02C8 F2F40200 R    MOV       R4,g_slot_idx_ss
+02CC F2070200 R    MOV       MDL,g_slot_idx_ss
+02D0 5B55          DIVU      R5
+02D2 F2F40CFE      MOV       R4,MDH
+02D6 F2F60EFE      MOV       R6,MDL
+02DA F6F40200 R    MOV       g_slot_idx_ss,R4
+                                           ; SOURCE LINE # 247
+02DE F3F83000 R    MOVB      RL4,g_dir_ub
+02E2 3D08          JMPR      cc_NZ,?C0033
+                                           ; SOURCE LINE # 248
+02E4 F010          MOV       R1,R0
+02E6 02F10200 R    ADD       R1,g_slot_idx_ss
+02EA A981          MOVB      RL4,[R1]
+02EC C084          MOVBZ     R4,RL4
+02EE F6F41C00 R    MOV       g_slot_idx,R4
+02F2 0D08          JMPR      cc_UC,?C0034
+02F4         ?C0033:
+                                           ; SOURCE LINE # 250
+02F4 E061          MOV       R1,#06H       ; SLOT_IDX_B
+02F6 0010          ADD       R1,R0         ; SLOT_IDX_B
+02F8 02F10200 R    ADD       R1,g_slot_idx_ss
+02FC A981          MOVB      RL4,[R1]
+02FE C084          MOVBZ     R4,RL4
+0300 F6F41C00 R    MOV       g_slot_idx,R4
+0304         ?C0034:
+                                           ; SOURCE LINE # 252
+                                           ; SOURCE LINE # 255
+0304 F2F41C00 R    MOV       R4,g_slot_idx
+0308 2841          SUB       R4,#01H
+030A 2D23          JMPR      cc_Z,?C0038
+030C 2842          SUB       R4,#02H
+030E 8D3A          JMPR      cc_C,?C0039
+0310 2D52          JMPR      cc_Z,?C0040
+0312 2842          SUB       R4,#02H
+0314 8D69          JMPR      cc_C,?C0041
+0316 EA201C04 R    JMPA      cc_Z,?C0042
+031A 0845          ADD       R4,#05H
+031C EA304E04 R    JMPA      cc_NZ,?C0035
+                                           ; SOURCE LINE # 257
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 16  
+
+0320         ?C0036:
+                                           ; SOURCE LINE # 258
+0320 E009          MOV       R9,#00H
+0322 E008          MOV       R8,#00H
+0324 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 259
+0328 E009          MOV       R9,#00H
+032A E028          MOV       R8,#02H
+032C DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 260
+0330 F2F90C00 R    MOV       R9,g_duty_uw
+0334 E018          MOV       R8,#01H
+0336 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 261
+033A E019          MOV       R9,#01H
+033C E018          MOV       R8,#01H
+033E DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 262
+0342 E019          MOV       R9,#01H
+0344 E028          MOV       R8,#02H
+0346 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 264
+                                           ; SOURCE LINE # 265
+                                           ; SOURCE LINE # 267
+034A E014          MOV       R4,#01H
+034C 74F42000 R    OR        g_slot_bits,R4
+                                           ; SOURCE LINE # 268
+0350 0D7E          JMPR      cc_UC,?C0035
+                                           ; SOURCE LINE # 270
+0352         ?C0038:
+                                           ; SOURCE LINE # 271
+0352 E009          MOV       R9,#00H
+0354 E028          MOV       R8,#02H
+0356 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 272
+035A E009          MOV       R9,#00H
+035C E008          MOV       R8,#00H
+035E DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 273
+0362 F2F90C00 R    MOV       R9,g_duty_uw
+0366 E018          MOV       R8,#01H
+0368 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 274
+036C E019          MOV       R9,#01H
+036E E018          MOV       R8,#01H
+0370 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 275
+0374 E019          MOV       R9,#01H
+0376 E008          MOV       R8,#00H
+0378 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 277
+                                           ; SOURCE LINE # 278
+                                           ; SOURCE LINE # 280
+037C E024          MOV       R4,#02H
+037E 74F42000 R    OR        g_slot_bits,R4
+                                           ; SOURCE LINE # 281
+0382 0D65          JMPR      cc_UC,?C0035
+                                           ; SOURCE LINE # 283
+0384         ?C0039:
+                                           ; SOURCE LINE # 284
+0384 E009          MOV       R9,#00H
+0386 E018          MOV       R8,#01H
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 17  
+
+0388 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 285
+038C E009          MOV       R9,#00H
+038E E008          MOV       R8,#00H
+0390 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 286
+0394 F2F90C00 R    MOV       R9,g_duty_uw
+0398 E028          MOV       R8,#02H
+039A DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 287
+039E E019          MOV       R9,#01H
+03A0 E008          MOV       R8,#00H
+03A2 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 288
+03A6 E019          MOV       R9,#01H
+03A8 E028          MOV       R8,#02H
+03AA DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 290
+                                           ; SOURCE LINE # 291
+                                           ; SOURCE LINE # 293
+03AE E044          MOV       R4,#04H
+03B0 74F42000 R    OR        g_slot_bits,R4
+                                           ; SOURCE LINE # 294
+03B4 0D4C          JMPR      cc_UC,?C0035
+                                           ; SOURCE LINE # 296
+03B6         ?C0040:
+                                           ; SOURCE LINE # 297
+03B6 E009          MOV       R9,#00H
+03B8 E008          MOV       R8,#00H
+03BA DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 298
+03BE E009          MOV       R9,#00H
+03C0 E018          MOV       R8,#01H
+03C2 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 299
+03C6 F2F90C00 R    MOV       R9,g_duty_uw
+03CA E028          MOV       R8,#02H
+03CC DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 300
+03D0 E019          MOV       R9,#01H
+03D2 E018          MOV       R8,#01H
+03D4 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 301
+03D8 E019          MOV       R9,#01H
+03DA E028          MOV       R8,#02H
+03DC DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 303
+                                           ; SOURCE LINE # 304
+                                           ; SOURCE LINE # 306
+03E0 E084          MOV       R4,#08H
+03E2 74F42000 R    OR        g_slot_bits,R4
+                                           ; SOURCE LINE # 307
+03E6 0D33          JMPR      cc_UC,?C0035
+                                           ; SOURCE LINE # 309
+03E8         ?C0041:
+                                           ; SOURCE LINE # 310
+03E8 E009          MOV       R9,#00H
+03EA E028          MOV       R8,#02H
+03EC DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 311
+03F0 E009          MOV       R9,#00H
+03F2 E018          MOV       R8,#01H
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 18  
+
+03F4 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 312
+03F8 F2F90C00 R    MOV       R9,g_duty_uw
+03FC E008          MOV       R8,#00H
+03FE DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 313
+0402 E019          MOV       R9,#01H
+0404 E018          MOV       R8,#01H
+0406 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 314
+040A E019          MOV       R9,#01H
+040C E008          MOV       R8,#00H
+040E DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 316
+                                           ; SOURCE LINE # 317
+                                           ; SOURCE LINE # 319
+0412 E6F41000      MOV       R4,#010H
+0416 74F42000 R    OR        g_slot_bits,R4
+                                           ; SOURCE LINE # 320
+041A 0D19          JMPR      cc_UC,?C0035
+                                           ; SOURCE LINE # 322
+041C         ?C0042:
+                                           ; SOURCE LINE # 323
+041C E009          MOV       R9,#00H
+041E E018          MOV       R8,#01H
+0420 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 324
+0424 E009          MOV       R9,#00H
+0426 E028          MOV       R8,#02H
+0428 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 325
+042C F2F90C00 R    MOV       R9,g_duty_uw
+0430 E008          MOV       R8,#00H
+0432 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 326
+0436 E019          MOV       R9,#01H
+0438 E008          MOV       R8,#00H
+043A DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 327
+043E E019          MOV       R9,#01H
+0440 E028          MOV       R8,#02H
+0442 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 329
+                                           ; SOURCE LINE # 330
+                                           ; SOURCE LINE # 332
+0446 E6F42000      MOV       R4,#020H
+044A 74F42000 R    OR        g_slot_bits,R4
+                                           ; SOURCE LINE # 333
+                                           ; SOURCE LINE # 335
+                                           ; SOURCE LINE # 336
+                                           ; SOURCE LINE # 337
+044E         ?C0035:
+                                           ; SOURCE LINE # 341
+044E F2F42000 R    MOV       R4,g_slot_bits
+0452 46F43F00      CMP       R4,#03FH
+0456 3D21          JMPR      cc_NZ,?C0043
+0458 F2F41C00 R    MOV       R4,g_slot_idx
+045C 3D1E          JMPR      cc_NZ,?C0043
+                                           ; SOURCE LINE # 343
+045E F68E2000 R    MOV       g_slot_bits,ZEROS
+                                           ; SOURCE LINE # 345
+0462 F2F42C00 R    MOV       R4,g_turns
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 19  
+
+0466 2D19          JMPR      cc_Z,?C0043
+                                           ; SOURCE LINE # 347
+0468 048F2C00 R    ADD       g_turns,ONES
+                                           ; SOURCE LINE # 348
+046C F2F42C00 R    MOV       R4,g_turns
+0470 3D14          JMPR      cc_NZ,?C0043
+                                           ; SOURCE LINE # 350
+0472 F2F41600 R    MOV       R4,g_step_mode_ub
+0476 4841          CMP       R4,#01H
+0478 3D10          JMPR      cc_NZ,?C0043
+                                           ; SOURCE LINE # 353
+047A F68F2800 R    MOV       g_time_inh,ONES
+                                           ; SOURCE LINE # 354
+047E E009          MOV       R9,#00H
+0480 E008          MOV       R8,#00H
+0482 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 355
+0486 E009          MOV       R9,#00H
+0488 E018          MOV       R8,#01H
+048A DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 356
+048E E009          MOV       R9,#00H
+0490 E028          MOV       R8,#02H
+0492 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 358
+0496 F68E1E00 R    MOV       g_time_run,ZEROS
+                                           ; SOURCE LINE # 360
+                                           ; SOURCE LINE # 362
+                                           ; SOURCE LINE # 363
+049A         ?C0043:
+                                           ; SOURCE LINE # 364
+049A F2F42000 R    MOV       R4,g_slot_bits
+049E F6F41200 R    MOV       g_slot_bits0,R4
+                                           ; SOURCE LINE # 366
+04A2         func_exit:
+                                           ; SOURCE LINE # 367
+                                           ; SOURCE LINE # 368
+04A2 06F00C00      ADD       R0,#0CH
+04A6 DB00          RETS      
+             ; FUNCTION do_motor_bldc_ctrl (END    RMASK = @0x7FFF)
+
+             ; FUNCTION calc_mot_total_angle (BEGIN  RMASK = @0x4F70)
+                                           ; SOURCE LINE # 372
+;---- Variable 'tmps32_a' assigned to Register 'R8/R9' ----
+;---- Variable 'tmps32_b' assigned to Register 'R10/R11' ----
+                                           ; SOURCE LINE # 373
+                                           ; SOURCE LINE # 378
+04A8 F2F60000 E    MOV       R6,g_resolver_pos0_uw
+04AC 42F60000 E    CMP       R6,g_resolver_pos_uw
+04B0 ED1F          JMPR      cc_UGT,?C0048
+                                           ; SOURCE LINE # 386
+04B2 F056          MOV       R5,R6
+04B4 06F5E803      ADD       R5,#03E8H
+04B8 42F50000 E    CMP       R5,g_resolver_pos_uw
+04BC ED11          JMPR      cc_UGT,?C0049
+                                           ; SOURCE LINE # 388
+04BE E6F40010      MOV       R4,#01000H
+04C2 22F40000 E    SUB       R4,g_resolver_pos_uw
+04C6 F084          MOV       R8,R4
+04C8 E009          MOV       R9,#00H
+                                           ; SOURCE LINE # 389
+04CA F0A6          MOV       R10,R6
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 20  
+
+04CC E00B          MOV       R11,#00H
+                                           ; SOURCE LINE # 390
+04CE 0046          ADD       R4,R6
+04D0 F059          MOV       R5,R9
+04D2 1059          ADDC      R5,R9
+04D4 F084          MOV       R8,R4
+04D6 8180          NEG       R8
+04D8 F095          MOV       R9,R5
+04DA 1890          ADDC      R9,#00H
+04DC 8190          NEG       R9
+                                           ; SOURCE LINE # 391
+04DE 0D20          JMPR      cc_UC,?C0051
+04E0         ?C0049:
+                                           ; SOURCE LINE # 394
+04E0 F2F80000 E    MOV       R8,g_resolver_pos_uw
+04E4 E009          MOV       R9,#00H
+                                           ; SOURCE LINE # 395
+04E6 F0A6          MOV       R10,R6
+04E8 E00B          MOV       R11,#00H
+                                           ; SOURCE LINE # 396
+04EA 2086          SUB       R8,R6
+04EC 3099          SUBC      R9,R9
+                                           ; SOURCE LINE # 397
+                                           ; SOURCE LINE # 398
+04EE 0D18          JMPR      cc_UC,?C0051
+04F0         ?C0048:
+                                           ; SOURCE LINE # 401
+04F0 F2F40000 E    MOV       R4,g_resolver_pos_uw
+04F4 06F4E803      ADD       R4,#03E8H
+04F8 4046          CMP       R4,R6
+04FA ED0B          JMPR      cc_UGT,?C0052
+                                           ; SOURCE LINE # 403
+04FC E6F40010      MOV       R4,#01000H
+0500 2046          SUB       R4,R6
+0502 F084          MOV       R8,R4
+0504 E009          MOV       R9,#00H
+                                           ; SOURCE LINE # 404
+0506 F2FA0000 E    MOV       R10,g_resolver_pos_uw
+050A E00B          MOV       R11,#00H
+                                           ; SOURCE LINE # 405
+050C 008A          ADD       R8,R10
+050E 1099          ADDC      R9,R9
+                                           ; SOURCE LINE # 406
+0510 0D07          JMPR      cc_UC,?C0051
+0512         ?C0052:
+                                           ; SOURCE LINE # 409
+0512 F2F80000 E    MOV       R8,g_resolver_pos_uw
+0516 E009          MOV       R9,#00H
+                                           ; SOURCE LINE # 410
+0518 F0A6          MOV       R10,R6
+051A E00B          MOV       R11,#00H
+                                           ; SOURCE LINE # 411
+051C 2086          SUB       R8,R6
+051E 3099          SUBC      R9,R9
+                                           ; SOURCE LINE # 412
+                                           ; SOURCE LINE # 413
+0520         ?C0051:
+                                           ; SOURCE LINE # 415
+0520 04F80000 E    ADD       g_total_angle_sl,R8
+0524 14F90200 E    ADDC      g_total_angle_sl+02H,R9
+                                           ; SOURCE LINE # 416
+0528 F2F40000 E    MOV       R4,g_resolver_pos_uw
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 21  
+
+052C F6F40000 E    MOV       g_resolver_pos0_uw,R4
+                                           ; SOURCE LINE # 418
+0530 DB00          RETS      
+             ; FUNCTION calc_mot_total_angle (END    RMASK = @0x4F70)
+
+             ; FUNCTION calc_mot_speed (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 422
+                                           ; SOURCE LINE # 423
+                                           ; SOURCE LINE # 429
+0532 248F1800 R    SUB       tmx_calc_speed_cnt,ONES
+                                           ; SOURCE LINE # 430
+0536 F2F41800 R    MOV       R4,tmx_calc_speed_cnt
+053A 46F4C800      CMP       R4,#0C8H
+053E 8D35          JMPR      cc_ULT,?C0056
+                                           ; SOURCE LINE # 432
+0540 F68E1800 R    MOV       tmx_calc_speed_cnt,ZEROS
+                                           ; SOURCE LINE # 433
+0544 E014          MOV       R4,#01H
+0546 F6F42A00 R    MOV       g_timer_calc_speed_ub,R4
+                                           ; SOURCE LINE # 434
+                                           ; SOURCE LINE # 437
+                                           ; SOURCE LINE # 438
+                                           ; SOURCE LINE # 442
+                                           ; SOURCE LINE # 444
+054A F68E2A00 R    MOV       g_timer_calc_speed_ub,ZEROS
+                                           ; SOURCE LINE # 446
+054E F2F40000 E    MOV       R4,g_total_angle_sl
+0552 F2F50200 E    MOV       R5,g_total_angle_sl+02H
+0556 F084          MOV       R8,R4
+0558 22F80000 E    SUB       R8,g_total_angle0_sl
+055C F095          MOV       R9,R5
+055E 32F90200 E    SUBC      R9,g_total_angle0_sl+02H
+;---- Variable 'tmps32' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 447
+0562 F6F40000 E    MOV       g_total_angle0_sl,R4
+0566 F6F50200 E    MOV       g_total_angle0_sl+02H,R5
+                                           ; SOURCE LINE # 449
+056A E6F67701      MOV       R6,#0177H
+056E E007          MOV       R7,#00H
+0570 F048          MOV       R4,R8
+0572 F059          MOV       R5,R9
+0574 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+0578 F065          MOV       R6,R5
+057A 7CB4          SHR       R4,#0BH
+057C BCB5          ASHR      R5,#0BH
+057E 5C56          SHL       R6,#05H
+0580 7046          OR        R4,R6
+0582 F054          MOV       R5,R4
+0584 F6F40E00 R    MOV       g_mot_speed_sw,R4
+                                           ; SOURCE LINE # 451
+0588 46F58813      CMP       R5,#01388H
+058C BD05          JMPR      cc_SLE,?C0058
+                                           ; SOURCE LINE # 452
+058E E6F48813      MOV       R4,#01388H
+0592 F6F40E00 R    MOV       g_mot_speed_sw,R4
+0596 DB00          RETS      
+0598         ?C0058:
+                                           ; SOURCE LINE # 453
+0598 F2F40E00 R    MOV       R4,g_mot_speed_sw
+059C 46F478EC      CMP       R4,#0EC78H
+05A0 DD04          JMPR      cc_SGE,?C0056
+                                           ; SOURCE LINE # 454
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          01/03/2020 16:20:12 PAGE 22  
+
+05A2 E6F478EC      MOV       R4,#0EC78H
+05A6 F6F40E00 R    MOV       g_mot_speed_sw,R4
+                                           ; SOURCE LINE # 455
+                                           ; SOURCE LINE # 456
+05AA         ?C0056:
+05AA DB00          RETS      
+             ; FUNCTION calc_mot_speed (END    RMASK = @0x63F0)
+
+             ; FUNCTION isr_100us_timer_hook_user (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 461
+                                           ; SOURCE LINE # 463
+05AC E008          MOV       R8,#00H
+05AE DA000000 E    CALLS     SEG (resolver_ad2s_read_pos),resolver_ad2s_read_pos
+05B2 F6F40000 E    MOV       g_resolver_pos_uw,R4
+                                           ; SOURCE LINE # 469
+05B6 F3F82E00 R    MOVB      RL4,g_motor_type_ub
+05BA 4982          CMPB      RL4,#02H
+05BC 3D02          JMPR      cc_NZ,?C0061
+                                           ; SOURCE LINE # 470
+05BE DA000000 E    CALLS     SEG (do_motor_pmsm_ctrl),do_motor_pmsm_ctrl
+05C2         ?C0061:
+                                           ; SOURCE LINE # 472
+05C2 F3F82E00 R    MOVB      RL4,g_motor_type_ub
+05C6 4981          CMPB      RL4,#01H
+05C8 3D02          JMPR      cc_NZ,?C0062
+                                           ; SOURCE LINE # 473
+05CA DA000000 R    CALLS     SEG (do_motor_bldc_ctrl),do_motor_bldc_ctrl
+05CE         ?C0062:
+                                           ; SOURCE LINE # 474
+05CE DA000000 E    CALLS     SEG (calc_motor_pos),calc_motor_pos
+                                           ; SOURCE LINE # 475
+05D2 DA000000 R    CALLS     SEG (calc_mot_speed),calc_mot_speed
+                                           ; SOURCE LINE # 476
+05D6 DB00          RETS      
+             ; FUNCTION isr_100us_timer_hook_user (END    RMASK = @0x7FFF)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =        1496     --------
+  NEAR-CONST SIZE  =          12     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          49     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =         148     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

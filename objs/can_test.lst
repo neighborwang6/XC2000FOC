@@ -1,0 +1,195 @@
+C166 COMPILER V7.57.0, CAN_TEST                                                            01/03/2020 16:20:08 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE CAN_TEST
+OBJECT MODULE PLACED IN .\objs\can_test.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE EOL_Diag\can_test.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\E
+                    -OL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 D
+                    -EBUG CODE PRINT(.\objs\can_test.lst) TABS(2) OBJECT(.\objs\can_test.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         * For EOL (End of Line) test [TBD, reserved]
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "xc2k_can.h"
+   11         #include "can_test.h"
+   12         #include "hican.h"
+   13         
+   14         ////////////////////////////////////////////////////////////////////////////////
+   15         //
+   16         ////////////////////////////////////////////////////////////////////////////////
+   17         u8 g_canbuf[8];
+   18         u8 g_canlen=0;
+   19         u16 g_canid=0;
+   20         u8 can_test_timeout=0;
+   21         
+   22         u8 g_ctrl_timeout;
+   23         
+   24         volatile u32 g_test_u32=0;
+   25         
+   26         ////////////////////////////////////////////////////////////////////////////////
+   27         //
+   28         ////////////////////////////////////////////////////////////////////////////////
+   29         u8 can_test_on(void)
+   30         {
+   31  1         return can_test_timeout;
+   32  1      }
+   33         
+   34         ////////////////////////////////////////////////////////////////////////////////
+   35         //
+   36         ////////////////////////////////////////////////////////////////////////////////
+   37         u8 can_test_init(void)
+   38         {
+   39  1         can_test_timeout=0;
+   40  1         g_ctrl_timeout=0;
+   41  1      
+   42  1         return 0;
+   43  1      }
+   44         
+   45         ////////////////////////////////////////////////////////////////////////////////
+   46         //
+   47         ////////////////////////////////////////////////////////////////////////////////
+   48         void can_test_enter(void)
+   49         {
+   50  1         can_test_timeout=205;
+   51  1      }
+   52         
+   53         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, CAN_TEST                                                            01/03/2020 16:20:08 PAGE 2   
+
+   54         //
+   55         ////////////////////////////////////////////////////////////////////////////////
+   56         void can_test_exit(void)
+   57         {
+   58  1      }
+   59         
+   60         ////////////////////////////////////////////////////////////////////////////////
+   61         //
+   62         ////////////////////////////////////////////////////////////////////////////////
+   63         void do_objx(u8 no,u32 id,u8 far * buf,u8 len)
+   64         {
+   65  1         switch(id)
+   66  1         {
+   67  2            ///////////////////////////////////////////////////
+   68  2            case 0x88:
+   69  2             if(buf[0]==0x55)
+   70  2             {
+   71  3             }
+   72  2            
+   73  2           break;
+   74  2      
+   75  2            ///////////////////////////////////////////////////
+   76  2          default:
+   77  2          break;
+   78  2         }
+   79  1      
+   80  1         can_do_objx_hook_hican(no,id,buf,len);
+   81  1      }
+   82         /////////////////////////////////////////////////////////////////////////
+   83         
+   84         
+C166 COMPILER V7.57.0, CAN_TEST                                                            01/03/2020 16:20:08 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION can_test_on (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 29
+                                           ; SOURCE LINE # 31
+0000 F3F80700 R    MOVB      RL4,can_test_timeout
+                                           ; SOURCE LINE # 32
+0004 DB00          RETS      
+             ; FUNCTION can_test_on (END    RMASK = @0x0010)
+
+             ; FUNCTION can_test_init (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 37
+                                           ; SOURCE LINE # 39
+0006 F78E0700 R    MOVB      can_test_timeout,ZEROS
+                                           ; SOURCE LINE # 40
+000A F78E0600 R    MOVB      g_ctrl_timeout,ZEROS
+                                           ; SOURCE LINE # 42
+000E E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 43
+0010 DB00          RETS      
+             ; FUNCTION can_test_init (END    RMASK = @0x0010)
+
+             ; FUNCTION can_test_enter (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 48
+                                           ; SOURCE LINE # 50
+0012 E7F8CD00      MOVB      RL4,#0CDH
+0016 F7F80700 R    MOVB      can_test_timeout,RL4
+                                           ; SOURCE LINE # 51
+001A DB00          RETS      
+             ; FUNCTION can_test_enter (END    RMASK = @0x0010)
+
+             ; FUNCTION can_test_exit (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 56
+                                           ; SOURCE LINE # 58
+001C DB00          RETS      
+             ; FUNCTION can_test_exit (END    RMASK = @0x8000)
+
+             ; FUNCTION do_objx (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 63
+001E F02B          MOV       R2,R11
+0020 F03C          MOV       R3,R12
+;---- Variable 'buf' assigned to Register 'R2/R3' ----
+0022 F069          MOV       R6,R9
+0024 F07A          MOV       R7,R10
+;---- Variable 'id' assigned to Register 'R6/R7' ----
+;---- Variable 'no' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 65
+0026 0D00          JMPR      cc_UC,?C0003
+                                           ; SOURCE LINE # 68
+                                           ; SOURCE LINE # 69
+                                           ; SOURCE LINE # 71
+                                           ; SOURCE LINE # 73
+                                           ; SOURCE LINE # 76
+                                           ; SOURCE LINE # 77
+                                           ; SOURCE LINE # 78
+0028         ?C0003:
+                                           ; SOURCE LINE # 80
+0028 A980          MOVB      RL4,[R0]      ; len
+002A C084          MOVBZ     R4,RL4
+002C 8840          MOV       [-R0],R4
+002E F0C3          MOV       R12,R3
+C166 COMPILER V7.57.0, CAN_TEST                                                            01/03/2020 16:20:08 PAGE 4   
+
+0030 F0B2          MOV       R11,R2
+0032 F096          MOV       R9,R6
+0034 F0A7          MOV       R10,R7
+0036 F048          MOV       R4,R8
+0038 C088          MOVBZ     R8,RL4
+003A DA000000 E    CALLS     SEG (can_do_objx_hook_hican),can_do_objx_hook_hican
+003E 0802          ADD       R0,#02H
+                                           ; SOURCE LINE # 81
+0040 DB00          RETS      
+             ; FUNCTION do_objx (END    RMASK = @0x7FFF)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          66     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           9     --------
+  FAR-DATA SIZE    =           8     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          26     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

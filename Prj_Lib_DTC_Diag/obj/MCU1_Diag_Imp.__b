@@ -1,0 +1,15 @@
+TRANSFER
+"..\objs\mcu1_imp.obj",
+"..\objs\diag_hw.obj",
+"..\objs\dtc_man.obj",
+"..\objs\task_man.obj",
+"..\objs\eeprom.obj",
+"..\objs\dtc_table.obj",
+"..\objs\dtc_man_mcu2.obj",
+"..\objs\mcu2_imp.obj",
+"..\objs\ypara.obj",
+"..\objs\prot_imp.obj",
+"..\objs\suart.obj",
+"..\objs\bleeding.obj",
+"..\objs\Lib_DTC_Diag_Version.obj" 
+TO ".\obj\MCU1_Diag_Imp.LIB"

@@ -1,0 +1,1692 @@
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE XC2K_CAN
+OBJECT MODULE PLACED IN .\objs\xc2k_can.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\
+                    -EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 
+                    -DEBUG CODE PRINT(.\objs\xc2k_can.lst) TABS(2) OBJECT(.\objs\xc2k_can.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "xc2k_can.h"
+   11         #include "int_vec.h"
+   12         
+   13         #ifdef WIN32
+              #include "SMaster_Sim_funcs.h"
+              #endif
+   16         
+   17         ////////////////////////////////////////////////////////////////////////////////
+   18         
+   19         /*****************************************************************
+   20         fcan=Fsys/(1024-CAN0_STEP):
+   21         
+   22         CAN_STEP   fcan
+   23         1022         40 MHz
+   24         1023         80 MHz (selected in this file)
+   25         
+   26         ////////////////////////////////////////////////////////////////////////////////
+   27         tq = (BRP+1) / fcan
+   28         TSync = 1 tq
+   29         TSeg1 = (TSEG1 + 1) tq (min. 3 tq)
+   30         TSeg2 = (TSEG2 + 1) tq (min. 2 tq)
+   31         bit time = TSync + TSeg1 + TSeg2 (min. 8 tq)
+   32         
+   33         fcan=40MHz
+   34         baudrate TSEG1   TSEG2  BRP
+   35         1MHz      6        1    7
+   36         500KHz    6        1    15
+   37         250KHz    6        1    31
+   38         
+   39         *****************************************************************/
+   40         // fcan=40Mhz @ Fsys=80MHz
+   41         #ifndef FSYS_MHZ
+                 #error "FSYS_MHZ not defined"
+              #endif
+   44         
+   45         #define CAN_STEP 1023
+   46         
+   47         // 1MHz: CAN Node 0
+   48         #define CAN0_TSEG1   6
+   49         #define CAN0_TSEG2   1
+   50         #define CAN0_SJW     1
+   51         #define CAN0_BRP   7
+   52         // 500KHz: CAN Node 1
+   53         #define CAN1_TSEG1   6
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 2   
+
+   54         #define CAN1_TSEG2   1
+   55         #define CAN1_SJW     1
+   56         #define CAN1_BRP   15
+   57         
+   58         // 250KHz: CAN Node 1
+   59         // #define CAN1_TSEG1   6
+   60         // #define CAN1_TSEG2   1
+   61         // #define CAN1_SJW     1
+   62         // #define CAN1_BRP  31
+   63         
+   64         u8 g_can_status=0; // bit0: bus off(1); bit1: tx ok, bit2: rx ok
+   65         
+   66         
+   67         ////////////////////////////////////////////////////////////////////////////////
+   68         //
+   69         ////////////////////////////////////////////////////////////////////////////////
+   70         void can_setting(void)
+   71         {
+   72  1        int idx;
+   73  1        volatile u16 tmpu16;
+   74  1        
+   75  1        MCAN_KSCCFG  =  0x0003; 
+   76  1        tmpu16=MCAN_KSCCFG;
+   77  1          _nop_(); _nop_();
+   78  1      
+   79  1          CAN_FDRL     =  0x4000|(CAN_STEP);    // Set fcan
+   80  1        tmpu16=CAN_FDRL;
+   81  1      
+   82  1          while(CAN_PANCTRL & CAN_PANCTR_BUSY); // Wait util Panel Ready
+   83  1        
+   84  1        // Configuration of CAN Node 0
+   85  1          CAN_NCR0     =  0x004F;               // Configuration Mode
+   86  1          CAN_NIPR0    =  0x0021;               // Select Interrupt Node Pointer
+   87  1      
+   88  1          P2_IOCR01    =  0x0090;
+   89  1          P2_IOCR00    =  0x0000;               // P2.0-RXDC0C P2.1-TXDC0 O1
+   90  1          CAN_NPCR0    =  0x0002;
+   91  1        
+   92  1          CAN_NBTR0L   =  (CAN0_TSEG2<<12)|(CAN0_TSEG1<<8)|(CAN0_SJW<<6)|(CAN0_BRP); // Baudrate Setting
+   93  1        
+   94  1          CAN_NECNT0H  = 0x0060;   // Configuration of the Error Counter
+   95  1          CAN_NECNT0L  = 0x0000;       
+   96  1          CAN_NFCR0H   = 0x0000;   // Configuration of the Frame Counter
+   97  1          CAN_NFCR0L   = 0x0000;
+   98  1      
+   99  1        // Configuration of the CAN Message Object List Structure
+  100  1        // Allocate 32-MOs for list 1 (CAN0)
+  101  1        
+  102  1        for(idx=0;idx<32;idx++)
+  103  1        {
+  104  2          SetListCommand((0x0100|idx),0x0002);
+  105  2        }
+  106  1        // Allocate 16-MOs for list 2 (CAN1)
+  107  1        
+  108  1        CAN_0IC        =  0x007C;     
+  109  1        CAN_1IC        =  0x007A;     
+  110  1        CAN_2IC        =  0x0076;     
+  111  1      
+  112  1        CAN_NCR0 &= ~((u16)0x0041); // reset INIT and CCE
+  113  1      }
+  114         
+  115         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 3   
+
+  116         /*******************************************************************************
+  117         cfg:  Bit  7  6  5  4  3  2  1   0
+  118                    |        |     |  |___|___ CAN Node (0,1,2,3)
+  119                    |        |     |
+  120                    |        |     |__________ Ext ID Flag
+  121                    |________|________________ DLC
+  122         
+  123         no: 0-15 supported           
+  124         *******************************************************************************/
+  125         ////////////////////////////////////////////////////////////////////////////////
+  126         void can_tx(u8 no,u32 id,u8 cfg,u8 *buf)
+  127         {
+  128  1        u16 tmpu16;
+  129  1        
+  130  1        tmpu16=(cfg&0x03)+1;
+  131  1        tmpu16<<=8;           // Adjust
+  132  1        
+  133  1        // Set CAN Node
+  134  1        while(CAN_PANCTRL & CAN_PANCTR_BUSY);
+  135  1        SetListCommand((tmpu16|no),0x0002);
+  136  1        
+  137  1        CAN_HWOBJ[no].MOCTRH=  0x0e28;  // NEWDAT,MSGVAL,TXEN0,TXEN1,DIR
+  138  1        CAN_HWOBJ[no].MOCTRL=  0x0000;
+  139  1        
+  140  1        // Set ID
+  141  1        tmpu16=0x4000;           // Priority Class: List order
+  142  1        if(cfg&0x04)             // Extended ID
+  143  1        {
+  144  2          tmpu16|=0x2000;
+  145  2          tmpu16|=(u16)(id>>16);
+  146  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  147  2          CAN_HWOBJ[no].MOARL=(u16)id;
+  148  2        }
+  149  1        else
+  150  1        {
+  151  2          tmpu16|=(id<<2);
+  152  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  153  2          CAN_HWOBJ[no].MOARL=0x0000;
+  154  2        }
+  155  1        
+  156  1        // Set Init Data
+  157  1        fmemcpy((u8 *)CAN_HWOBJ[no].DATA,buf,8);
+  158  1        
+  159  1        // Mask
+  160  1          CAN_HWOBJ[no].MOAMRH = 0x3fff;
+  161  1          CAN_HWOBJ[no].MOAMRL = 0xffff;
+  162  1        
+  163  1        // Pending Bit
+  164  1          CAN_HWOBJ[no].MOIPRH = 0x0000;
+  165  1        if(no<16)
+  166  1          CAN_HWOBJ[no].MOIPRL = (((u16)no)<<8);
+  167  1        else if(no<32)
+  168  1          CAN_HWOBJ[no].MOIPRL = (((u16)no)<<8)|0x11;
+  169  1        
+  170  1        tmpu16=cfg&0xf0;
+  171  1        tmpu16<<=4;           // Set DLC
+  172  1        // tmpu16|=0x0080;       // Single Transmit Trial
+  173  1        
+  174  1          CAN_HWOBJ[no].MOFCRH = tmpu16;
+  175  1          CAN_HWOBJ[no].MOFCRL = 0x0000;
+  176  1      }
+  177         
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 4   
+
+  178         ////////////////////////////////////////////////////////////////////////////////
+  179         //
+  180         ////////////////////////////////////////////////////////////////////////////////
+  181         void can_rx(u8 no,u32 id,u32 mask,u8 cfg)
+  182         {
+  183  1        u16 tmpu16;
+  184  1        
+  185  1        tmpu16=(cfg&0x03)+1;
+  186  1        tmpu16<<=8;           // Adjust
+  187  1        
+  188  1        // Set CAN Node
+  189  1        //while(CAN_PANCTRL & CAN_PANCTR_BUSY);
+  190  1        //SetListCommand((tmpu16|no),0x0002);
+  191  1        
+  192  1        CAN_HWOBJ[no].MOCTRH=  0x00A0;  // NEWDAT,RXEN
+  193  1        CAN_HWOBJ[no].MOCTRL=  0x0000;
+  194  1        
+  195  1      
+  196  1        
+  197  1        // Set ID
+  198  1        tmpu16=0x4000;           // Priority Class: List order
+  199  1        if(cfg&0x04)             // Extended ID
+  200  1        {
+  201  2          tmpu16|=0x2000;
+  202  2          tmpu16|=(u16)(id>>16);
+  203  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  204  2          CAN_HWOBJ[no].MOARL=(u16)id;
+  205  2          
+  206  2        }
+  207  1        else
+  208  1        {
+  209  2          tmpu16|=(id<<2);
+  210  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  211  2          CAN_HWOBJ[no].MOARL=0x0000;
+  212  2          
+  213  2        }
+  214  1        
+  215  1        // Mask
+  216  1        if(cfg&0x04)             // Extended ID
+  217  1        {
+  218  2          CAN_HWOBJ[no].MOAMRH = ((u16)(mask>>16)) & 0x3FFF;  // load MO[no] acceptance mask register high
+  219  2          CAN_HWOBJ[no].MOAMRL = (u16)mask;  // load MO[no] acceptance mask register low  
+  220  2          
+  221  2        }
+  222  1        else
+  223  1        {
+  224  2            CAN_HWOBJ[no].MOAMRH = ((u16)(mask<<2)) & 0x3FFF;
+  225  2            CAN_HWOBJ[no].MOAMRL = 0xFFFF;
+  226  2        }
+  227  1        
+  228  1        // Pending Bit
+  229  1          CAN_HWOBJ[no].MOIPRH = 0x0000;
+  230  1        if(no<16)
+  231  1          CAN_HWOBJ[no].MOIPRL = (((u16)no)<<8);
+  232  1        else if(no<32)
+  233  1          CAN_HWOBJ[no].MOIPRL = (((u16)no)<<8)|0x11;
+  234  1      
+  235  1        if(cfg&0x04)
+  236  1        {
+  237  2          // Function Control
+  238  2          CAN_HWOBJ[no].MOFCRH = 0x0801;
+  239  2          CAN_HWOBJ[no].MOFCRL = 0x0000;
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 5   
+
+  240  2      
+  241  2        }
+  242  1        else
+  243  1        {
+  244  2          // Function Control
+  245  2          CAN_HWOBJ[no].MOFCRH = 0x0001;
+  246  2          CAN_HWOBJ[no].MOFCRL = 0x0000;
+  247  2        
+  248  2        }
+  249  1        
+  250  1      }
+  251         
+  252         ////////////////////////////////////////////////////////////////////////////////
+  253         //
+  254         ////////////////////////////////////////////////////////////////////////////////
+  255         void can_load(u8 no,u32 id,u8 cfg,u8 *buf)
+  256         {
+  257  1        u16 tmpu16;
+  258  1        
+  259  1        CAN_HWOBJ[no].MOCTRL = 0x0020;       // reset MSGVAL
+  260  1        CAN_HWOBJ[no].MOCTRH = 0x0808;       // set NEWDAT
+  261  1        fmemcpy((u8 *)CAN_HWOBJ[no].DATA,buf,8);
+  262  1        CAN_HWOBJ[no].MOCTRH = 0x0020;       // set MSGVAL
+  263  1        CAN_HWOBJ[no].MOCTRL = 0x0040;       // reset RTSEL
+  264  1        
+  265  1        // Set ID
+  266  1        tmpu16=0x4000;           // Priority Class: List order
+  267  1        if(cfg&0x04)             // Extended ID
+  268  1        {
+  269  2          tmpu16|=0x2000;
+  270  2          tmpu16|=(u16)(id>>16);
+  271  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  272  2          CAN_HWOBJ[no].MOARL=(u16)id;
+  273  2        }
+  274  1        else
+  275  1        {
+  276  2          tmpu16|=(id<<2);
+  277  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  278  2          CAN_HWOBJ[no].MOARL=0x0000;
+  279  2        }
+  280  1      
+  281  1        tmpu16=cfg&0xf0;
+  282  1        tmpu16<<=4;           // Set DLC
+  283  1        // tmpu16|=0x0080;       // Single Transmit Trial
+  284  1        
+  285  1          CAN_HWOBJ[no].MOFCRH = tmpu16;
+  286  1          CAN_HWOBJ[no].MOFCRL = 0x0000;
+  287  1      }
+  288         
+  289         ////////////////////////////////////////////////////////////////////////////////
+  290         //
+  291         ////////////////////////////////////////////////////////////////////////////////
+  292         void can_stx(u8 no)
+  293         {
+  294  1      #ifndef WIN32
+  295  1        // CAN Bus off
+  296  1        if(CAN_NSR0 & 0x80)
+  297  1          return;
+  298  1        // Node Initialization
+  299  1        if(CAN_NCR0 & 0x01)
+  300  1          return;
+  301  1      
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 6   
+
+  302  1        CAN_HWOBJ[no].MOCTRH = 0x0720;  // set TXRQ,TXEN0,TXEN1,MSGVAL
+  303  1      #else
+              
+                u16 id;
+                u8 dlc;
+              
+                sbus_putc('[');
+                sbus_putc('=');
+                sbus_putc(']');
+                dlc=(CAN_HWOBJ[no].MOFCRH>>8)&0x0f;
+                sbus_putc(dlc);
+                id=(CAN_HWOBJ[no].MOARH>>2)&0x7ff;
+              
+                sbus_putc((u8)id);
+                sbus_putc((u8)(id>>8));
+                sbus_putc(0);
+                sbus_putc(0);
+              
+                for(dlc=0;dlc<8;dlc++)
+                {
+                  sbus_putc(CAN_HWOBJ[no].DATA[dlc]);
+                }
+              #endif
+  325  1      
+  326  1      }
+  327         
+  328         ////////////////////////////////////////////////////////////////////////////////
+  329         //
+  330         ////////////////////////////////////////////////////////////////////////////////
+  331         u8 can_stx_ex(u8 no)
+  332         {
+  333  1        if(can_busy(no))
+  334  1        {
+  335  2          can_abort(no);
+  336  2          return 1;
+  337  2        }
+  338  1        can_stx(no);
+  339  1        return 0;
+  340  1      }
+  341         
+  342         ////////////////////////////////////////////////////////////////////////////////
+  343         //
+  344         ////////////////////////////////////////////////////////////////////////////////
+  345         void can_abort(u8 no)
+  346         {
+  347  1        CAN_HWOBJ[no].MOCTRL = 0x0720;  // reset TXRQ,TXEN0,TXEN1,MSGVAL
+  348  1      }
+  349         
+  350         ////////////////////////////////////////////////////////////////////////////////
+  351         //
+  352         ////////////////////////////////////////////////////////////////////////////////
+  353         u8 can_busy(u8 no)
+  354         {
+  355  1        return (CAN_HWOBJ[no].MOCTRL & 0x0100)?1:0; // MOCTRL => MOSTATL
+  356  1      }
+  357         
+  358         ////////////////////////////////////////////////////////////////////////////////
+  359         //
+  360         ////////////////////////////////////////////////////////////////////////////////
+  361         void can_sload(u8 no,u8 *buf)
+  362         {
+  363  1        CAN_HWOBJ[no].MOCTRH = 0x0008;       // set NEWDAT
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 7   
+
+  364  1        fmemcpy((u8 *)CAN_HWOBJ[no].DATA,buf,8);
+  365  1        CAN_HWOBJ[no].MOCTRH = 0x0020;       // set MSGVAL
+  366  1        CAN_HWOBJ[no].MOCTRL = 0x0040;       // reset RTSEL
+  367  1      }
+  368         
+  369         ////////////////////////////////////////////////////////////////////////////////
+  370         //
+  371         ////////////////////////////////////////////////////////////////////////////////
+  372         void isr_can_txrx0(void) interrupt CAN_SRN0INT
+  373         {
+  374  1        u16 nodeinfo;
+  375  1        u16 objinfo;
+  376  1        u8 objno;
+  377  1        u32 id;
+  378  1      
+  379  1        nodeinfo = CAN_NSR0;
+  380  1        
+  381  1        if (nodeinfo & 0x0008)               // TXOK => reset 
+  382  1        {
+  383  2          CAN_NSR0 = 0x0337;
+  384  2          g_can_status|=0x02;
+  385  2        }
+  386  1        
+  387  1        if (nodeinfo & 0x0010)               // if RXOK => deal => reset
+  388  1        {
+  389  2          CAN_NSR0 = 0x032F;
+  390  2          g_can_status|=0x04;
+  391  2        }
+  392  1        
+  393  1        CAN_MSIMASKH = 0xf000;          // set message index mask register
+  394  1        CAN_MSIMASKL = 0x000f;
+  395  1        //CAN_MSIMASKH = 0x8000;
+  396  1        //CAN_MSIMASKL = 0x0000;
+  397  1        
+  398  1        while (CAN_MSID0 != 0x0020)
+  399  1        {
+  400  2          objno=(u8)CAN_MSID0;
+  401  2          objinfo = CAN_HWOBJ[objno].MOCTRL;
+  402  2          
+  403  2          if(objinfo & MOSTAT_RXPND)          // Receive interrupt
+  404  2          {       
+  405  3            if(objinfo & MOSTAT_NEWDAT)       // if NEWDAT is set
+  406  3            {
+  407  4              id=CAN_HWOBJ[objno].MOARH & 0x1FFF;
+  408  4              id<<=16;
+  409  4              id|=(CAN_HWOBJ[objno].MOARL);
+  410  4              if((CAN_HWOBJ[objno].MOARH & 0x2000)==0)  //Notation! ((CAN_HWOBJ[objno].MOARH & 0x20000000)==0) befor
+             -e.
+  411  4                id>>=18;
+  412  4              do_objx(objno, id,
+  413  4                (u8 *)CAN_HWOBJ[objno].DATA,
+  414  4                (u8)((CAN_HWOBJ[objno].MOFCRH>>8)&0x0f));
+  415  4            }
+  416  3            CAN_HWOBJ[objno].MOCTRL = MOSTAT_RST_MNR;            // reset MSGLST + NEWDAT + RXPND
+  417  3          } 
+  418  2          if(objno<16)
+  419  2            CAN_MSPND0L = ~(((u16)1)<<objno);
+  420  2          else if(objno<32)
+  421  2            CAN_MSPND0H = ~(((u16)1)<<(objno-16));
+  422  2        }
+  423  1      }
+  424         
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 8   
+
+  425         ////////////////////////////////////////////////////////////////////////////////
+  426         //
+  427         ////////////////////////////////////////////////////////////////////////////////
+  428         void isr_can_status(void) interrupt CAN_SRN1INT
+  429         {
+  430  1        u16 nodeinfo;
+  431  1        
+  432  1        nodeinfo = CAN_NSR0;
+  433  1        
+  434  1        if (!(nodeinfo & 0x0020))               // if ALERT
+  435  1          return;
+  436  1          
+  437  1        
+  438  1        if (nodeinfo & 0x0080)           // if BOFF
+  439  1        {
+  440  2          // CAN_NCR0 &= ~((u16)0x0041);  // reset INIT and CCE
+  441  2          g_can_status|=1;
+  442  2        }
+  443  1        
+  444  1        // if (nodeinfo & 0x0040);          // if EWRN
+  445  1        
+  446  1        if (nodeinfo & 0x0100)           // if LLE
+  447  1        {
+  448  2          // A list length error has been detected during message
+  449  2          // acceptance filtering. The number of elements in the list
+  450  2          // that belongs to this CAN node differs from the list SIZE 
+  451  2          // given in the list termination pointer
+  452  2          
+  453  2          CAN_NSR0      = 0x023F;        // reset LLE
+  454  2        }
+  455  1        
+  456  1        if (nodeinfo & 0x0200)           // if LOE
+  457  1        {
+  458  2          // A list object error has been detected during message
+  459  2          // acceptance filtering. A message object with wrong LIST 
+  460  2          // index entry in the Message Object Control Register has 
+  461  2          // been detected
+  462  2          
+  463  2          CAN_NSR0      = 0x013F;        // reset LOE
+  464  2        }
+  465  1        
+  466  1        if (CAN_NCR0 & 0x0001)           // if INIT
+  467  1        {
+  468  2        }
+  469  1        
+  470  1        CAN_NSR0      = 0x031F;          // reset ALERT
+  471  1        
+  472  1      }
+  473         
+  474         ////////////////////////////////////////////////////////////////////////////////
+  475         //
+  476         ////////////////////////////////////////////////////////////////////////////////
+  477         void isr_can_error(void) interrupt CAN_SRN2INT
+  478         {
+  479  1        
+  480  1        u16 nodeinfo;
+  481  1        
+  482  1        nodeinfo = CAN_NSR0;
+  483  1        
+  484  1        if (!(nodeinfo & 0x0007))               // if LEC
+  485  1          return;
+  486  1          
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 9   
+
+  487  1        switch (nodeinfo & 0x0007)       // LEC0 (Last Error Code0)
+  488  1        {
+  489  2        case 1: // Stuff Error
+  490  2          // More than 5 equal bits in a sequence have occurred
+  491  2          // in a part of a received message where this is not
+  492  2          // allowed.
+  493  2          
+  494  2          break;
+  495  2          
+  496  2        case 2: // Form Error
+  497  2          // A fixed format part of a received frame has the
+  498  2          // wrong format.
+  499  2          
+  500  2          break;
+  501  2          
+  502  2        case 3: // Ack Error
+  503  2          // The message this CAN controller transmitted was
+  504  2          // not acknowledged by another node.
+  505  2          
+  506  2          break;
+  507  2          
+  508  2        case 4: // Bit1 Error
+  509  2          // During the transmission of a message (with the
+  510  2          // exeption of the arbitration field), the device
+  511  2          // wanted to send a recessive level ("1"), but the
+  512  2          // monitored bus value was dominant.
+  513  2          
+  514  2          break;
+  515  2          
+  516  2        case 5: // Bit0 Error
+  517  2          // During the transmission of a message (or acknow-
+  518  2          // ledge bit, active error flag, or overload flag),
+  519  2          // the device wanted to send a dominant level ("0"),
+  520  2          // but the monitored bus value was recessive.
+  521  2          
+  522  2          // During busoff recovery this status is set each time 
+  523  2          // a sequence of 11 recessive bits has been monitored.
+  524  2          // The CPU may use this code as indication that the 
+  525  2          // bus is not continuously disturbed).
+  526  2          
+  527  2          if (nodeinfo & 0x0080)  // if Busoff status
+  528  2          {
+  529  3            
+  530  3          }
+  531  2          else
+  532  2          {
+  533  3          }
+  534  2          break;
+  535  2          
+  536  2        case 6: // CRC Error
+  537  2          // The CRC check sum was incorrect in the message
+  538  2          // received.
+  539  2          
+  540  2          break;
+  541  2          
+  542  2        default:
+  543  2          break;
+  544  2        }
+  545  1        CAN_NSR0      = 0x0338;          // reset LEC
+  546  1      }
+  547         
+  548         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 10  
+
+  549         //
+  550         ////////////////////////////////////////////////////////////////////////////////
+  551         void set_can_on(void)
+  552         {
+  553  1        CAN_NCR0 &= ~((u16)0x0041);  // reset INIT and CCE
+  554  1        g_can_status &= (u8)0xFE;    // clear Bus OFF status
+  555  1      }
+  556         
+  557         ////////////////////////////////////////////////////////////////////////////////
+  558         //
+  559         ////////////////////////////////////////////////////////////////////////////////
+  560         u8 get_can_bus_off(void)
+  561         {
+  562  1        // CAN Bus off
+  563  1        // if(CAN_NSR0 & 0x80)
+  564  1        if(g_can_status & 1)
+  565  1          return 1;
+  566  1        else
+  567  1          return 0;
+  568  1      }
+  569         
+  570         ////////////////////////////////////////////////////////////////////////////////
+  571         //
+  572         ////////////////////////////////////////////////////////////////////////////////
+  573         u8 can_txx(u32 id,u8 *buf)
+  574         {
+  575  1        UNUSED_PARA(id);
+  576  1        UNUSED_PARA(buf);
+  577  1      
+  578  1        return 1;
+  579  1      }
+  580         
+  581         ////////////////////////////////////////////////////////////////////////////////
+  582         //
+  583         ////////////////////////////////////////////////////////////////////////////////
+  584         u8 can_settingx(u32 baudrate, u8 option)
+  585         {
+  586  1        UNUSED_PARA(baudrate);
+  587  1        UNUSED_PARA(option);
+  588  1      
+  589  1        return 1;
+  590  1      }
+  591         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 11  
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION can_setting (BEGIN  RMASK = @0x4030)
+                                           ; SOURCE LINE # 70
+0000 2802          SUB       R0,#02H
+                                           ; SOURCE LINE # 71
+                                           ; SOURCE LINE # 75
+0002 E60F0300      MOV       MCAN_KSCCFG,#03H
+                                           ; SOURCE LINE # 76
+0006 F2F41EFE      MOV       R4,MCAN_KSCCFG
+000A B840          MOV       [R0],R4       ; tmpu16
+                                           ; SOURCE LINE # 77
+000C CC00          NOP       
+000E CC00          NOP       
+                                           ; SOURCE LINE # 79
+0010 E6F4FF43      MOV       R4,#043FFH
+0014 D7102000      EXTS      #020H,#02H
+0018 F6F40C00      MOV       0CH,R4
+                                           ; SOURCE LINE # 80
+001C F2F40C00      MOV       R4,0CH
+0020 B840          MOV       [R0],R4       ; tmpu16
+                                           ; SOURCE LINE # 82
+0022         ?C0001:
+0022 D7002000      EXTS      #020H,#01H
+0026 F2F4C401      MOV       R4,01C4H
+002A 8AF4FA80      JB        R4.8,?C0001
+002E         ?C0002:
+                                           ; SOURCE LINE # 85
+002E E6F44F00      MOV       R4,#04FH
+0032 D7002000      EXTS      #020H,#01H
+0036 F6F40002      MOV       0200H,R4
+                                           ; SOURCE LINE # 86
+003A E6F42100      MOV       R4,#021H
+003E D7002000      EXTS      #020H,#01H
+0042 F6F40802      MOV       0208H,R4
+                                           ; SOURCE LINE # 88
+0046 E6F49000      MOV       R4,#090H
+004A F6F442E8      MOV       0E842H,R4
+                                           ; SOURCE LINE # 89
+004E E004          MOV       R4,#00H
+0050 F6F440E8      MOV       0E840H,R4
+                                           ; SOURCE LINE # 90
+0054 E024          MOV       R4,#02H
+0056 D7002000      EXTS      #020H,#01H
+005A F6F40C02      MOV       020CH,R4
+                                           ; SOURCE LINE # 92
+005E E6F44716      MOV       R4,#01647H
+0062 D7002000      EXTS      #020H,#01H
+0066 F6F41002      MOV       0210H,R4
+                                           ; SOURCE LINE # 94
+006A E6F46000      MOV       R4,#060H
+006E D7002000      EXTS      #020H,#01H
+0072 F6F41602      MOV       0216H,R4
+                                           ; SOURCE LINE # 95
+0076 E004          MOV       R4,#00H
+0078 D7202000      EXTS      #020H,#03H
+007C F6F41402      MOV       0214H,R4
+                                           ; SOURCE LINE # 96
+0080 F6F41A02      MOV       021AH,R4
+                                           ; SOURCE LINE # 97
+0084 F6F41802      MOV       0218H,R4
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 12  
+
+                                           ; SOURCE LINE # 102
+0088 E005          MOV       R5,#00H
+;---- Variable 'idx' assigned to Register 'R5' ----
+008A         ?C0008:
+                                           ; SOURCE LINE # 104
+008A F045          MOV       R4,R5
+008C 8FF4          BSET      R4.8
+008E D7002000      EXTS      #020H,#01H
+0092 F6F4C601      MOV       01C6H,R4
+0096 E024          MOV       R4,#02H
+0098 D7002000      EXTS      #020H,#01H
+009C F6F4C401      MOV       01C4H,R4
+00A0         ?C0010:
+00A0 D7002000      EXTS      #020H,#01H
+00A4 F2F4C401      MOV       R4,01C4H
+00A8 8AF4FA80      JB        R4.8,?C0010
+00AC         ?C0011:
+                                           ; SOURCE LINE # 105
+00AC 86F51F00      CMPI1     R5,#01FH
+00B0 CDEC          JMPR      cc_SLT,?C0008
+00B2         ?C0006:
+                                           ; SOURCE LINE # 108
+00B2 D1A0          EXTR      #03H
+00B4 E6A07C00      MOV       CAN_0IC,#07CH
+                                           ; SOURCE LINE # 109
+00B8 E6A17A00      MOV       CAN_1IC,#07AH
+                                           ; SOURCE LINE # 110
+00BC E6A27600      MOV       CAN_2IC,#076H
+                                           ; SOURCE LINE # 112
+00C0 D7002000      EXTS      #020H,#01H
+00C4 F2F40002      MOV       R4,0200H
+00C8 66F4BEFF      AND       R4,#0FFBEH
+00CC D7002000      EXTS      #020H,#01H
+00D0 F6F40002      MOV       0200H,R4
+                                           ; SOURCE LINE # 113
+00D4 0802          ADD       R0,#02H
+00D6 DB00          RETS      
+             ; FUNCTION can_setting (END    RMASK = @0x4030)
+
+             ; FUNCTION can_tx (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 126
+00D8 ECFD          PUSH      R13
+00DA ECFE          PUSH      R14
+00DC ECFF          PUSH      R15
+00DE 88C0          MOV       [-R0],R12
+00E0 F0EB          MOV       R14,R11
+;---- Variable 'cfg' assigned to Register 'R14' ----
+;---- Variable 'id' assigned to Register 'R9/R10' ----
+00E2 F0D8          MOV       R13,R8
+;---- Variable 'no' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 127
+                                           ; SOURCE LINE # 130
+00E4 F04B          MOV       R4,R11
+00E6 6983          ANDB      RL4,#03H
+00E8 C08F          MOVBZ     R15,RL4
+00EA 08F1          ADD       R15,#01H
+;---- Variable 'tmpu16' assigned to Register 'R15' ----
+                                           ; SOURCE LINE # 131
+00EC 5C8F          SHL       R15,#08H
+                                           ; SOURCE LINE # 134
+00EE         ?C0014:
+00EE D7002000      EXTS      #020H,#01H
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 13  
+
+00F2 F2F4C401      MOV       R4,01C4H
+00F6 8AF4FA80      JB        R4.8,?C0014
+00FA         ?C0015:
+                                           ; SOURCE LINE # 135
+00FA F04D          MOV       R4,R13
+00FC C084          MOVBZ     R4,RL4
+00FE 704F          OR        R4,R15
+0100 D7002000      EXTS      #020H,#01H
+0104 F6F4C601      MOV       01C6H,R4
+0108 E024          MOV       R4,#02H
+010A D7002000      EXTS      #020H,#01H
+010E F6F4C401      MOV       01C4H,R4
+0112         ?C0018:
+0112 D7002000      EXTS      #020H,#01H
+0116 F2F4C401      MOV       R4,01C4H
+011A 8AF4FA80      JB        R4.8,?C0018
+011E         ?C0019:
+                                           ; SOURCE LINE # 137
+011E E6F5280E      MOV       R5,#0E28H
+0122 F04D          MOV       R4,R13
+0124 C082          MOVBZ     R2,RL4
+0126 5C52          SHL       R2,#05H
+0128 D7408000      EXTP      #080H,#01H
+012C C4521E10      MOV       [R2+#POF(0101EH)],R5
+                                           ; SOURCE LINE # 138
+0130 E005          MOV       R5,#00H
+0132 D7408000      EXTP      #080H,#01H
+0136 C4521C10      MOV       [R2+#POF(0101CH)],R5
+                                           ; SOURCE LINE # 141
+013A E6FF0040      MOV       R15,#04000H
+                                           ; SOURCE LINE # 142
+013E 9AFE0D20      JNB       R14.2,?C0022
+                                           ; SOURCE LINE # 144
+0142 E6FF0060      MOV       R15,#06000H
+                                           ; SOURCE LINE # 145
+0146 F06A          MOV       R6,R10
+0148 E6F40060      MOV       R4,#06000H
+014C 70FA          OR        R15,R10
+                                           ; SOURCE LINE # 146
+014E D7508000      EXTP      #080H,#02H
+0152 C4F21A10      MOV       [R2+#POF(0101AH)],R15
+                                           ; SOURCE LINE # 147
+0156 C4921810      MOV       [R2+#POF(01018H)],R9
+                                           ; SOURCE LINE # 148
+015A 0D0F          JMPR      cc_UC,?C0023
+015C         ?C0022:
+                                           ; SOURCE LINE # 151
+015C F059          MOV       R5,R9
+015E 5C25          SHL       R5,#02H
+0160 E6F40040      MOV       R4,#04000H
+0164 F0F4          MOV       R15,R4
+0166 70F5          OR        R15,R5
+                                           ; SOURCE LINE # 152
+0168 D7408000      EXTP      #080H,#01H
+016C C4F21A10      MOV       [R2+#POF(0101AH)],R15
+                                           ; SOURCE LINE # 153
+0170 E005          MOV       R5,#00H
+0172 D7408000      EXTP      #080H,#01H
+0176 C4521810      MOV       [R2+#POF(01018H)],R5
+                                           ; SOURCE LINE # 154
+017A         ?C0023:
+                                           ; SOURCE LINE # 157
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 14  
+
+017A E08C          MOV       R12,#08H
+017C D4B00200      MOV       R11,[R0+#02H] ; buf+2
+0180 A8A0          MOV       R10,[R0]      ; buf
+0182 E6F81010      MOV       R8,#01010H
+0186 E6F98000      MOV       R9,#080H
+018A 0082          ADD       R8,R2
+018C DA000000 E    CALLS     SEG (fmemcpy),fmemcpy
+                                           ; SOURCE LINE # 160
+0190 E6F5FF3F      MOV       R5,#03FFFH
+0194 F04D          MOV       R4,R13
+0196 C087          MOVBZ     R7,RL4
+0198 5C57          SHL       R7,#05H
+019A D7408000      EXTP      #080H,#01H
+019E C4570E10      MOV       [R7+#POF(0100EH)],R5
+                                           ; SOURCE LINE # 161
+01A2 E6F5FFFF      MOV       R5,#0FFFFH
+01A6 D7408000      EXTP      #080H,#01H
+01AA C4570C10      MOV       [R7+#POF(0100CH)],R5
+                                           ; SOURCE LINE # 164
+01AE E005          MOV       R5,#00H
+01B0 D7408000      EXTP      #080H,#01H
+01B4 C4570A10      MOV       [R7+#POF(0100AH)],R5
+                                           ; SOURCE LINE # 165
+01B8 47F81000      CMPB      RL4,#010H
+01BC 9D07          JMPR      cc_UGE,?C0024
+                                           ; SOURCE LINE # 166
+01BE C085          MOVBZ     R5,RL4
+01C0 5C85          SHL       R5,#08H
+01C2 D7408000      EXTP      #080H,#01H
+01C6 C4570810      MOV       [R7+#POF(01008H)],R5
+01CA 0D0C          JMPR      cc_UC,?C0025
+01CC         ?C0024:
+                                           ; SOURCE LINE # 167
+01CC F04D          MOV       R4,R13
+01CE 47F82000      CMPB      RL4,#020H
+01D2 9D08          JMPR      cc_UGE,?C0025
+                                           ; SOURCE LINE # 168
+01D4 C085          MOVBZ     R5,RL4
+01D6 5C85          SHL       R5,#08H
+01D8 76F51100      OR        R5,#011H
+01DC D7408000      EXTP      #080H,#01H
+01E0 C4570810      MOV       [R7+#POF(01008H)],R5
+01E4         ?C0025:
+                                           ; SOURCE LINE # 170
+01E4 F04E          MOV       R4,R14
+01E6 67F8F000      ANDB      RL4,#0F0H
+01EA C08F          MOVBZ     R15,RL4
+                                           ; SOURCE LINE # 171
+01EC 5C4F          SHL       R15,#04H
+                                           ; SOURCE LINE # 174
+01EE D7408000      EXTP      #080H,#01H
+01F2 C4F70210      MOV       [R7+#POF(01002H)],R15
+                                           ; SOURCE LINE # 175
+01F6 E005          MOV       R5,#00H
+01F8 D7408000      EXTP      #080H,#01H
+01FC C4570010      MOV       [R7+#POF(01000H)],R5
+                                           ; SOURCE LINE # 176
+0200 0802          ADD       R0,#02H
+0202 FCFF          POP       R15
+0204 FCFE          POP       R14
+0206 FCFD          POP       R13
+0208 DB00          RETS      
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 15  
+
+             ; FUNCTION can_tx (END    RMASK = @0x7FFF)
+
+             ; FUNCTION can_rx (BEGIN  RMASK = @0x40FE)
+                                           ; SOURCE LINE # 181
+;---- Variable 'mask' assigned to Register 'R11/R12' ----
+;---- Variable 'id' assigned to Register 'R9/R10' ----
+;---- Variable 'no' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 182
+                                           ; SOURCE LINE # 185
+020A A940          MOVB      RL2,[R0]      ; cfg
+020C F184          MOVB      RL4,RL2
+020E 6983          ANDB      RL4,#03H
+0210 C081          MOVBZ     R1,RL4
+0212 0811          ADD       R1,#01H
+;---- Variable 'tmpu16' assigned to Register 'R1' ----
+                                           ; SOURCE LINE # 186
+0214 5C81          SHL       R1,#08H
+                                           ; SOURCE LINE # 192
+0216 E6F5A000      MOV       R5,#0A0H
+021A F048          MOV       R4,R8
+021C C083          MOVBZ     R3,RL4
+021E F073          MOV       R7,R3
+0220 5C57          SHL       R7,#05H
+0222 D7408000      EXTP      #080H,#01H
+0226 C4571E10      MOV       [R7+#POF(0101EH)],R5
+                                           ; SOURCE LINE # 193
+022A E005          MOV       R5,#00H
+022C D7408000      EXTP      #080H,#01H
+0230 C4571C10      MOV       [R7+#POF(0101CH)],R5
+                                           ; SOURCE LINE # 198
+0234 E6F10040      MOV       R1,#04000H
+                                           ; SOURCE LINE # 199
+0238 9AF21220      JNB       R2.2,?C0027
+                                           ; SOURCE LINE # 201
+                                           ; SOURCE LINE # 202
+023C F06A          MOV       R6,R10
+023E E6F40060      MOV       R4,#06000H
+0242 F014          MOV       R1,R4
+0244 701A          OR        R1,R10
+                                           ; SOURCE LINE # 203
+0246 5C53          SHL       R3,#05H
+0248 D7408000      EXTP      #080H,#01H
+024C C4131A10      MOV       [R3+#POF(0101AH)],R1
+                                           ; SOURCE LINE # 204
+0250 F048          MOV       R4,R8
+0252 C084          MOVBZ     R4,RL4
+0254 5C54          SHL       R4,#05H
+0256 D7408000      EXTP      #080H,#01H
+025A C4941810      MOV       [R4+#POF(01018H)],R9
+                                           ; SOURCE LINE # 206
+025E 0D15          JMPR      cc_UC,?C0028
+0260         ?C0027:
+                                           ; SOURCE LINE # 209
+0260 F059          MOV       R5,R9
+0262 5C25          SHL       R5,#02H
+0264 E6F40040      MOV       R4,#04000H
+0268 F014          MOV       R1,R4
+026A 7015          OR        R1,R5
+                                           ; SOURCE LINE # 210
+026C F048          MOV       R4,R8
+026E C084          MOVBZ     R4,RL4
+0270 5C54          SHL       R4,#05H
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 16  
+
+0272 D7408000      EXTP      #080H,#01H
+0276 C4141A10      MOV       [R4+#POF(0101AH)],R1
+                                           ; SOURCE LINE # 211
+027A E005          MOV       R5,#00H
+027C F048          MOV       R4,R8
+027E C084          MOVBZ     R4,RL4
+0280 5C54          SHL       R4,#05H
+0282 D7408000      EXTP      #080H,#01H
+0286 C4541810      MOV       [R4+#POF(01018H)],R5
+                                           ; SOURCE LINE # 213
+028A         ?C0028:
+                                           ; SOURCE LINE # 216
+028A A980          MOVB      RL4,[R0]      ; cfg
+028C 9AF41320      JNB       R4.2,?C0029
+                                           ; SOURCE LINE # 218
+0290 E005          MOV       R5,#00H
+0292 F05C          MOV       R5,R12
+0294 66F5FF3F      AND       R5,#03FFFH
+0298 F048          MOV       R4,R8
+029A C084          MOVBZ     R4,RL4
+029C 5C54          SHL       R4,#05H
+029E D7408000      EXTP      #080H,#01H
+02A2 C4540E10      MOV       [R4+#POF(0100EH)],R5
+                                           ; SOURCE LINE # 219
+02A6 F048          MOV       R4,R8
+02A8 C084          MOVBZ     R4,RL4
+02AA 5C54          SHL       R4,#05H
+02AC D7408000      EXTP      #080H,#01H
+02B0 C4B40C10      MOV       [R4+#POF(0100CH)],R11
+                                           ; SOURCE LINE # 221
+02B4 0D19          JMPR      cc_UC,?C0030
+02B6         ?C0029:
+                                           ; SOURCE LINE # 224
+02B6 F04B          MOV       R4,R11
+02B8 F05C          MOV       R5,R12
+02BA 0044          ADD       R4,R4
+02BC 1055          ADDC      R5,R5
+02BE 0044          ADD       R4,R4
+02C0 1055          ADDC      R5,R5
+02C2 F054          MOV       R5,R4
+02C4 66F5FF3F      AND       R5,#03FFFH
+02C8 F048          MOV       R4,R8
+02CA C084          MOVBZ     R4,RL4
+02CC 5C54          SHL       R4,#05H
+02CE D7408000      EXTP      #080H,#01H
+02D2 C4540E10      MOV       [R4+#POF(0100EH)],R5
+                                           ; SOURCE LINE # 225
+02D6 E6F5FFFF      MOV       R5,#0FFFFH
+02DA F048          MOV       R4,R8
+02DC C084          MOVBZ     R4,RL4
+02DE 5C54          SHL       R4,#05H
+02E0 D7408000      EXTP      #080H,#01H
+02E4 C4540C10      MOV       [R4+#POF(0100CH)],R5
+                                           ; SOURCE LINE # 226
+02E8         ?C0030:
+                                           ; SOURCE LINE # 229
+02E8 E005          MOV       R5,#00H
+02EA F048          MOV       R4,R8
+02EC C084          MOVBZ     R4,RL4
+02EE 5C54          SHL       R4,#05H
+02F0 D7408000      EXTP      #080H,#01H
+02F4 C4540A10      MOV       [R4+#POF(0100AH)],R5
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 17  
+
+                                           ; SOURCE LINE # 230
+02F8 F048          MOV       R4,R8
+02FA 47F81000      CMPB      RL4,#010H
+02FE 9D09          JMPR      cc_UGE,?C0031
+                                           ; SOURCE LINE # 231
+0300 C085          MOVBZ     R5,RL4
+0302 5C85          SHL       R5,#08H
+0304 C084          MOVBZ     R4,RL4
+0306 5C54          SHL       R4,#05H
+0308 D7408000      EXTP      #080H,#01H
+030C C4540810      MOV       [R4+#POF(01008H)],R5
+0310 0D0E          JMPR      cc_UC,?C0032
+0312         ?C0031:
+                                           ; SOURCE LINE # 232
+0312 F048          MOV       R4,R8
+0314 47F82000      CMPB      RL4,#020H
+0318 9D0A          JMPR      cc_UGE,?C0032
+                                           ; SOURCE LINE # 233
+031A C085          MOVBZ     R5,RL4
+031C 5C85          SHL       R5,#08H
+031E 76F51100      OR        R5,#011H
+0322 C084          MOVBZ     R4,RL4
+0324 5C54          SHL       R4,#05H
+0326 D7408000      EXTP      #080H,#01H
+032A C4540810      MOV       [R4+#POF(01008H)],R5
+032E         ?C0032:
+                                           ; SOURCE LINE # 235
+032E A980          MOVB      RL4,[R0]      ; cfg
+0330 9AF41220      JNB       R4.2,?C0034
+                                           ; SOURCE LINE # 238
+0334 E6F50108      MOV       R5,#0801H
+0338 F048          MOV       R4,R8
+033A C084          MOVBZ     R4,RL4
+033C 5C54          SHL       R4,#05H
+033E D7408000      EXTP      #080H,#01H
+0342 C4540210      MOV       [R4+#POF(01002H)],R5
+                                           ; SOURCE LINE # 239
+0346 E005          MOV       R5,#00H
+0348 F048          MOV       R4,R8
+034A C084          MOVBZ     R4,RL4
+034C 5C54          SHL       R4,#05H
+034E D7408000      EXTP      #080H,#01H
+0352 C4540010      MOV       [R4+#POF(01000H)],R5
+                                           ; SOURCE LINE # 241
+0356 DB00          RETS      
+0358         ?C0034:
+                                           ; SOURCE LINE # 245
+0358 E015          MOV       R5,#01H
+035A F048          MOV       R4,R8
+035C C084          MOVBZ     R4,RL4
+035E 5C54          SHL       R4,#05H
+0360 D7408000      EXTP      #080H,#01H
+0364 C4540210      MOV       [R4+#POF(01002H)],R5
+                                           ; SOURCE LINE # 246
+0368 E005          MOV       R5,#00H
+036A F048          MOV       R4,R8
+036C C084          MOVBZ     R4,RL4
+036E 5C54          SHL       R4,#05H
+0370 D7408000      EXTP      #080H,#01H
+0374 C4540010      MOV       [R4+#POF(01000H)],R5
+                                           ; SOURCE LINE # 248
+0378         ?C0035:
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 18  
+
+                                           ; SOURCE LINE # 250
+0378 DB00          RETS      
+             ; FUNCTION can_rx (END    RMASK = @0x40FE)
+
+             ; FUNCTION can_load (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 255
+037A ECFD          PUSH      R13
+037C ECFE          PUSH      R14
+037E ECFF          PUSH      R15
+0380 88C0          MOV       [-R0],R12
+0382 88B0          MOV       [-R0],R11
+0384 F0E9          MOV       R14,R9
+0386 F0FA          MOV       R15,R10
+;---- Variable 'id' assigned to Register 'R14/R15' ----
+0388 F0D8          MOV       R13,R8
+;---- Variable 'no' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 256
+                                           ; SOURCE LINE # 259
+038A E6F52000      MOV       R5,#020H
+038E F048          MOV       R4,R8
+0390 C086          MOVBZ     R6,RL4
+0392 5C56          SHL       R6,#05H
+0394 D7408000      EXTP      #080H,#01H
+0398 C4561C10      MOV       [R6+#POF(0101CH)],R5
+                                           ; SOURCE LINE # 260
+039C E6F50808      MOV       R5,#0808H
+03A0 D7408000      EXTP      #080H,#01H
+03A4 C4561E10      MOV       [R6+#POF(0101EH)],R5
+                                           ; SOURCE LINE # 261
+03A8 E08C          MOV       R12,#08H
+03AA D4B00400      MOV       R11,[R0+#04H] ; buf+2
+03AE D4A00200      MOV       R10,[R0+#02H] ; buf
+03B2 E6F81010      MOV       R8,#01010H
+03B6 E6F98000      MOV       R9,#080H
+03BA 0086          ADD       R8,R6
+03BC DA000000 E    CALLS     SEG (fmemcpy),fmemcpy
+                                           ; SOURCE LINE # 262
+03C0 E6F52000      MOV       R5,#020H
+03C4 F04D          MOV       R4,R13
+03C6 C08B          MOVBZ     R11,RL4
+03C8 5C5B          SHL       R11,#05H
+03CA D7408000      EXTP      #080H,#01H
+03CE C45B1E10      MOV       [R11+#POF(0101EH)],R5
+                                           ; SOURCE LINE # 263
+03D2 E6F54000      MOV       R5,#040H
+03D6 D7408000      EXTP      #080H,#01H
+03DA C45B1C10      MOV       [R11+#POF(0101CH)],R5
+                                           ; SOURCE LINE # 266
+03DE E6F80040      MOV       R8,#04000H
+;---- Variable 'tmpu16' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 267
+03E2 A920          MOVB      RL1,[R0]      ; cfg
+03E4 9AF10D20      JNB       R1.2,?C0036
+                                           ; SOURCE LINE # 269
+03E8 E6F80060      MOV       R8,#06000H
+                                           ; SOURCE LINE # 270
+03EC F06F          MOV       R6,R15
+03EE E6F40060      MOV       R4,#06000H
+03F2 708F          OR        R8,R15
+                                           ; SOURCE LINE # 271
+03F4 D7508000      EXTP      #080H,#02H
+03F8 C48B1A10      MOV       [R11+#POF(0101AH)],R8
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 19  
+
+                                           ; SOURCE LINE # 272
+03FC C4EB1810      MOV       [R11+#POF(01018H)],R14
+                                           ; SOURCE LINE # 273
+0400 0D0F          JMPR      cc_UC,?C0037
+0402         ?C0036:
+                                           ; SOURCE LINE # 276
+0402 F05E          MOV       R5,R14
+0404 5C25          SHL       R5,#02H
+0406 E6F40040      MOV       R4,#04000H
+040A F084          MOV       R8,R4
+040C 7085          OR        R8,R5
+                                           ; SOURCE LINE # 277
+040E D7408000      EXTP      #080H,#01H
+0412 C48B1A10      MOV       [R11+#POF(0101AH)],R8
+                                           ; SOURCE LINE # 278
+0416 E005          MOV       R5,#00H
+0418 D7408000      EXTP      #080H,#01H
+041C C45B1810      MOV       [R11+#POF(01018H)],R5
+                                           ; SOURCE LINE # 279
+0420         ?C0037:
+                                           ; SOURCE LINE # 281
+0420 67F2F000      ANDB      RL1,#0F0H
+0424 C028          MOVBZ     R8,RL1
+                                           ; SOURCE LINE # 282
+0426 5C48          SHL       R8,#04H
+                                           ; SOURCE LINE # 285
+0428 D7408000      EXTP      #080H,#01H
+042C C48B0210      MOV       [R11+#POF(01002H)],R8
+                                           ; SOURCE LINE # 286
+0430 E005          MOV       R5,#00H
+0432 D7408000      EXTP      #080H,#01H
+0436 C45B0010      MOV       [R11+#POF(01000H)],R5
+                                           ; SOURCE LINE # 287
+043A 0804          ADD       R0,#04H
+043C FCFF          POP       R15
+043E FCFE          POP       R14
+0440 FCFD          POP       R13
+0442 DB00          RETS      
+             ; FUNCTION can_load (END    RMASK = @0x7FFF)
+
+             ; FUNCTION can_stx (BEGIN  RMASK = @0x4030)
+                                           ; SOURCE LINE # 292
+;---- Variable 'no' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 296
+0444 D7002000      EXTS      #020H,#01H
+0448 F2F40402      MOV       R4,0204H
+044C 8AF40F70      JB        R4.7,?C0039
+                                           ; SOURCE LINE # 297
+0450         ?C0038:
+                                           ; SOURCE LINE # 299
+0450 D7002000      EXTS      #020H,#01H
+0454 F2F40002      MOV       R4,0200H
+0458 8AF40900      JB        R4.0,?C0039
+                                           ; SOURCE LINE # 300
+045C         ?C0040:
+                                           ; SOURCE LINE # 302
+045C E6F52007      MOV       R5,#0720H
+0460 F048          MOV       R4,R8
+0462 C084          MOVBZ     R4,RL4
+0464 5C54          SHL       R4,#05H
+0466 D7408000      EXTP      #080H,#01H
+046A C4541E10      MOV       [R4+#POF(0101EH)],R5
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 20  
+
+                                           ; SOURCE LINE # 326
+046E         ?C0039:
+046E DB00          RETS      
+             ; FUNCTION can_stx (END    RMASK = @0x4030)
+
+             ; FUNCTION can_stx_ex (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 331
+0470 ECFD          PUSH      R13
+0472 F0D8          MOV       R13,R8
+;---- Variable 'no' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 333
+0474 F048          MOV       R4,R8
+0476 C088          MOVBZ     R8,RL4
+0478 DA000000 R    CALLS     SEG (can_busy),can_busy
+047C 4980          CMPB      RL4,#00H
+047E 2D06          JMPR      cc_Z,?C0041
+                                           ; SOURCE LINE # 335
+0480 F04D          MOV       R4,R13
+0482 C088          MOVBZ     R8,RL4
+0484 DA000000 R    CALLS     SEG (can_abort),can_abort
+                                           ; SOURCE LINE # 336
+0488 E118          MOVB      RL4,#01H
+048A 0D05          JMPR      cc_UC,?C0042
+                                           ; SOURCE LINE # 337
+048C         ?C0041:
+                                           ; SOURCE LINE # 338
+048C F04D          MOV       R4,R13
+048E C088          MOVBZ     R8,RL4
+0490 DA000000 R    CALLS     SEG (can_stx),can_stx
+                                           ; SOURCE LINE # 339
+0494 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 340
+0496         ?C0042:
+0496 FCFD          POP       R13
+0498 DB00          RETS      
+             ; FUNCTION can_stx_ex (END    RMASK = @0x7FFF)
+
+             ; FUNCTION can_abort (BEGIN  RMASK = @0x4030)
+                                           ; SOURCE LINE # 345
+;---- Variable 'no' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 347
+049A E6F52007      MOV       R5,#0720H
+049E F048          MOV       R4,R8
+04A0 C084          MOVBZ     R4,RL4
+04A2 5C54          SHL       R4,#05H
+04A4 D7408000      EXTP      #080H,#01H
+04A8 C4541C10      MOV       [R4+#POF(0101CH)],R5
+                                           ; SOURCE LINE # 348
+04AC DB00          RETS      
+             ; FUNCTION can_abort (END    RMASK = @0x4030)
+
+             ; FUNCTION can_busy (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 353
+;---- Variable 'no' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 355
+04AE F048          MOV       R4,R8
+04B0 C084          MOVBZ     R4,RL4
+04B2 5C54          SHL       R4,#05H
+04B4 D7408000      EXTP      #080H,#01H
+04B8 D4441C10      MOV       R4,[R4+#POF(0101CH)]
+04BC 9AF40280      JNB       R4.8,?C0044
+04C0 E118          MOVB      RL4,#01H
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 21  
+
+04C2 0D01          JMPR      cc_UC,?C0045
+04C4         ?C0044:
+04C4 E108          MOVB      RL4,#00H
+04C6         ?C0045:
+                                           ; SOURCE LINE # 356
+04C6 DB00          RETS      
+             ; FUNCTION can_busy (END    RMASK = @0x4010)
+
+             ; FUNCTION can_sload (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 361
+04C8 ECFD          PUSH      R13
+04CA F069          MOV       R6,R9
+04CC F07A          MOV       R7,R10
+;---- Variable 'buf' assigned to Register 'R6/R7' ----
+04CE F0D8          MOV       R13,R8
+;---- Variable 'no' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 363
+04D0 E085          MOV       R5,#08H
+04D2 F048          MOV       R4,R8
+04D4 C081          MOVBZ     R1,RL4
+04D6 5C51          SHL       R1,#05H
+04D8 D7408000      EXTP      #080H,#01H
+04DC C4511E10      MOV       [R1+#POF(0101EH)],R5
+                                           ; SOURCE LINE # 364
+04E0 E08C          MOV       R12,#08H
+04E2 F0BA          MOV       R11,R10
+04E4 F0A9          MOV       R10,R9
+04E6 E6F81010      MOV       R8,#01010H
+04EA E6F98000      MOV       R9,#080H
+04EE 0081          ADD       R8,R1
+04F0 DA000000 E    CALLS     SEG (fmemcpy),fmemcpy
+                                           ; SOURCE LINE # 365
+04F4 E6F52000      MOV       R5,#020H
+04F8 F04D          MOV       R4,R13
+04FA C087          MOVBZ     R7,RL4
+04FC 5C57          SHL       R7,#05H
+04FE D7408000      EXTP      #080H,#01H
+0502 C4571E10      MOV       [R7+#POF(0101EH)],R5
+                                           ; SOURCE LINE # 366
+0506 E6F54000      MOV       R5,#040H
+050A D7408000      EXTP      #080H,#01H
+050E C4571C10      MOV       [R7+#POF(0101CH)],R5
+                                           ; SOURCE LINE # 367
+0512 FCFD          POP       R13
+0514 DB00          RETS      
+             ; FUNCTION can_sload (END    RMASK = @0x7FFF)
+
+             ; FUNCTION isr_can_txrx0 (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 372
+0516 C6030300      SCXT      DPP3,#03H
+051A EC00          PUSH      DPP0
+051C C6871000      SCXT      MDC,#010H
+0520 EC06          PUSH      MDH
+0522 EC07          PUSH      MDL
+0524 ECF1          PUSH      R1
+0526 ECF2          PUSH      R2
+0528 ECF3          PUSH      R3
+052A ECF4          PUSH      R4
+052C ECF5          PUSH      R5
+052E ECF6          PUSH      R6
+0530 ECF7          PUSH      R7
+0532 ECF8          PUSH      R8
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 22  
+
+0534 ECF9          PUSH      R9
+0536 ECFA          PUSH      R10
+0538 ECFB          PUSH      R11
+053A ECFC          PUSH      R12
+053C ECFD          PUSH      R13
+                                           ; SOURCE LINE # 373
+                                           ; SOURCE LINE # 379
+053E D7002000      EXTS      #020H,#01H
+0542 F2F50402      MOV       R5,0204H
+;---- Variable 'nodeinfo' assigned to Register 'R5' ----
+                                           ; SOURCE LINE # 381
+0546 9AF50930      JNB       R5.3,?C0046
+                                           ; SOURCE LINE # 383
+054A E6F43703      MOV       R4,#0337H
+054E D7002000      EXTS      #020H,#01H
+0552 F6F40402      MOV       0204H,R4
+                                           ; SOURCE LINE # 384
+0556 E128          MOVB      RL4,#02H
+0558 75F80000 R    ORB       g_can_status,RL4
+                                           ; SOURCE LINE # 385
+055C         ?C0046:
+                                           ; SOURCE LINE # 387
+055C 9AF50940      JNB       R5.4,?C0047
+                                           ; SOURCE LINE # 389
+0560 E6F42F03      MOV       R4,#032FH
+0564 D7002000      EXTS      #020H,#01H
+0568 F6F40402      MOV       0204H,R4
+                                           ; SOURCE LINE # 390
+056C E148          MOVB      RL4,#04H
+056E 75F80000 R    ORB       g_can_status,RL4
+                                           ; SOURCE LINE # 391
+0572         ?C0047:
+                                           ; SOURCE LINE # 393
+0572 E6F400F0      MOV       R4,#0F000H
+0576 D7002000      EXTS      #020H,#01H
+057A F6F4C201      MOV       01C2H,R4
+                                           ; SOURCE LINE # 394
+057E E0F4          MOV       R4,#0FH
+0580 D7002000      EXTS      #020H,#01H
+0584 F6F4C001      MOV       01C0H,R4
+                                           ; SOURCE LINE # 398
+0588 0D71          JMPR      cc_UC,?C0048
+058A         ?C0050:
+                                           ; SOURCE LINE # 400
+058A D7002000      EXTS      #020H,#01H
+058E F2F48001      MOV       R4,0180H
+0592 F0D4          MOV       R13,R4
+;---- Variable 'objno' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 401
+0594 F04D          MOV       R4,R13
+0596 C084          MOVBZ     R4,RL4
+0598 5C54          SHL       R4,#05H
+059A D7408000      EXTP      #080H,#01H
+059E D4541C10      MOV       R5,[R4+#POF(0101CH)]
+;---- Variable 'objinfo' assigned to Register 'R5' ----
+                                           ; SOURCE LINE # 403
+05A2 9AF54900      JNB       R5.0,?C0052
+                                           ; SOURCE LINE # 405
+05A6 9AF53E30      JNB       R5.3,?C0053
+                                           ; SOURCE LINE # 407
+05AA F04D          MOV       R4,R13
+05AC C084          MOVBZ     R4,RL4
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 23  
+
+05AE 5C54          SHL       R4,#05H
+05B0 D7408000      EXTP      #080H,#01H
+05B4 D4441A10      MOV       R4,[R4+#POF(0101AH)]
+05B8 66F4FF1F      AND       R4,#01FFFH
+05BC F024          MOV       R2,R4
+05BE E003          MOV       R3,#00H
+;---- Variable 'id' assigned to Register 'R2/R3' ----
+                                           ; SOURCE LINE # 408
+05C0 F034          MOV       R3,R4
+05C2 E002          MOV       R2,#00H
+                                           ; SOURCE LINE # 409
+05C4 F04D          MOV       R4,R13
+05C6 C084          MOVBZ     R4,RL4
+05C8 5C54          SHL       R4,#05H
+05CA D7408000      EXTP      #080H,#01H
+05CE D4441810      MOV       R4,[R4+#POF(01018H)]
+05D2 E005          MOV       R5,#00H
+05D4 7024          OR        R2,R4
+05D6 7035          OR        R3,R5
+                                           ; SOURCE LINE # 410
+05D8 F04D          MOV       R4,R13
+05DA C084          MOVBZ     R4,RL4
+05DC 5C54          SHL       R4,#05H
+05DE D7408000      EXTP      #080H,#01H
+05E2 D4441A10      MOV       R4,[R4+#POF(0101AH)]
+05E6 8AF403D0      JB        R4.13,?C0054
+                                           ; SOURCE LINE # 411
+05EA F023          MOV       R2,R3
+05EC 7C22          SHR       R2,#02H
+05EE E003          MOV       R3,#00H
+05F0         ?C0054:
+                                           ; SOURCE LINE # 414
+05F0 F04D          MOV       R4,R13
+05F2 C084          MOVBZ     R4,RL4
+05F4 5C54          SHL       R4,#05H
+05F6 D7408000      EXTP      #080H,#01H
+05FA D4440210      MOV       R4,[R4+#POF(01002H)]
+05FE 7C84          SHR       R4,#08H
+0600 66F40F00      AND       R4,#0FH
+0604 C084          MOVBZ     R4,RL4
+0606 8840          MOV       [-R0],R4
+0608 F04D          MOV       R4,R13
+060A C084          MOVBZ     R4,RL4
+060C 5C54          SHL       R4,#05H
+060E E6FB1010      MOV       R11,#01010H
+0612 E6FC8000      MOV       R12,#080H
+0616 00B4          ADD       R11,R4
+0618 F092          MOV       R9,R2
+061A F0A3          MOV       R10,R3
+061C F04D          MOV       R4,R13
+061E C088          MOVBZ     R8,RL4
+0620 DA000000 E    CALLS     SEG (do_objx),do_objx
+0624 0802          ADD       R0,#02H
+                                           ; SOURCE LINE # 415
+0626         ?C0053:
+                                           ; SOURCE LINE # 416
+0626 E6F51900      MOV       R5,#019H
+062A F04D          MOV       R4,R13
+062C C084          MOVBZ     R4,RL4
+062E 5C54          SHL       R4,#05H
+0630 D7408000      EXTP      #080H,#01H
+0634 C4541C10      MOV       [R4+#POF(0101CH)],R5
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 24  
+
+                                           ; SOURCE LINE # 417
+0638         ?C0052:
+                                           ; SOURCE LINE # 418
+0638 F04D          MOV       R4,R13
+063A 47F81000      CMPB      RL4,#010H
+063E 9D08          JMPR      cc_UGE,?C0055
+                                           ; SOURCE LINE # 419
+0640 E014          MOV       R4,#01H
+0642 4C4D          SHL       R4,R13
+0644 9140          CPL       R4
+0646 D7002000      EXTS      #020H,#01H
+064A F6F44001      MOV       0140H,R4
+064E 0D0E          JMPR      cc_UC,?C0048
+0650         ?C0055:
+                                           ; SOURCE LINE # 420
+0650 F04D          MOV       R4,R13
+0652 47F82000      CMPB      RL4,#020H
+0656 9D0A          JMPR      cc_UGE,?C0048
+                                           ; SOURCE LINE # 421
+0658 C085          MOVBZ     R5,RL4
+065A 26F51000      SUB       R5,#010H
+065E E014          MOV       R4,#01H
+0660 4C45          SHL       R4,R5
+0662 9140          CPL       R4
+0664 D7002000      EXTS      #020H,#01H
+0668 F6F44201      MOV       0142H,R4
+                                           ; SOURCE LINE # 422
+066C         ?C0048:
+066C D7002000      EXTS      #020H,#01H
+0670 F2F48001      MOV       R4,0180H
+0674 46F42000      CMP       R4,#020H
+0678 3D88          JMPR      cc_NZ,?C0050
+067A         ?C0049:
+                                           ; SOURCE LINE # 423
+067A FCFD          POP       R13
+067C FCFC          POP       R12
+067E FCFB          POP       R11
+0680 FCFA          POP       R10
+0682 FCF9          POP       R9
+0684 FCF8          POP       R8
+0686 FCF7          POP       R7
+0688 FCF6          POP       R6
+068A FCF5          POP       R5
+068C FCF4          POP       R4
+068E FCF3          POP       R3
+0690 FCF2          POP       R2
+0692 FCF1          POP       R1
+0694 FC07          POP       MDL
+0696 FC06          POP       MDH
+0698 FC87          POP       MDC
+069A FC00          POP       DPP0
+069C FC03          POP       DPP3
+069E FB88          RETI      
+             ; FUNCTION isr_can_txrx0 (END    RMASK = @0x7FFF)
+
+             ; FUNCTION isr_can_status (BEGIN  RMASK = @0x4030)
+                                           ; SOURCE LINE # 428
+06A0 C6030300      SCXT      DPP3,#03H
+06A4 ECF4          PUSH      R4
+06A6 ECF5          PUSH      R5
+                                           ; SOURCE LINE # 429
+                                           ; SOURCE LINE # 432
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 25  
+
+06A8 D7002000      EXTS      #020H,#01H
+06AC F2F50402      MOV       R5,0204H
+;---- Variable 'nodeinfo' assigned to Register 'R5' ----
+                                           ; SOURCE LINE # 434
+06B0 9AF51F50      JNB       R5.5,?C0059
+                                           ; SOURCE LINE # 435
+06B4         ?C0058:
+                                           ; SOURCE LINE # 438
+06B4 9AF50370      JNB       R5.7,?C0060
+                                           ; SOURCE LINE # 441
+06B8 E118          MOVB      RL4,#01H
+06BA 75F80000 R    ORB       g_can_status,RL4
+                                           ; SOURCE LINE # 442
+06BE         ?C0060:
+                                           ; SOURCE LINE # 446
+06BE 9AF50680      JNB       R5.8,?C0061
+                                           ; SOURCE LINE # 453
+06C2 E6F43F02      MOV       R4,#023FH
+06C6 D7002000      EXTS      #020H,#01H
+06CA F6F40402      MOV       0204H,R4
+                                           ; SOURCE LINE # 454
+06CE         ?C0061:
+                                           ; SOURCE LINE # 456
+06CE 9AF50690      JNB       R5.9,?C0062
+                                           ; SOURCE LINE # 463
+06D2 E6F43F01      MOV       R4,#013FH
+06D6 D7002000      EXTS      #020H,#01H
+06DA F6F40402      MOV       0204H,R4
+                                           ; SOURCE LINE # 464
+06DE         ?C0062:
+                                           ; SOURCE LINE # 466
+06DE D7002000      EXTS      #020H,#01H
+06E2 F2F40002      MOV       R4,0200H
+                                           ; SOURCE LINE # 468
+                                           ; SOURCE LINE # 470
+06E6 E6F41F03      MOV       R4,#031FH
+06EA D7002000      EXTS      #020H,#01H
+06EE F6F40402      MOV       0204H,R4
+                                           ; SOURCE LINE # 472
+06F2         ?C0059:
+06F2 FCF5          POP       R5
+06F4 FCF4          POP       R4
+06F6 FC03          POP       DPP3
+06F8 FB88          RETI      
+             ; FUNCTION isr_can_status (END    RMASK = @0x4030)
+
+             ; FUNCTION isr_can_error (BEGIN  RMASK = @0x4070)
+                                           ; SOURCE LINE # 477
+06FA C6030300      SCXT      DPP3,#03H
+06FE ECF4          PUSH      R4
+0700 ECF5          PUSH      R5
+0702 ECF6          PUSH      R6
+                                           ; SOURCE LINE # 478
+                                           ; SOURCE LINE # 482
+0704 D7002000      EXTS      #020H,#01H
+0708 F2F50402      MOV       R5,0204H
+;---- Variable 'nodeinfo' assigned to Register 'R5' ----
+                                           ; SOURCE LINE # 484
+070C F065          MOV       R6,R5
+070E 6867          AND       R6,#07H
+0710 2D07          JMPR      cc_Z,?C0065
+                                           ; SOURCE LINE # 485
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 26  
+
+0712         ?C0064:
+                                           ; SOURCE LINE # 487
+0712 0D00          JMPR      cc_UC,?C0066
+                                           ; SOURCE LINE # 489
+                                           ; SOURCE LINE # 494
+                                           ; SOURCE LINE # 496
+                                           ; SOURCE LINE # 500
+                                           ; SOURCE LINE # 502
+                                           ; SOURCE LINE # 506
+                                           ; SOURCE LINE # 508
+                                           ; SOURCE LINE # 514
+                                           ; SOURCE LINE # 516
+                                           ; SOURCE LINE # 527
+                                           ; SOURCE LINE # 530
+                                           ; SOURCE LINE # 533
+                                           ; SOURCE LINE # 534
+                                           ; SOURCE LINE # 536
+                                           ; SOURCE LINE # 540
+                                           ; SOURCE LINE # 542
+                                           ; SOURCE LINE # 543
+                                           ; SOURCE LINE # 544
+0714         ?C0066:
+                                           ; SOURCE LINE # 545
+0714 E6F43803      MOV       R4,#0338H
+0718 D7002000      EXTS      #020H,#01H
+071C F6F40402      MOV       0204H,R4
+                                           ; SOURCE LINE # 546
+0720         ?C0065:
+0720 FCF6          POP       R6
+0722 FCF5          POP       R5
+0724 FCF4          POP       R4
+0726 FC03          POP       DPP3
+0728 FB88          RETI      
+             ; FUNCTION isr_can_error (END    RMASK = @0x4070)
+
+             ; FUNCTION set_can_on (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 551
+                                           ; SOURCE LINE # 553
+072A D7002000      EXTS      #020H,#01H
+072E F2F40002      MOV       R4,0200H
+0732 66F4BEFF      AND       R4,#0FFBEH
+0736 D7002000      EXTS      #020H,#01H
+073A F6F40002      MOV       0200H,R4
+                                           ; SOURCE LINE # 554
+073E E7F8FE00      MOVB      RL4,#0FEH
+0742 65F80000 R    ANDB      g_can_status,RL4
+                                           ; SOURCE LINE # 555
+0746 DB00          RETS      
+             ; FUNCTION set_can_on (END    RMASK = @0x4010)
+
+             ; FUNCTION get_can_bus_off (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 560
+                                           ; SOURCE LINE # 564
+0748 F3F80000 R    MOVB      RL4,g_can_status
+074C 9AF40200      JNB       R4.0,?C0076
+                                           ; SOURCE LINE # 565
+0750 E118          MOVB      RL4,#01H
+0752 DB00          RETS      
+0754         ?C0076:
+                                           ; SOURCE LINE # 567
+0754 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 568
+C166 COMPILER V7.57.0, XC2K_CAN                                                            01/03/2020 16:20:07 PAGE 27  
+
+0756         ?C0077:
+0756 DB00          RETS      
+             ; FUNCTION get_can_bus_off (END    RMASK = @0x0010)
+
+             ; FUNCTION can_txx (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 573
+;---- Variable 'buf' assigned to Register 'R10/R11' ----
+;---- Variable 'id' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 578
+0758 E118          MOVB      RL4,#01H
+                                           ; SOURCE LINE # 579
+075A DB00          RETS      
+             ; FUNCTION can_txx (END    RMASK = @0x4010)
+
+             ; FUNCTION can_settingx (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 584
+;---- Variable 'option' assigned to Register 'R10' ----
+;---- Variable 'baudrate' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 589
+075C E118          MOVB      RL4,#01H
+                                           ; SOURCE LINE # 590
+075E DB00          RETS      
+             ; FUNCTION can_settingx (END    RMASK = @0x4010)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =        1888     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           1     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =           6     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

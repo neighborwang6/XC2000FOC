@@ -1,0 +1,264 @@
+C166 COMPILER V7.57.0, PROT_IMP                                                            01/03/2020 16:20:10 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE PROT_IMP
+OBJECT MODULE PLACED IN .\objs\prot_imp.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu2_prot\prot_imp.c MODV2 LARGE BROWSE INCDIR(.\src\hardware
+                    -;.\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logi
+                    -c) MODV2 DEBUG CODE PRINT(.\objs\prot_imp.lst) TABS(2) OBJECT(.\objs\prot_imp.obj) 
+
+ stmt lvl     source
+
+    1         ///////////////////////////////////////////////////////////////////////////////////////
+    2         /*
+    3         
+    4         */
+    5         ///////////////////////////////////////////////////////////////////////////////////////
+    6         #include "prot_imp.h"
+    7         #include "board.h"
+    8         #include "std_diag.h"
+    9         #include "mcu2_imp.h"
+   10         #include "dtc_man.h"
+   11         #include "ypara.h"
+   12         #include "dtc_man.h"
+   13         #include "dtc_man_mcu2.h"
+   14         #include "task_man.h"
+   15         
+   16         #define GET_RLDRV() (1)
+   17         #define SET_RLDRV(x)
+   18         
+   19         extern u8 g_com_on;
+   20         
+   21         extern code GDTC xdtc[];
+   22         extern SDTC *dtc_pt;
+   23         extern u16 xdata vspd[];
+   24         extern u8 xdata *gdtc_buf;
+   25         extern u8 gdtc_num;
+   26         extern u8 stx_option;
+   27         
+   28         extern u8 xdata gee_dat[32];
+   29         extern u8 gee_cmd;
+   30         extern u8 gee_cmd_bak;
+   31         extern u8 gee_stat;
+   32         
+   33         extern MCUMSG1 xdata mcumsg1;
+   34         
+   35         extern u8 gee_buf[];
+   36         
+   37         extern u16 on_toutx;
+   38         
+   39         u8 g_wheelspeed_test_status=0;   // bit0: 0-idle, bit1: 1-result available bit2: 1-test running
+   40         
+   41         //////////////////////////////////////////////////////////////////////
+   42         //
+   43         //////////////////////////////////////////////////////////////////////
+   44         // Because RAM limit, declare common used temporary variables here.
+   45         u8 g_tmp=0;
+   46         u8 g_tmp0=0;
+   47         u8 g_tmpbuf[8];
+   48         
+   49         u8 prod_mode=0xaa; // 0x05: EOL mode disable, 0x50: FILLIN mode disable=>0x55,
+   50         // if 0xaa: no DTC will be stored to EEPROM and ABS function
+   51         // disabled.
+   52         u8 security_mode=0;
+   53         
+C166 COMPILER V7.57.0, PROT_IMP                                                            01/03/2020 16:20:10 PAGE 2   
+
+   54         u8 comp_on_tout[10]={0,0,0,0,0,0,0,0,0,0}; // SOL,MOTOR,LAMP
+   55         
+   56         u8 diag_mode=DIAG_MODE_NONE;
+   57         
+   58         u8 gact_task=TASK_CMD_ACT_NONE;
+   59         u8 gact_task_stat=TASK_STAT_COMPLETE;  // Important to init this value
+   60         u16 gact_task_tout=0;
+   61         u8 routine_id=0xff;
+   62         
+   63         u8 g_seed[4];
+   64         
+   65         u8 g_msg_offset=0;
+   66         u8 g_msg_len=0;
+   67         u8 g_msg_error=0;   // BIT0: invalid message
+   68         u8 g_msg_data_len=0;
+   69         
+   70         #define SID   inbuf[offset+0]
+   71         #define PARA0 inbuf[offset+1]
+   72         #define PARA1 inbuf[offset+2]
+   73         #define PARA2 inbuf[offset+3]
+   74         #define TGT_ADDR inbuf[1]
+   75         #define SRC_ADDR inbuf[2]
+   76         
+   77         u8 do_tester_msg(u8 *inbuf,u8 *outbuf,u8 msglen,u8 option)
+   78         {
+   79  1        UNUSED_PARA(inbuf);
+   80  1        UNUSED_PARA(outbuf);
+   81  1        UNUSED_PARA(msglen);
+   82  1        UNUSED_PARA(option);
+   83  1      
+   84  1        return 0;
+   85  1      }
+   86         //////////////////////////////////////////////////////////////////////
+   87         //
+   88         //////////////////////////////////////////////////////////////////////
+   89         u8 get_msg_len(u8 *buf,u8 len)
+   90         {
+   91  1        UNUSED_PARA(buf);
+   92  1        UNUSED_PARA(len);
+   93  1      
+   94  1        return 0;
+   95  1      }
+   96         
+   97         //////////////////////////////////////////////////////////////////////
+   98         //
+   99         //////////////////////////////////////////////////////////////////////
+  100         u8 get_sid_offset(u8 *buf,u8 len)
+  101         {
+  102  1        UNUSED_PARA(buf);
+  103  1        UNUSED_PARA(len);
+  104  1      
+  105  1        return 0;
+  106  1      }
+  107         //////////////////////////////////////////////////////////////////////
+  108         //
+  109         //////////////////////////////////////////////////////////////////////
+  110         u8 calc_chksum(u8 *buf,u8 buflen)
+  111         {
+  112  1        u8 idx;
+  113  1        u8 sum=0;
+  114  1        for(idx=0;idx<buflen;idx++)
+  115  1        {
+C166 COMPILER V7.57.0, PROT_IMP                                                            01/03/2020 16:20:10 PAGE 3   
+
+  116  2          sum+=buf[idx];
+  117  2        }   
+  118  1        
+  119  1        return sum;
+  120  1      }
+  121         //////////////////////////////////////////////////////////////////////
+  122         //
+  123         //////////////////////////////////////////////////////////////////////
+  124         void timer_hook_50ms(void)
+  125         {
+  126  1      
+  127  1      }
+  128         
+  129         //////////////////////////////////////////////////////////////////////
+  130         //
+  131         //////////////////////////////////////////////////////////////////////
+  132         void do_component_test(u8 sid,u8 para0,u8 para1,u8 option)
+  133         {
+  134  1        UNUSED_PARA(sid);
+  135  1        UNUSED_PARA(para0);
+  136  1        UNUSED_PARA(para1);
+  137  1        UNUSED_PARA(option);  
+  138  1      }
+  139         //////////////////////////////////////////////////////////////////////
+  140         //
+  141         //////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, PROT_IMP                                                            01/03/2020 16:20:10 PAGE 4   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION do_tester_msg (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 77
+;---- Variable 'msglen' assigned to Register 'R12' ----
+;---- Variable 'outbuf' assigned to Register 'R10/R11' ----
+;---- Variable 'inbuf' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 84
+0000 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 85
+0002 DB00          RETS      
+             ; FUNCTION do_tester_msg (END    RMASK = @0x4010)
+
+             ; FUNCTION get_msg_len (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 89
+;---- Variable 'len' assigned to Register 'R10' ----
+;---- Variable 'buf' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 94
+0004 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 95
+0006 DB00          RETS      
+             ; FUNCTION get_msg_len (END    RMASK = @0x4010)
+
+             ; FUNCTION get_sid_offset (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 100
+;---- Variable 'len' assigned to Register 'R10' ----
+;---- Variable 'buf' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 105
+0008 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 106
+000A DB00          RETS      
+             ; FUNCTION get_sid_offset (END    RMASK = @0x4010)
+
+             ; FUNCTION calc_chksum (BEGIN  RMASK = @0x40F2)
+                                           ; SOURCE LINE # 110
+;---- Variable 'buflen' assigned to Register 'R10' ----
+;---- Variable 'buf' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 111
+                                           ; SOURCE LINE # 113
+000C E102          MOVB      RL1,#00H
+;---- Variable 'sum' assigned to Register 'RL1' ----
+                                           ; SOURCE LINE # 114
+000E E10E          MOVB      RL7,#00H
+;---- Variable 'idx' assigned to Register 'RL7' ----
+0010 0D07          JMPR      cc_UC,?C0006
+0012         ?C0007:
+                                           ; SOURCE LINE # 116
+0012 C0E6          MOVBZ     R6,RL7
+0014 F048          MOV       R4,R8
+0016 0046          ADD       R4,R6
+0018 DC49          EXTP      R9,#01H
+001A A984          MOVB      RL4,[R4]
+001C 0128          ADDB      RL1,RL4
+                                           ; SOURCE LINE # 117
+001E 09E1          ADDB      RL7,#01H
+0020         ?C0006:
+0020 F05A          MOV       R5,R10
+0022 41EA          CMPB      RL7,RL5
+0024 8DF6          JMPR      cc_ULT,?C0007
+0026         ?C0005:
+                                           ; SOURCE LINE # 119
+C166 COMPILER V7.57.0, PROT_IMP                                                            01/03/2020 16:20:10 PAGE 5   
+
+0026 F182          MOVB      RL4,RL1
+                                           ; SOURCE LINE # 120
+0028 DB00          RETS      
+             ; FUNCTION calc_chksum (END    RMASK = @0x40F2)
+
+             ; FUNCTION timer_hook_50ms (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 124
+                                           ; SOURCE LINE # 127
+002A DB00          RETS      
+             ; FUNCTION timer_hook_50ms (END    RMASK = @0x8000)
+
+             ; FUNCTION do_component_test (BEGIN  RMASK = @0x4000)
+                                           ; SOURCE LINE # 132
+;---- Variable 'option' assigned to Register 'R11' ----
+;---- Variable 'para1' assigned to Register 'R10' ----
+;---- Variable 'para0' assigned to Register 'R9' ----
+;---- Variable 'sid' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 138
+002C DB00          RETS      
+             ; FUNCTION do_component_test (END    RMASK = @0x4000)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          46     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          19     --------
+  FAR-DATA SIZE    =          18     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =         100     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

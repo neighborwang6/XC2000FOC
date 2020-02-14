@@ -1,0 +1,4 @@
+TRANSFER
+"..\objs\gvar.obj",
+"..\objs\gpara.obj" 
+TO ".\Obj\CalTool.LIB"

@@ -1,0 +1,71 @@
+C166 COMPILER V7.57.0, DTC_MAN_MCU2                                                        01/03/2020 16:20:09 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE DTC_MAN_MCU2
+OBJECT MODULE PLACED IN .\objs\dtc_man_mcu2.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu2_prot\dtc_man_mcu2.c MODV2 LARGE BROWSE INCDIR(.\src\hard
+                    -ware;.\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_
+                    -Logic) MODV2 DEBUG CODE PRINT(.\objs\dtc_man_mcu2.lst) TABS(2) OBJECT(.\objs\dtc_man_mcu2.obj) 
+
+ stmt lvl     source
+
+    1         ///////////////////////////////////////////////////////////////////////////////////////
+    2         /*
+    3         
+    4         */
+    5         ///////////////////////////////////////////////////////////////////////////////////////
+    6         #include "stdlib.h"
+    7         #include "string.h"
+    8         #include "dtc_man_mcu2.h"
+    9         
+   10         extern SDTC *dtc_pt;
+   11         extern const GDTC xdtc[];
+   12         
+   13         ///////////////////////////////////////////////////////////////////////////////////////
+   14         // Retrieve a DTC info
+   15         u8 dtc_infox(u8 idh,u8 idl,u8 *buf)
+   16         {
+   17  1        UNUSED_PARA(idh);
+   18  1        UNUSED_PARA(idl);
+   19  1        UNUSED_PARA(buf);
+   20  1        
+   21  1        return 0;
+   22  1      }
+   23         
+C166 COMPILER V7.57.0, DTC_MAN_MCU2                                                        01/03/2020 16:20:09 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION dtc_infox (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 15
+;---- Variable 'buf' assigned to Register 'R10/R11' ----
+;---- Variable 'idl' assigned to Register 'R9' ----
+;---- Variable 'idh' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 21
+0000 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 22
+0002 DB00          RETS      
+             ; FUNCTION dtc_infox (END    RMASK = @0x4010)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =           4     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

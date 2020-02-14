@@ -1,0 +1,46 @@
+C166 COMPILER V7.57.0, DTC_TABLE                                                           01/03/2020 16:20:09 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE DTC_TABLE
+OBJECT MODULE PLACED IN .\objs\dtc_table.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu2_prot\dtc_table.c MODV2 LARGE BROWSE INCDIR(.\src\hardwar
+                    -e;.\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Log
+                    -ic) MODV2 DEBUG CODE PRINT(.\objs\dtc_table.lst) TABS(2) OBJECT(.\objs\dtc_table.obj) 
+
+ stmt lvl     source
+
+    1         #include "std_defs.h"
+    2         #include "dtc_man.h"
+    3         
+    4         const GDTC xdtc[]={
+    5           {0x55,0xaa33},
+    6           { DTC_ECU_HW     , 0x5000 }, // 0x80 + 0x01,
+    7           { DTC_ECU_SW     , 0x5010 }, // 0x80 + 0x02,
+    8           {0,0}
+    9         };
+C166 COMPILER V7.57.0, DTC_TABLE                                                           01/03/2020 16:20:09 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =    --------     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =          24     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

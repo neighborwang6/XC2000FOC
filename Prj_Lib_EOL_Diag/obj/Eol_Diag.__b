@@ -1,0 +1,6 @@
+TRANSFER
+"..\objs\can_test.obj",
+"..\objs\kline_test.obj",
+"..\objs\xc2k_can.obj",
+"..\objs\xc2k_kline.obj" 
+TO ".\obj\Eol_Diag.LIB"

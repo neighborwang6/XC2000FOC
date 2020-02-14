@@ -1,0 +1,186 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (ABS_NewProject_XC2K), 0x0002 // Tools: '166/167'
+
+Group (Hw_Driver)
+Group (EOL_Diag)
+Group (DTC_Diag)
+Group (CalTool)
+Group (App_ABS)
+Group (DTC_Diag_MCU2)
+
+File 1,2,<.\START_V3.A66><START_V3.A66>
+File 1,1,<.\Hw_Driver\adc.c><adc.c>
+File 1,1,<.\Hw_Driver\ccu6.c><ccu6.c>
+File 1,1,<.\Hw_Driver\hcu.c><hcu.c>
+File 1,1,<.\Hw_Driver\hw.c><hw.c>
+File 1,1,<.\Hw_Driver\motor.c><motor.c>
+File 1,1,<.\Hw_Driver\rtc.c><rtc.c>
+File 1,1,<.\Hw_Driver\scs.c><scs.c>
+File 1,1,<.\Hw_Driver\ssc.c><ssc.c>
+File 1,1,<.\Hw_Driver\timer.c><timer.c>
+File 1,1,<.\Hw_Driver\tle6212.c><tle6212.c>
+File 1,1,<.\Hw_Driver\trap.c><trap.c>
+File 1,1,<.\Hw_Driver\uart.c><uart.c>
+File 1,1,<.\Hw_Driver\valve.c><valve.c>
+File 1,1,<.\Hw_Driver\Lib_Hw_Driver_Version.c><Lib_Hw_Driver_Version.c>
+File 1,1,<.\Hw_Driver\quick_dbg.c><quick_dbg.c>
+File 2,1,<.\EOL_Diag\can_test.c><can_test.c>
+File 2,1,<.\EOL_Diag\kline_test.c><kline_test.c>
+File 2,1,<.\EOL_Diag\xc2k_can.c><xc2k_can.c>
+File 2,1,<.\EOL_Diag\xc2k_kline.c><xc2k_kline.c>
+File 2,1,<.\EOL_Diag\Lib_EOL_Diag_Version.c><Lib_EOL_Diag_Version.c>
+File 3,1,<.\DTC_Diag\diag_hw.c><diag_hw.c>
+File 3,1,<.\DTC_Diag\dtc_man.c><dtc_man.c>
+File 3,1,<.\DTC_Diag\mcu1_imp.c><mcu1_imp.c>
+File 3,1,<.\DTC_Diag\task_man.c><task_man.c>
+File 3,1,<.\DTC_Diag\eeprom.c><eeprom.c>
+File 3,1,<.\DTC_Diag\Lib_DTC_Diag_Version.c><Lib_DTC_Diag_Version.c>
+File 4,1,<.\CalTool\gpara.c><gpara.c>
+File 4,1,<.\CalTool\gvar.c><gvar.c>
+File 5,1,<.\src\debugx.c><debugx.c>
+File 5,1,<.\src\abs_task.c><abs_task.c>
+File 5,1,<.\src\main.c><main.c>
+File 5,1,<.\src\abs_ctrl.c><abs_ctrl.c>
+File 5,1,<.\src\calc.c><calc.c>
+File 5,1,<.\src\compen.c><compen.c>
+File 5,1,<.\src\diag.c><diag.c>
+File 5,1,<.\src\hardware.c><hardware.c>
+File 5,1,<.\src\test_if.c><test_if.c>
+File 6,1,<.\DTC_Diag\mcu2_prot\dtc_man_mcu2.c><dtc_man_mcu2.c>
+File 6,1,<.\DTC_Diag\mcu2_prot\dtc_table.c><dtc_table.c>
+File 6,1,<.\DTC_Diag\mcu2_prot\mcu2_imp.c><mcu2_imp.c>
+File 6,1,<.\DTC_Diag\mcu2_prot\prot_imp.c><prot_imp.c>
+File 6,1,<.\DTC_Diag\mcu2_prot\suart.c><suart.c>
+File 6,1,<.\DTC_Diag\mcu2_prot\ypara.c><ypara.c>
+
+
+Options 1,0,0  // Target 'ABS_NewProject_XC2K'
+ Device (XC2365-48F)
+ Vendor (Infineon)
+ Cpu (IRAM(0xF600-0xFDFF) XRAM(0xA000-0xDFFF) XRAM2(0xE00000-0xE01FFF) IROM(0xC00000-0xC0EFFF) IROM2(0xC10000-0xC5FFFF) CLOCK(20000000) MOD167 MODV2)
+ FlashUt ()
+ StupF ("LIB\START_V3.A66" ("XC2000 Startup Code"))
+ FlashDR (UL2OCDS(-O4399 -F15 -Q0"XC2xxx-48F" -J01 -L0C00000 -N0C0000 -M00))
+ DevID (4424)
+ Rgf (XC2365.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg ()
+ OrgReg ()
+ TgStat=16
+ OutDir (.\objs\)
+ OutName (Mcu2K_Test)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=1
+ Browse=1
+ LstDir (.\objs\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ Model=4
+ RTOS=0
+ nHold=6
+ iHold=65535
+ sHold=65535
+ bHold=65535
+ MOD167=0
+ MODV2=1
+ UseOnChipRom=1
+ UseOnchipXCAN=1
+ UseOnchipXRAM2=0
+ NearRam=0
+ NearRom=0
+ UseOnChipIROM2=1
+ UseOnChipIROM3=0
+ UseOnChipXRAM3=0
+ ExtMem 0 0,0,0
+ ExtMem 1 0,0,0
+ ExtMem 2 0,0,0
+ ExtMem 3 0,0,0
+ ExtMem 4 0,0,0
+ ExtMem 5 0,0,0
+ Optimize=6
+ SpeedSize=1
+ RegColor=0
+ Static=0
+ WarningLev=2
+ Alias=1
+ Order=0
+ UnsignedChar=0
+ NoDppSave=1
+ Float64=0
+ SaveUsr=0
+ Reorder=0
+ cMisc (MODV2)
+ Define ()
+ Undefine ()
+ INCC6 (.\src\hardware;.\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot)
+ EC166 { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ECMISC ()
+ ECDEFINE ()
+ ECUNDEF ()
+ ECINC ()
+ MPL=1
+ CASE=0
+ aMisc (MODV2)
+ aSet ()
+ aReset ()
+ INCA6 ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ useLinkFile=0
+ LnkFile ()
+ LinkOnly=0
+ UseTargSet=1
+ DppUse=0
+ nDataSel=2
+ nConstSel=1
+ NearDataStr ()
+ NearConstStr ()
+ CinitTab (0xC10000 - 0xC5FFFF)
+ IntVectAddr ()
+ lWarnLev=2
+ lDisWarn ()
+ lAssign ()
+ lRegbank ()
+ lReserve ()
+ lMisc ()
+ lClasses ()
+ lSect ()
+  OPTDL (S166.DLL)(-cMODV2)(D167.DLL)(-pX2365)(S166.DLL)(-cMODV2)(T167.DLL)(-pX2365)
+  OPTDBG 48126,2,()()()()()()()()()() (BIN\UL2OCDS.DLL)()()()
+ FLASH1 { 1,0,0,0,1,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\UL2OCDS.DLL)
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+

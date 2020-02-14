@@ -1,0 +1,9 @@
+
+[WORKSPACE]
+  MPW_NAME="WorkSpace"
+  Project=".\Mcu2K_Test.Uv2",A,X
+  Project=".\Prj_CalTool\CalTool.Uv2"
+  Project=".\Prj_Lib_DTC_Diag\MCU1_Diag_Imp.Uv2"
+  Project=".\Prj_Lib_EOL_Diag\Eol_Diag.Uv2"
+  Project=".\Prj_Lib_Hw_Driver\Hw_Driver.Uv2"
+

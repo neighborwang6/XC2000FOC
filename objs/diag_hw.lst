@@ -1,0 +1,170 @@
+C166 COMPILER V7.57.0, DIAG_HW                                                             01/03/2020 16:20:08 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE DIAG_HW
+OBJECT MODULE PLACED IN .\objs\diag_hw.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\diag_hw.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EO
+                    -L_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DE
+                    -BUG CODE PRINT(.\objs\diag_hw.lst) TABS(2) OBJECT(.\objs\diag_hw.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         //
+    3         #include "diag_hw.h"
+    4         #include "mcu1_imp.h"
+    5         #include "mcu2_imp.h"
+    6         #include "dtc_man.h"
+    7         #include "hican.h"
+    8         
+    9         ////////////////////////////////////////////////////////////////////////////////
+   10         //
+   11         
+   12         void ad_scan(void);
+   13         u8 can_test_init(void);
+   14         
+   15         extern void mcu1_imp_init(void);
+   16         
+   17         extern u16 diag_timeout; 
+   18         extern u16 volatile g_ms_uw;
+   19         
+   20         u8 sys_health[HEALTH_IDX_MAX+1];
+   21         
+   22         // Specify if the ECU in diag mode (Normal mode initially)
+   23         u8 g_diag_stat=0;
+   24         
+   25         ////////////////////////////////////////////////////////////////////////////////
+   26         //
+   27         void diag_hw_init(void)
+   28         {
+   29  1         mcu1_imp_init();
+   30  1      
+   31  1         dtc_man_init();
+   32  1         can_test_init();
+   33  1      
+   34  1         hican_init();
+   35  1      
+   36  1         sys_health[HEALTH_IDX_SPI]=200;
+   37  1         sys_health[HEALTH_IDX_DIAG]=0;
+   38  1      }
+   39         
+   40         ////////////////////////////////////////////////////////////////////////////////
+   41         //
+   42         void do_spi_char(u8 ch)
+   43         {
+   44  1        ch=ch;
+   45  1      }
+   46         
+   47         ////////////////////////////////////////////////////////////////////////////////
+   48         //
+   49         void diag_main_loop_hook(void)
+   50         {
+   51  1        ///////////////////////////////////////////////////////
+   52  1        // Post Prossess the SPI Message
+   53  1        do_mcu1_msg();
+C166 COMPILER V7.57.0, DIAG_HW                                                             01/03/2020 16:20:08 PAGE 2   
+
+   54  1        do_mcu2_msg();
+   55  1        ///////////////////////////////////////////////////////
+   56  1        // Deal with the DTC change
+   57  1        dtc_man_nsr();
+   58  1      
+   59  1        ///////////////////////////////////////////////////////
+   60  1        ad_scan();            // FIXED: yly : why put it here :(
+   61  1      
+   62  1        ///////////////////////////////////////////////////////
+   63  1      }
+   64         
+   65         ////////////////////////////////////////////////////////////////////////////////
+   66         // Enter diagnostic mode
+   67         void diag_in_hook(void)
+   68         {
+   69  1         // diag_in_hook_user();
+   70  1      }
+   71         
+   72         ////////////////////////////////////////////////////////////////////////////////
+   73         // Leave diagnostic mode
+   74         void diag_out_hook(void)
+   75         {
+   76  1      }
+   77         
+C166 COMPILER V7.57.0, DIAG_HW                                                             01/03/2020 16:20:08 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION diag_hw_init (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 27
+                                           ; SOURCE LINE # 29
+0000 DA000000 E    CALLS     SEG (mcu1_imp_init),mcu1_imp_init
+                                           ; SOURCE LINE # 31
+0004 DA000000 E    CALLS     SEG (dtc_man_init),dtc_man_init
+                                           ; SOURCE LINE # 32
+0008 DA000000 E    CALLS     SEG (can_test_init),can_test_init
+                                           ; SOURCE LINE # 34
+000C DA000000 E    CALLS     SEG (hican_init),hican_init
+                                           ; SOURCE LINE # 36
+0010 E7F8C800      MOVB      RL4,#0C8H
+0014 F7F80100 R    MOVB      sys_health,RL4
+                                           ; SOURCE LINE # 37
+0018 F78E0200 R    MOVB      sys_health+01H,ZEROS
+                                           ; SOURCE LINE # 38
+001C DB00          RETS      
+             ; FUNCTION diag_hw_init (END    RMASK = @0x7FFF)
+
+             ; FUNCTION do_spi_char (BEGIN  RMASK = @0x4000)
+                                           ; SOURCE LINE # 42
+;---- Variable 'ch' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 45
+001E DB00          RETS      
+             ; FUNCTION do_spi_char (END    RMASK = @0x4000)
+
+             ; FUNCTION diag_main_loop_hook (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 49
+                                           ; SOURCE LINE # 53
+0020 DA000000 E    CALLS     SEG (do_mcu1_msg),do_mcu1_msg
+                                           ; SOURCE LINE # 54
+0024 DA000000 E    CALLS     SEG (do_mcu2_msg),do_mcu2_msg
+                                           ; SOURCE LINE # 57
+0028 DA000000 E    CALLS     SEG (dtc_man_nsr),dtc_man_nsr
+                                           ; SOURCE LINE # 60
+002C DA000000 E    CALLS     SEG (ad_scan),ad_scan
+                                           ; SOURCE LINE # 63
+0030 DB00          RETS      
+             ; FUNCTION diag_main_loop_hook (END    RMASK = @0x7FFF)
+
+             ; FUNCTION diag_in_hook (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 67
+                                           ; SOURCE LINE # 70
+0032 DB00          RETS      
+             ; FUNCTION diag_in_hook (END    RMASK = @0x8000)
+
+             ; FUNCTION diag_out_hook (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 74
+                                           ; SOURCE LINE # 76
+0034 DB00          RETS      
+             ; FUNCTION diag_out_hook (END    RMASK = @0x8000)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          54     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+C166 COMPILER V7.57.0, DIAG_HW                                                             01/03/2020 16:20:08 PAGE 4   
+
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           4     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =           6     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,171 @@
+C166 COMPILER V7.57.0, AUT_DRV                                                             01/03/2020 16:20:14 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE AUT_DRV
+OBJECT MODULE PLACED IN .\objs\aut_drv.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\aut_drv.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_Dia
+                    -g;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG C
+                    -ODE PRINT(.\objs\aut_drv.lst) TABS(2) OBJECT(.\objs\aut_drv.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /**************************************************
+    3         *    File Name    : ctrl.c
+    4         *    Copyright    : QingChen
+    5         *    Module Name  : Electric Power Steering
+    6              *
+    7         *    CPU          : XC2000
+    8         *    RTOS         : No RTOS
+    9         *
+   10         *    Create Date  : 2019.11.14
+   11         *    Author/Cororation: Perfersor YLY
+   12         *    Abstract Description:
+   13         *
+   14         *--------------- Revision History --------------
+   15         *    No Version Date      Revisied By  Item    Description
+   16         *    1  V0.0    19.11.26  WGY                  eBooster
+   17         **************************************************/
+   18         
+   19         /**************************************************
+   20         *    Debug switch Section
+   21         **************************************************/
+   22         //#define PRESURE_PID_CTRL
+   23         /**************************************************
+   24         *    Include File Section
+   25         **************************************************/
+   26         #include "aut_drv.h"
+   27         
+   28         /**************************************************
+   29         *    MacroDefine Section
+   30         **************************************************/
+   31         
+   32         /**************************************************
+   33         *    StructDefine Section
+   34         **************************************************/
+   35         
+   36         /**************************************************
+   37         *    Prototype Declare Section
+   38         **************************************************/
+   39         
+   40         /**************************************************
+   41         *    Global Variable Declare Section
+   42         **************************************************/
+   43         
+   44         /**************************************************
+   45         *    File Static Variable Define Section
+   46         **************************************************/
+   47         
+   48         /**************************************************
+   49         *    Function Define Section
+   50         **************************************************/
+   51         
+   52         // WGY Debug Data
+   53         u8 AUT_DRV_BUFF[8];
+C166 COMPILER V7.57.0, AUT_DRV                                                             01/03/2020 16:20:14 PAGE 2   
+
+   54         
+   55         ///////////////////////////////////////////////////////////////////////////////
+   56         //Auto Drive Command from CAN bus
+   57         void do_aut_drv_response(u8 *buf)
+   58         {
+   59  1        u16 *pt;
+   60  1      
+   61  1        // Compatible with Motorola Order of BYTEs.
+   62  1        AUT_DRV_BUFF[0]=buf[0];
+   63  1        AUT_DRV_BUFF[1]=buf[1];
+   64  1        AUT_DRV_BUFF[2]=buf[2];
+   65  1        AUT_DRV_BUFF[3]=buf[3];
+   66  1        AUT_DRV_BUFF[4]=buf[4];
+   67  1        AUT_DRV_BUFF[5]=buf[5];
+   68  1        AUT_DRV_BUFF[6]=buf[6];
+   69  1        AUT_DRV_BUFF[7]=buf[7];
+   70  1      
+   71  1      
+   72  1        
+   73  1        pt = (u16*)AUT_DRV_BUFF;
+   74  1        
+   75  1        if(pt[2]!=0x00)
+   76  1          return;
+   77  1        
+   78  1        ///////////////////////////////////////////////////////
+   79  1      }
+C166 COMPILER V7.57.0, AUT_DRV                                                             01/03/2020 16:20:14 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION do_aut_drv_response (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 57
+;---- Variable 'buf' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 58
+                                           ; SOURCE LINE # 62
+0000 DC49          EXTP      R9,#01H
+0002 A988          MOVB      RL4,[R8]
+0004 D7400000 R    EXTP      #PAG (AUT_DRV_BUFF),#01H
+0008 F7F80000 R    MOVB      POF (AUT_DRV_BUFF),RL4
+                                           ; SOURCE LINE # 63
+000C DC49          EXTP      R9,#01H
+000E F4880100      MOVB      RL4,[R8+#POF(01H)]
+0012 D7400000 R    EXTP      #PAG (AUT_DRV_BUFF),#01H
+0016 F7F80100 R    MOVB      POF (AUT_DRV_BUFF+01H),RL4
+                                           ; SOURCE LINE # 64
+001A DC49          EXTP      R9,#01H
+001C F4880200      MOVB      RL4,[R8+#POF(02H)]
+0020 D7400000 R    EXTP      #PAG (AUT_DRV_BUFF),#01H
+0024 F7F80200 R    MOVB      POF (AUT_DRV_BUFF+02H),RL4
+                                           ; SOURCE LINE # 65
+0028 DC49          EXTP      R9,#01H
+002A F4880300      MOVB      RL4,[R8+#POF(03H)]
+002E D7400000 R    EXTP      #PAG (AUT_DRV_BUFF),#01H
+0032 F7F80300 R    MOVB      POF (AUT_DRV_BUFF+03H),RL4
+                                           ; SOURCE LINE # 66
+0036 DC49          EXTP      R9,#01H
+0038 F4880400      MOVB      RL4,[R8+#POF(04H)]
+003C D7400000 R    EXTP      #PAG (AUT_DRV_BUFF),#01H
+0040 F7F80400 R    MOVB      POF (AUT_DRV_BUFF+04H),RL4
+                                           ; SOURCE LINE # 67
+0044 DC49          EXTP      R9,#01H
+0046 F4880500      MOVB      RL4,[R8+#POF(05H)]
+004A D7400000 R    EXTP      #PAG (AUT_DRV_BUFF),#01H
+004E F7F80500 R    MOVB      POF (AUT_DRV_BUFF+05H),RL4
+                                           ; SOURCE LINE # 68
+0052 DC49          EXTP      R9,#01H
+0054 F4880600      MOVB      RL4,[R8+#POF(06H)]
+0058 D7400000 R    EXTP      #PAG (AUT_DRV_BUFF),#01H
+005C F7F80600 R    MOVB      POF (AUT_DRV_BUFF+06H),RL4
+                                           ; SOURCE LINE # 69
+0060 DC49          EXTP      R9,#01H
+0062 F4880700      MOVB      RL4,[R8+#POF(07H)]
+0066 D7400000 R    EXTP      #PAG (AUT_DRV_BUFF),#01H
+006A F7F80700 R    MOVB      POF (AUT_DRV_BUFF+07H),RL4
+                                           ; SOURCE LINE # 73
+                                           ; SOURCE LINE # 75
+                                           ; SOURCE LINE # 76
+                                           ; SOURCE LINE # 79
+006E DB00          RETS      
+             ; FUNCTION do_aut_drv_response (END    RMASK = @0x4010)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         112     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+C166 COMPILER V7.57.0, AUT_DRV                                                             01/03/2020 16:20:14 PAGE 4   
+
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =           8     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

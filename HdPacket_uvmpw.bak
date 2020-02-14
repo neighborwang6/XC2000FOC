@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<ProjectWorkspace xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_mpw.xsd">
+
+  <SchemaVersion>1.0</SchemaVersion>
+
+  <Header>### uVision Project, (C) Keil Software</Header>
+
+  <WorkspaceName>WorkSpace</WorkspaceName>
+
+  <project>
+    <PathAndName>.\Mcu2K_Test.uvproj</PathAndName>
+    <NodeIsActive>1</NodeIsActive>
+  </project>
+
+  <project>
+    <PathAndName>.\Prj_CalTool\CalTool.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\Prj_Lib_DTC_Diag\MCU1_Diag_Imp.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\Prj_Lib_EOL_Diag\Eol_Diag.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\Prj_Lib_Hw_Driver\Hw_Driver.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\Prj_Lib_CAN_Driver\HiCAN_Driver.uvproj</PathAndName>
+  </project>
+
+</ProjectWorkspace>

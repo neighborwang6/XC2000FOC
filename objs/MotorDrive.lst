@@ -1,0 +1,255 @@
+C166 COMPILER V7.57.0, MOTORDRIVE                                                          01/03/2020 16:20:13 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE MOTORDRIVE
+OBJECT MODULE PLACED IN .\objs\MotorDrive.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE EBS_Ctrl_Logic\MotorDrive.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.
+                    -\src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic)
+                    - MODV2 DEBUG CODE PRINT(.\objs\MotorDrive.lst) TABS(2) OBJECT(.\objs\MotorDrive.obj) 
+
+ stmt lvl     source
+
+    1         #include "MotorDrive.h"
+    2         #include "std_defs.h"
+    3         #include "ctrl_if.h"
+    4         #include "MotorCtrlSet.h"
+    5         u16 protect_pre=0;
+    6         u16 Control_mode=0;
+    7         u16 TestDUTY=0;
+    8         
+    9         extern u16 MotorModeSet;
+   10         extern u16 state,Voltage;
+   11         extern float sum_error;
+   12         
+   13         extern u16 DisplacementInit,DisplacementSenseMM;
+   14         extern u16 ControlModePre;
+   15         extern u16 MotorState;
+   16         extern u16 PressureAVE,ControlMode;
+   17         
+   18         void MotorDrive(void)
+   19         {
+   20  1        if(ControlModePre==1)
+   21  1        {
+   22  2          if (ControlMode==1)
+   23  2            {
+   24  3              protect_pre=0;
+   25  3                  
+   26  3                  if(MotorState==0)  //&&(TargetPressure<=(PressureAVE*0.9))
+   27  3                  {
+   28  4                    Control_mode=1;  //ForWard
+   29  4                  }
+   30  3                  else if(MotorState==1)
+   31  3                  {
+   32  4                    Control_mode=2;  //BackWard
+   33  4                  }
+   34  3              
+   35  3                  switch (Control_mode)
+   36  3                  {
+   37  4                  case 1:
+   38  4                    MotorModeSet=100;  //Forward
+   39  4                    MotorCtrlSet();
+   40  4                    set_motor_volt(Voltage);
+   41  4                      break;
+   42  4                  case 2:
+   43  4                      MotorModeSet=500;
+   44  4                      MotorCtrlSet();
+   45  4                  set_motor_volt(Voltage);
+   46  4                      break;
+   47  4                  case 3:
+   48  4                      MotorModeSet=900;
+   49  4                      set_motor_volt(0);
+   50  4                      MotorCtrlSet();
+   51  4                      break;
+   52  4                }
+   53  3              }
+C166 COMPILER V7.57.0, MOTORDRIVE                                                          01/03/2020 16:20:13 PAGE 2   
+
+   54  2            else
+   55  2              {
+   56  3                  sum_error=0;
+   57  3                  Control_mode=5;
+   58  3                  protect_pre++;
+   59  3                  if(protect_pre>=600)
+   60  3                  {
+   61  4                      Control_mode=8;
+   62  4                      protect_pre=1080;
+   63  4                  }
+   64  3                    
+   65  3                switch (Control_mode)
+   66  3                  {
+   67  4                  case 5:
+   68  4                    MotorModeSet=900;
+   69  4                    MotorCtrlSet();
+   70  4                    set_motor_volt(0);//2V
+   71  4                      break;
+   72  4                  case 8: 
+   73  4                      MotorModeSet=900;
+   74  4                      MotorCtrlSet();
+   75  4                      set_motor_volt(0);
+   76  4                      break;
+   77  4                  }
+   78  3          }
+   79  2          }
+   80  1      }
+C166 COMPILER V7.57.0, MOTORDRIVE                                                          01/03/2020 16:20:13 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION MotorDrive (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 18
+                                           ; SOURCE LINE # 20
+0000 F2F40000 E    MOV       R4,ControlModePre
+0004 4841          CMP       R4,#01H
+0006 3D69          JMPR      cc_NZ,?C0001
+                                           ; SOURCE LINE # 22
+0008 F2F40000 E    MOV       R4,ControlMode
+000C 4841          CMP       R4,#01H
+000E 3D36          JMPR      cc_NZ,?C0002
+                                           ; SOURCE LINE # 24
+0010 F68E0400 R    MOV       protect_pre,ZEROS
+                                           ; SOURCE LINE # 26
+0014 F2F50000 E    MOV       R5,MotorState
+0018 3D04          JMPR      cc_NZ,?C0003
+                                           ; SOURCE LINE # 28
+001A E014          MOV       R4,#01H
+001C F6F40000 R    MOV       Control_mode,R4
+                                           ; SOURCE LINE # 29
+0020 0D05          JMPR      cc_UC,?C0004
+0022         ?C0003:
+                                           ; SOURCE LINE # 30
+0022 4851          CMP       R5,#01H
+0024 3D03          JMPR      cc_NZ,?C0004
+                                           ; SOURCE LINE # 32
+0026 E024          MOV       R4,#02H
+0028 F6F40000 R    MOV       Control_mode,R4
+                                           ; SOURCE LINE # 33
+002C         ?C0004:
+                                           ; SOURCE LINE # 35
+002C F2F40000 R    MOV       R4,Control_mode
+0030 2842          SUB       R4,#02H
+0032 2D0F          JMPR      cc_Z,?C0008
+0034 2841          SUB       R4,#01H
+0036 2D18          JMPR      cc_Z,?C0009
+0038 0842          ADD       R4,#02H
+003A 3D4F          JMPR      cc_NZ,?C0001
+                                           ; SOURCE LINE # 37
+003C         ?C0007:
+                                           ; SOURCE LINE # 38
+003C E6F46400      MOV       R4,#064H
+0040 F6F40000 E    MOV       MotorModeSet,R4
+                                           ; SOURCE LINE # 39
+0044 DA000000 E    CALLS     SEG (MotorCtrlSet),MotorCtrlSet
+                                           ; SOURCE LINE # 40
+0048 F2F80000 E    MOV       R8,Voltage
+004C DA000000 E    CALLS     SEG (set_motor_volt),set_motor_volt
+                                           ; SOURCE LINE # 41
+0050 DB00          RETS      
+                                           ; SOURCE LINE # 42
+0052         ?C0008:
+                                           ; SOURCE LINE # 43
+0052 E6F4F401      MOV       R4,#01F4H
+0056 F6F40000 E    MOV       MotorModeSet,R4
+                                           ; SOURCE LINE # 44
+005A DA000000 E    CALLS     SEG (MotorCtrlSet),MotorCtrlSet
+                                           ; SOURCE LINE # 45
+005E F2F80000 E    MOV       R8,Voltage
+0062 DA000000 E    CALLS     SEG (set_motor_volt),set_motor_volt
+C166 COMPILER V7.57.0, MOTORDRIVE                                                          01/03/2020 16:20:13 PAGE 4   
+
+                                           ; SOURCE LINE # 46
+0066 DB00          RETS      
+                                           ; SOURCE LINE # 47
+0068         ?C0009:
+                                           ; SOURCE LINE # 48
+0068 E6F48403      MOV       R4,#0384H
+006C F6F40000 E    MOV       MotorModeSet,R4
+                                           ; SOURCE LINE # 49
+0070 E008          MOV       R8,#00H
+0072 DA000000 E    CALLS     SEG (set_motor_volt),set_motor_volt
+                                           ; SOURCE LINE # 50
+0076 DA000000 E    CALLS     SEG (MotorCtrlSet),MotorCtrlSet
+                                           ; SOURCE LINE # 51
+                                           ; SOURCE LINE # 52
+                                           ; SOURCE LINE # 53
+007A DB00          RETS      
+007C         ?C0002:
+                                           ; SOURCE LINE # 56
+007C F68E0000 E    MOV       sum_error,ZEROS
+0080 F68E0200 E    MOV       sum_error+02H,ZEROS
+                                           ; SOURCE LINE # 57
+0084 E054          MOV       R4,#05H
+0086 F6F40000 R    MOV       Control_mode,R4
+                                           ; SOURCE LINE # 58
+008A 248F0400 R    SUB       protect_pre,ONES
+                                           ; SOURCE LINE # 59
+008E F2F40400 R    MOV       R4,protect_pre
+0092 46F45802      CMP       R4,#0258H
+0096 8D07          JMPR      cc_ULT,?C0011
+                                           ; SOURCE LINE # 61
+0098 E084          MOV       R4,#08H
+009A F6F40000 R    MOV       Control_mode,R4
+                                           ; SOURCE LINE # 62
+009E E6F43804      MOV       R4,#0438H
+00A2 F6F40400 R    MOV       protect_pre,R4
+                                           ; SOURCE LINE # 63
+00A6         ?C0011:
+                                           ; SOURCE LINE # 65
+00A6 F2F40000 R    MOV       R4,Control_mode
+00AA 06F4F8FF      ADD       R4,#0FFF8H
+00AE 2D0C          JMPR      cc_Z,?C0014
+00B0 0843          ADD       R4,#03H
+00B2 3D13          JMPR      cc_NZ,?C0001
+                                           ; SOURCE LINE # 67
+00B4         ?C0013:
+                                           ; SOURCE LINE # 68
+00B4 E6F48403      MOV       R4,#0384H
+00B8 F6F40000 E    MOV       MotorModeSet,R4
+                                           ; SOURCE LINE # 69
+00BC DA000000 E    CALLS     SEG (MotorCtrlSet),MotorCtrlSet
+                                           ; SOURCE LINE # 70
+00C0 E008          MOV       R8,#00H
+00C2 DA000000 E    CALLS     SEG (set_motor_volt),set_motor_volt
+                                           ; SOURCE LINE # 71
+00C6 DB00          RETS      
+                                           ; SOURCE LINE # 72
+00C8         ?C0014:
+                                           ; SOURCE LINE # 73
+00C8 E6F48403      MOV       R4,#0384H
+00CC F6F40000 E    MOV       MotorModeSet,R4
+                                           ; SOURCE LINE # 74
+00D0 DA000000 E    CALLS     SEG (MotorCtrlSet),MotorCtrlSet
+C166 COMPILER V7.57.0, MOTORDRIVE                                                          01/03/2020 16:20:13 PAGE 5   
+
+                                           ; SOURCE LINE # 75
+00D4 E008          MOV       R8,#00H
+00D6 DA000000 E    CALLS     SEG (set_motor_volt),set_motor_volt
+                                           ; SOURCE LINE # 76
+                                           ; SOURCE LINE # 77
+                                           ; SOURCE LINE # 78
+                                           ; SOURCE LINE # 79
+00DA         ?C0001:
+00DA DB00          RETS      
+             ; FUNCTION MotorDrive (END    RMASK = @0x7FFF)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         220     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           6     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          18     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,565 @@
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE SENT_DECODE
+OBJECT MODULE PLACED IN .\objs\sent_decode.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\sent_decode.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL
+                    -_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEB
+                    -UG CODE PRINT(.\objs\sent_decode.lst) TABS(2) OBJECT(.\objs\sent_decode.obj) 
+
+ stmt lvl     source
+
+    1         /**************************************************
+    2         *    File Name    : sent_decode.c
+    3         *    Copyright    : QingChen
+    4         *    Module Name  : Electric Power Steering
+    5              *
+    6         *    CPU          : XC2000
+    7         *    RTOS         : No RTOS
+    8         *
+    9         *    Create Date  : 2019.11.26
+   10         *    Author/Cororation: WGY/QingChen Techology
+   11         *    Abstract Description: Get Sent Data From disp Sensor of BOSCH iBooster.
+   12         *
+   13         *--------------- Revision History --------------
+   14         *    No Version Date      Revisied By  Item    Description
+   15         *    1  V0.0    19.11.14  WGY                  
+   16         **************************************************/
+   17         
+   18         
+   19         /**************************************************
+   20         *    Debug switch Section
+   21         **************************************************/
+   22         
+   23         /**************************************************
+   24         *    Include File Section
+   25         **************************************************/
+   26         #include "std_defs.h"
+   27         #include "sent_decode.h"
+   28         /**************************************************
+   29         *    MacroDefine Section
+   30         **************************************************/
+   31         #define TIMER_ATOM_US (6.67e-3) // Timer Resolution in microsecond
+   32         //#define TIMER_TICKS_PER_US ((u16)(1.0/(TIMER_ATOM_US)))
+   33         #define TIMER_TICKS_PER_US (40)
+   34         
+   35         #define F_US(x) ((x)*(TIMER_TICKS_PER_US)*1UL)
+   36         #define IDLE_TM F_US(500UL)
+   37         #define F_TICKS(x) (x)
+   38         #define F_TICKS_TM(x) ((x)*g_tick_period)
+   39         #define SYN_TICKS F_TICKS(56)
+   40         #define SYN_TICKS_TM F_TICKS_TM(56)
+   41         
+   42         #define TM_EQUAL(t1,t2,tolerance) ((t1)<(t2)+(tolerance) && (t1)+(tolerance)>(t2))
+   43         #define TM_GREAT_THAN(t1,t2) (t1>t2)
+   44         #define TM_LESS_THAN(t1,t2) (t1<t2)
+   45         /**************************************************
+   46         *    StructDefine Section
+   47         **************************************************/
+   48         
+   49         /**************************************************
+   50         *    Prototype Declare Section
+   51         **************************************************/
+   52         enum {
+   53             FPHASE_NONE      = 0,
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 2   
+
+   54             FPHASE_SYN_OK    = 1,
+   55             FPHASE_STATUS_OK = 2,
+   56             FPHASE_DATA_OK   = 3
+   57         };
+   58         
+   59         /**************************************************
+   60         *    Global Variable Declare Section
+   61         **************************************************/
+   62         u8 sent_data[7];
+   63         u8 sent_data_idx=0;
+   64         u32 timer_val0=0; // Timer valve at previous falling edge
+   65         u32 timer_val=0;  // Timer value at current falling edge
+   66         u8 frame_phase=FPHASE_NONE;  //Default mode
+   67         u32 g_tick_period=F_US(3); // XXus/bit
+   68         
+   69         /**************************************************
+   70         *    File Static Variable Define Section
+   71         **************************************************/
+   72         
+   73         /**************************************************
+   74         *    Function Define Section
+   75         **************************************************/
+   76         
+   77         u8 sent_decode(u32 timer, u8 option)
+   78         {
+   79  1          u8 ret_code=1;
+   80  1          u8 tmpu8;
+   81  1          u32 pulsex;
+   82  1      
+   83  1          if(option==1)
+   84  1          {
+   85  2              frame_phase=FPHASE_NONE;
+   86  2              sent_data_idx=0;
+   87  2      
+   88  2              return 1;
+   89  2          }
+   90  1      
+   91  1          pulsex=timer;
+   92  1      
+   93  1          if(pulsex>IDLE_TM)
+   94  1          {
+   95  2              frame_phase=FPHASE_NONE;
+   96  2              sent_data_idx=0;
+   97  2      
+   98  2              return 1;
+   99  2          }
+  100  1      
+  101  1          switch(frame_phase)
+  102  1          {
+  103  2          case FPHASE_NONE:
+  104  2              if(TM_EQUAL(pulsex,SYN_TICKS_TM,SYN_TICKS_TM/5)) // SYN nibble detected
+  105  2              {
+  106  3                  g_tick_period=pulsex/SYN_TICKS;
+  107  3                  frame_phase=FPHASE_SYN_OK;
+  108  3                  sent_data_idx=0;
+  109  3              }
+  110  2              break;
+  111  2          case FPHASE_SYN_OK:
+  112  2              if(TM_GREAT_THAN(pulsex,F_TICKS_TM(27.9)) || TM_LESS_THAN(pulsex,F_TICKS_TM(11.5))) // Invalid STA
+             -TUS nibble detected
+  113  2              {
+  114  3                  frame_phase=FPHASE_NONE;
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 3   
+
+  115  3                  sent_data_idx=0;
+  116  3                  break;
+  117  3              }
+  118  2              pulsex+=(g_tick_period/4);  // Round to: a.75 => a+1
+  119  2              tmpu8=(u8)(pulsex/g_tick_period);
+  120  2              if(tmpu8>27)
+  121  2                  tmpu8=27;
+  122  2              if(tmpu8<12)
+  123  2                  tmpu8=12;
+  124  2      
+  125  2              sent_data_idx=0;
+  126  2              sent_data[sent_data_idx]=tmpu8-12;  //Status & Communication
+  127  2              sent_data_idx++;
+  128  2              frame_phase=FPHASE_STATUS_OK;
+  129  2              break;
+  130  2      
+  131  2          case FPHASE_STATUS_OK:
+  132  2              if(TM_GREAT_THAN(pulsex,F_TICKS_TM(27.9)) || TM_LESS_THAN(pulsex,F_TICKS_TM(11.5))) // Invalid Dat
+             -a & CRC nibble detected
+  133  2              {
+  134  3                  frame_phase=FPHASE_NONE;
+  135  3                  sent_data_idx=0;
+  136  3                  break;
+  137  3              }
+  138  2      
+  139  2              // Timing trouble
+  140  2              // ...
+  141  2              pulsex+=(g_tick_period/4); // Round to: a.75 => a+1
+  142  2              tmpu8=(u8)(pulsex/g_tick_period);
+  143  2              if(tmpu8>27)
+  144  2                  tmpu8=27;
+  145  2              if(tmpu8<12)
+  146  2                  tmpu8=12;
+  147  2              sent_data[sent_data_idx]=tmpu8-12;
+  148  2      
+  149  2              sent_data_idx++;
+  150  2              if(sent_data_idx>=7)
+  151  2              {
+  152  3                  frame_phase=FPHASE_DATA_OK;
+  153  3                  ret_code=0;
+  154  3                  break;
+  155  3              }
+  156  2      
+  157  2              break;
+  158  2      
+  159  2          case FPHASE_DATA_OK:
+  160  2              sent_data_idx=0;
+  161  2              frame_phase=FPHASE_NONE;
+  162  2              ret_code=2;
+  163  2              break;
+  164  2      
+  165  2          default:
+  166  2              sent_data_idx=0;
+  167  2              frame_phase=FPHASE_NONE;
+  168  2              break;
+  169  2          }
+  170  1      
+  171  1          return ret_code;
+  172  1      }
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 4   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION sent_decode (BEGIN  RMASK = @0x7FFE)
+                                           ; SOURCE LINE # 77
+0000 ECFD          PUSH      R13
+0002 ECFE          PUSH      R14
+0004 ECFF          PUSH      R15
+;---- Variable 'option' assigned to Register 'R10' ----
+;---- Variable 'timer' assigned to Register 'R8/R9' ----
+0006 2804          SUB       R0,#04H
+                                           ; SOURCE LINE # 78
+                                           ; SOURCE LINE # 79
+0008 E118          MOVB      RL4,#01H
+000A B980          MOVB      [R0],RL4      ; ret_code
+                                           ; SOURCE LINE # 83
+000C F04A          MOV       R4,R10
+000E 4981          CMPB      RL4,#01H
+0010 3D07          JMPR      cc_NZ,?C0001
+                                           ; SOURCE LINE # 85
+0012 F78E0D00 R    MOVB      frame_phase,ZEROS
+                                           ; SOURCE LINE # 86
+0016 F78E0C00 R    MOVB      sent_data_idx,ZEROS
+                                           ; SOURCE LINE # 88
+001A E118          MOVB      RL4,#01H
+001C EA00BA02 R    JMPA      cc_UC,?C0002
+                                           ; SOURCE LINE # 89
+0020         ?C0001:
+                                           ; SOURCE LINE # 91
+0020 F0E8          MOV       R14,R8
+0022 F0F9          MOV       R15,R9
+;---- Variable 'pulsex' assigned to Register 'R14/R15' ----
+                                           ; SOURCE LINE # 93
+0024 F048          MOV       R4,R8
+0026 F059          MOV       R5,R9
+0028 26F4204E      SUB       R4,#04E20H
+002C 3850          SUBC      R5,#00H
+002E FD07          JMPR      cc_ULE,?C0003
+                                           ; SOURCE LINE # 95
+0030 F78E0D00 R    MOVB      frame_phase,ZEROS
+                                           ; SOURCE LINE # 96
+0034 F78E0C00 R    MOVB      sent_data_idx,ZEROS
+                                           ; SOURCE LINE # 98
+0038 E118          MOVB      RL4,#01H
+003A EA00BA02 R    JMPA      cc_UC,?C0002
+                                           ; SOURCE LINE # 99
+003E         ?C0003:
+                                           ; SOURCE LINE # 101
+003E F3F80D00 R    MOVB      RL4,frame_phase
+0042 2981          SUBB      RL4,#01H
+0044 2D48          JMPR      cc_Z,?C0007
+0046 2982          SUBB      RL4,#02H
+0048 EA80B801 R    JMPA      cc_C,?C0008
+004C EA20A202 R    JMPA      cc_Z,?C0009
+0050 0983          ADDB      RL4,#03H
+0052 EA30B002 R    JMPA      cc_NZ,?C0006
+                                           ; SOURCE LINE # 103
+0056         ?C0005:
+                                           ; SOURCE LINE # 104
+0056 E6F63800      MOV       R6,#038H
+005A E007          MOV       R7,#00H
+005C F2FA0400 R    MOV       R10,g_tick_period
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 5   
+
+0060 F2FB0600 R    MOV       R11,g_tick_period+02H
+0064 F04A          MOV       R4,R10
+0066 F05B          MOV       R5,R11
+0068 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+006C F0C4          MOV       R12,R4
+006E F0D5          MOV       R13,R5
+0070 E056          MOV       R6,#05H
+0072 E007          MOV       R7,#00H
+0074 DA000000 E    CALLS     SEG (?C_ULDIV),?C_ULDIV
+0078 F064          MOV       R6,R4
+007A F075          MOV       R7,R5
+007C 00C4          ADD       R12,R4
+007E 10D5          ADDC      R13,R5
+0080 F04E          MOV       R4,R14
+0082 F05F          MOV       R5,R15
+0084 204C          SUB       R4,R12
+0086 305D          SUBC      R5,R13
+0088 EA90B802 R    JMPA      cc_UGE,?C0004
+008C F086          MOV       R8,R6
+008E 008E          ADD       R8,R14
+0090 F097          MOV       R9,R7
+0092 109F          ADDC      R9,R15
+0094 E6F63800      MOV       R6,#038H
+0098 E007          MOV       R7,#00H
+009A F2F40400 R    MOV       R4,g_tick_period
+009E F2F50600 R    MOV       R5,g_tick_period+02H
+00A2 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+00A6 F064          MOV       R6,R4
+00A8 F075          MOV       R7,R5
+00AA 2084          SUB       R8,R4
+00AC 3095          SUBC      R9,R5
+00AE EAF0B802 R    JMPA      cc_ULE,?C0004
+                                           ; SOURCE LINE # 106
+00B2 E6F63800      MOV       R6,#038H
+00B6 E007          MOV       R7,#00H
+00B8 F04E          MOV       R4,R14
+00BA F05F          MOV       R5,R15
+00BC DA000000 E    CALLS     SEG (?C_ULDIV),?C_ULDIV
+00C0 F6F40400 R    MOV       g_tick_period,R4
+00C4 F6F50600 R    MOV       g_tick_period+02H,R5
+                                           ; SOURCE LINE # 107
+00C8 E118          MOVB      RL4,#01H
+00CA F7F80D00 R    MOVB      frame_phase,RL4
+                                           ; SOURCE LINE # 108
+00CE F78E0C00 R    MOVB      sent_data_idx,ZEROS
+                                           ; SOURCE LINE # 109
+                                           ; SOURCE LINE # 110
+00D2 EA00B802 R    JMPA      cc_UC,?C0004
+                                           ; SOURCE LINE # 111
+00D6         ?C0007:
+                                           ; SOURCE LINE # 112
+00D6 F2F40400 R    MOV       R4,g_tick_period
+00DA F2F50600 R    MOV       R5,g_tick_period+02H
+00DE E006          MOV       R6,#00H
+00E0 DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+00E4 F064          MOV       R6,R4
+00E6 F075          MOV       R7,R5
+00E8 E6F43333      MOV       R4,#03333H
+00EC E6F5DF41      MOV       R5,#041DFH
+00F0 DA000000 E    CALLS     SEG (?C_FPMUL),?C_FPMUL
+00F4 F0C4          MOV       R12,R4
+00F6 F0D5          MOV       R13,R5
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 6   
+
+00F8 F04E          MOV       R4,R14
+00FA F05F          MOV       R5,R15
+00FC E006          MOV       R6,#00H
+00FE DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+0102 F06C          MOV       R6,R12
+0104 F07D          MOV       R7,R13
+0106 DA000000 E    CALLS     SEG (?C_FPCMP),?C_FPCMP
+010A AD1A          JMPR      cc_SGT,?C0012
+010C F2F40400 R    MOV       R4,g_tick_period
+0110 F2F50600 R    MOV       R5,g_tick_period+02H
+0114 E006          MOV       R6,#00H
+0116 DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+011A F064          MOV       R6,R4
+011C F075          MOV       R7,R5
+011E E004          MOV       R4,#00H
+0120 E6F53841      MOV       R5,#04138H
+0124 DA000000 E    CALLS     SEG (?C_FPMUL),?C_FPMUL
+0128 F0C4          MOV       R12,R4
+012A F0D5          MOV       R13,R5
+012C F04E          MOV       R4,R14
+012E F05F          MOV       R5,R15
+0130 E006          MOV       R6,#00H
+0132 DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+0136 F06C          MOV       R6,R12
+0138 F07D          MOV       R7,R13
+013A DA000000 E    CALLS     SEG (?C_FPCMP),?C_FPCMP
+013E DD06          JMPR      cc_SGE,?C0011
+0140         ?C0012:
+                                           ; SOURCE LINE # 114
+0140 F78E0D00 R    MOVB      frame_phase,ZEROS
+                                           ; SOURCE LINE # 115
+0144 F78E0C00 R    MOVB      sent_data_idx,ZEROS
+                                           ; SOURCE LINE # 116
+0148 EA00B802 R    JMPA      cc_UC,?C0004
+                                           ; SOURCE LINE # 117
+014C         ?C0011:
+                                           ; SOURCE LINE # 118
+014C F2F40400 R    MOV       R4,g_tick_period
+0150 F2F50600 R    MOV       R5,g_tick_period+02H
+0154 F065          MOV       R6,R5
+0156 7C24          SHR       R4,#02H
+0158 7C25          SHR       R5,#02H
+015A 5CE6          SHL       R6,#0EH
+015C 7046          OR        R4,R6
+015E 00E4          ADD       R14,R4
+0160 10F5          ADDC      R15,R5
+                                           ; SOURCE LINE # 119
+0162 F2F60400 R    MOV       R6,g_tick_period
+0166 F2F70600 R    MOV       R7,g_tick_period+02H
+016A F04E          MOV       R4,R14
+016C F05F          MOV       R5,R15
+016E DA000000 E    CALLS     SEG (?C_ULDIV),?C_ULDIV
+0172 F1A8          MOVB      RL5,RL4
+0174 E4A00200      MOVB      [R0+#02H],RL5 ; tmpu8
+                                           ; SOURCE LINE # 120
+0178 47FA1B00      CMPB      RL5,#01BH
+017C FD04          JMPR      cc_ULE,?C0013
+                                           ; SOURCE LINE # 121
+017E E7F81B00      MOVB      RL4,#01BH
+0182 E4800200      MOVB      [R0+#02H],RL4 ; tmpu8
+0186         ?C0013:
+                                           ; SOURCE LINE # 122
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 7   
+
+0186 F4800200      MOVB      RL4,[R0+#02H] ; tmpu8
+018A 47F80C00      CMPB      RL4,#0CH
+018E 9D03          JMPR      cc_UGE,?C0014
+                                           ; SOURCE LINE # 123
+0190 E1C8          MOVB      RL4,#0CH
+0192 E4800200      MOVB      [R0+#02H],RL4 ; tmpu8
+0196         ?C0014:
+                                           ; SOURCE LINE # 125
+0196 F78E0C00 R    MOVB      sent_data_idx,ZEROS
+                                           ; SOURCE LINE # 126
+019A F4800200      MOVB      RL4,[R0+#02H] ; tmpu8
+019E 27F80C00      SUBB      RL4,#0CH
+01A2 D7400000 R    EXTP      #PAG (sent_data),#01H
+01A6 F7F80000 R    MOVB      POF (sent_data),RL4
+                                           ; SOURCE LINE # 127
+01AA 258F0C00 R    SUBB      sent_data_idx,ONES
+                                           ; SOURCE LINE # 128
+01AE E128          MOVB      RL4,#02H
+01B0 F7F80D00 R    MOVB      frame_phase,RL4
+                                           ; SOURCE LINE # 129
+01B4 EA00B802 R    JMPA      cc_UC,?C0004
+                                           ; SOURCE LINE # 131
+01B8         ?C0008:
+                                           ; SOURCE LINE # 132
+01B8 F2F40400 R    MOV       R4,g_tick_period
+01BC F2F50600 R    MOV       R5,g_tick_period+02H
+01C0 E006          MOV       R6,#00H
+01C2 DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+01C6 F064          MOV       R6,R4
+01C8 F075          MOV       R7,R5
+01CA E6F43333      MOV       R4,#03333H
+01CE E6F5DF41      MOV       R5,#041DFH
+01D2 DA000000 E    CALLS     SEG (?C_FPMUL),?C_FPMUL
+01D6 F0C4          MOV       R12,R4
+01D8 F0D5          MOV       R13,R5
+01DA F04E          MOV       R4,R14
+01DC F05F          MOV       R5,R15
+01DE E006          MOV       R6,#00H
+01E0 DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+01E4 F06C          MOV       R6,R12
+01E6 F07D          MOV       R7,R13
+01E8 DA000000 E    CALLS     SEG (?C_FPCMP),?C_FPCMP
+01EC AD1A          JMPR      cc_SGT,?C0016
+01EE F2F40400 R    MOV       R4,g_tick_period
+01F2 F2F50600 R    MOV       R5,g_tick_period+02H
+01F6 E006          MOV       R6,#00H
+01F8 DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+01FC F064          MOV       R6,R4
+01FE F075          MOV       R7,R5
+0200 E004          MOV       R4,#00H
+0202 E6F53841      MOV       R5,#04138H
+0206 DA000000 E    CALLS     SEG (?C_FPMUL),?C_FPMUL
+020A F0C4          MOV       R12,R4
+020C F0D5          MOV       R13,R5
+020E F04E          MOV       R4,R14
+0210 F05F          MOV       R5,R15
+0212 E006          MOV       R6,#00H
+0214 DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+0218 F06C          MOV       R6,R12
+021A F07D          MOV       R7,R13
+021C DA000000 E    CALLS     SEG (?C_FPCMP),?C_FPCMP
+0220 DD05          JMPR      cc_SGE,?C0015
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 8   
+
+0222         ?C0016:
+                                           ; SOURCE LINE # 134
+0222 F78E0D00 R    MOVB      frame_phase,ZEROS
+                                           ; SOURCE LINE # 135
+0226 F78E0C00 R    MOVB      sent_data_idx,ZEROS
+                                           ; SOURCE LINE # 136
+022A 0D46          JMPR      cc_UC,?C0004
+                                           ; SOURCE LINE # 137
+022C         ?C0015:
+                                           ; SOURCE LINE # 141
+022C F2F40400 R    MOV       R4,g_tick_period
+0230 F2F50600 R    MOV       R5,g_tick_period+02H
+0234 F065          MOV       R6,R5
+0236 7C24          SHR       R4,#02H
+0238 7C25          SHR       R5,#02H
+023A 5CE6          SHL       R6,#0EH
+023C 7046          OR        R4,R6
+023E 00E4          ADD       R14,R4
+0240 10F5          ADDC      R15,R5
+                                           ; SOURCE LINE # 142
+0242 F2F60400 R    MOV       R6,g_tick_period
+0246 F2F70600 R    MOV       R7,g_tick_period+02H
+024A F04E          MOV       R4,R14
+024C F05F          MOV       R5,R15
+024E DA000000 E    CALLS     SEG (?C_ULDIV),?C_ULDIV
+0252 F1A8          MOVB      RL5,RL4
+0254 E4A00200      MOVB      [R0+#02H],RL5 ; tmpu8
+                                           ; SOURCE LINE # 143
+0258 47FA1B00      CMPB      RL5,#01BH
+025C FD04          JMPR      cc_ULE,?C0017
+                                           ; SOURCE LINE # 144
+025E E7F81B00      MOVB      RL4,#01BH
+0262 E4800200      MOVB      [R0+#02H],RL4 ; tmpu8
+0266         ?C0017:
+                                           ; SOURCE LINE # 145
+0266 F4800200      MOVB      RL4,[R0+#02H] ; tmpu8
+026A 47F80C00      CMPB      RL4,#0CH
+026E 9D03          JMPR      cc_UGE,?C0018
+                                           ; SOURCE LINE # 146
+0270 E1C8          MOVB      RL4,#0CH
+0272 E4800200      MOVB      [R0+#02H],RL4 ; tmpu8
+0276         ?C0018:
+                                           ; SOURCE LINE # 147
+0276 F4A00200      MOVB      RL5,[R0+#02H] ; tmpu8
+027A 27FA0C00      SUBB      RL5,#0CH
+027E C2F40C00 R    MOVBZ     R4,sent_data_idx
+0282 D7400000 R    EXTP      #PAG (sent_data),#01H
+0286 E4A40000 R    MOVB      [R4+#POF(sent_data)],RL5
+                                           ; SOURCE LINE # 149
+028A 258F0C00 R    SUBB      sent_data_idx,ONES
+                                           ; SOURCE LINE # 150
+028E F3F80C00 R    MOVB      RL4,sent_data_idx
+0292 4987          CMPB      RL4,#07H
+0294 8D11          JMPR      cc_ULT,?C0004
+                                           ; SOURCE LINE # 152
+0296 E138          MOVB      RL4,#03H
+0298 F7F80D00 R    MOVB      frame_phase,RL4
+                                           ; SOURCE LINE # 153
+029C E108          MOVB      RL4,#00H
+029E B980          MOVB      [R0],RL4      ; ret_code
+                                           ; SOURCE LINE # 154
+02A0 0D0B          JMPR      cc_UC,?C0004
+C166 COMPILER V7.57.0, SENT_DECODE                                                         01/03/2020 16:20:13 PAGE 9   
+
+                                           ; SOURCE LINE # 155
+                                           ; SOURCE LINE # 157
+                                           ; SOURCE LINE # 159
+02A2         ?C0009:
+                                           ; SOURCE LINE # 160
+02A2 F78E0C00 R    MOVB      sent_data_idx,ZEROS
+                                           ; SOURCE LINE # 161
+02A6 F78E0D00 R    MOVB      frame_phase,ZEROS
+                                           ; SOURCE LINE # 162
+02AA E128          MOVB      RL4,#02H
+02AC B980          MOVB      [R0],RL4      ; ret_code
+                                           ; SOURCE LINE # 163
+02AE 0D04          JMPR      cc_UC,?C0004
+                                           ; SOURCE LINE # 165
+02B0         ?C0006:
+                                           ; SOURCE LINE # 166
+02B0 F78E0C00 R    MOVB      sent_data_idx,ZEROS
+                                           ; SOURCE LINE # 167
+02B4 F78E0D00 R    MOVB      frame_phase,ZEROS
+                                           ; SOURCE LINE # 168
+                                           ; SOURCE LINE # 169
+02B8         ?C0004:
+                                           ; SOURCE LINE # 171
+02B8 A980          MOVB      RL4,[R0]      ; ret_code
+                                           ; SOURCE LINE # 172
+02BA         ?C0002:
+02BA 0804          ADD       R0,#04H
+02BC FCFF          POP       R15
+02BE FCFE          POP       R14
+02C0 FCFD          POP       R13
+02C2 DB00          RETS      
+             ; FUNCTION sent_decode (END    RMASK = @0x7FFE)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         708     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          14     --------
+  FAR-DATA SIZE    =           7     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          36     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

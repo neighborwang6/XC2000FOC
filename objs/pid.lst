@@ -1,0 +1,321 @@
+C166 COMPILER V7.57.0, PID                                                                 01/03/2020 16:20:13 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE PID
+OBJECT MODULE PLACED IN .\objs\pid.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\pid.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_Diag;.\
+                    -DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG CODE 
+                    -PRINT(.\objs\pid.lst) TABS(2) OBJECT(.\objs\pid.obj) 
+
+ stmt lvl     source
+
+    1         /**************************************************
+    2         *    File Name    : PID.c
+    3         *    Copyright    : QingChen
+    4         *    Module Name  : Electric Power Steering
+    5              *
+    6         *    CPU          : XC2000
+    7         *    RTOS         : No RTOS
+    8         *
+    9         *    Create Date  : 2019.11.14
+   10         *    Author/Cororation: WGY/QingChen Techology
+   11         *    Abstract Description:
+   12         *
+   13         *--------------- Revision History --------------
+   14         *    No Version Date      Revisied By  Item    Description
+   15         *    1  V0.0    19.11.14  WGY                  EPS
+   16         **************************************************/
+   17         
+   18         /**************************************************
+   19         *    Debug switch Section
+   20         **************************************************/
+   21         //#define TORQUE_OPEN_LOOP_CTRL
+   22         #define TORQUE_PID_CTRL
+   23         /**************************************************
+   24         *    Include File Section
+   25         **************************************************/
+   26         #include "pid.h"
+   27         /**************************************************
+   28         *    MacroDefine Section
+   29         **************************************************/
+   30         
+   31         /**************************************************
+   32         *    StructDefine Section
+   33         **************************************************/
+   34         
+   35         /**************************************************
+   36         *    Prototype Declare Section
+   37         **************************************************/
+   38         
+   39         /**************************************************
+   40         *    Global Variable Declare Section
+   41         **************************************************/
+   42         
+   43         /**************************************************
+   44         *    File Static Variable Define Section
+   45         **************************************************/
+   46         
+   47         /**************************************************
+   48         *    Function Define Section
+   49         **************************************************/
+   50         
+   51         //-----------------------------------
+   52         //---------PID_st realize function
+   53         s16 PID_realize(PID_st *p)
+C166 COMPILER V7.57.0, PID                                                                 01/03/2020 16:20:13 PAGE 2   
+
+   54         {
+   55  1        f32 opt_p,opt_i,opt_d;
+   56  1        /* err calculate */
+   57  1        p->err = (p->desire_value) - (p->actual_value);
+   58  1        p->sum_err += p->err;
+   59  1        //Proportion
+   60  1        opt_p = (p->kp)*(p->err);
+   61  1        //Integral
+   62  1        opt_i = (p->ki)*(p->sum_err);
+   63  1        //Differential
+   64  1        opt_d = (p->ki)*((p->err) - (p->pre_err));
+   65  1      
+   66  1        p->pre_err = p->err;  //Update the history error.
+   67  1        
+   68  1        p->output = opt_p + opt_d;
+   69  1        return (s16)(p->output);
+   70  1      
+   71  1      }
+   72         
+   73         void PID_Init(PID_st *p)
+   74         {
+   75  1        p->kp = 0;            // Q24
+   76  1        p->ki = 0;            // Q24
+   77  1        p->kd = 0;            // Q24
+   78  1        p->delta_kp = 0;      // Q24
+   79  1        p->delta_ki = 0;      // Q24
+   80  1        p->delta_kd = 0;      // Q24
+   81  1        p->actual_value = 0;  // actual value of the control variable    Q16
+   82  1        p->desire_value = 0;  // desired value of the control variable   Q16
+   83  1        p->lowscale = 0;      // a minimum sacle factor the control variable, if actual value < actual value*lows
+             -cale,dont use integral   Q24
+   84  1        p->highscale = 0;     // a maximun sacle factor the control variable, if actual value > actual value*high
+             -scale,dont use integral  Q24
+   85  1        p->max = 0;           // output max value   Q24
+   86  1        p->min = 0;           // output min value   Q24
+   87  1        p->ki_index = 0;      // Q24
+   88  1        p->kd_index = 0;      // Q24
+   89  1        p->kp_index = 0;      // Q24
+   90  1        p->sum_err = 0;
+   91  1        p->pre_err = 0;
+   92  1        p->err = 0;
+   93  1        p->output = 0;
+   94  1      
+   95  1      }
+   96         
+   97           //g_pid_pres_ctrl.kp = 0;
+   98           //g_pid_pres_ctrl.ki = 0;
+   99           //g_pid_pres_ctrl.kd = 0;
+  100           //g_pid_pres_ctrl.desire_value = C_VAL_DISP_INITIAL;
+  101           //g_pid_pres_ctrl.actual_value = g_disp_value0;
+  102           //TryVqs = PID_realize(&g_pid_pres_ctrl);
+C166 COMPILER V7.57.0, PID                                                                 01/03/2020 16:20:13 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION PID_realize (BEGIN  RMASK = @0x77FE)
+                                           ; SOURCE LINE # 53
+0000 ECFD          PUSH      R13
+0002 ECFE          PUSH      R14
+0004 ECFF          PUSH      R15
+0006 F0C8          MOV       R12,R8
+0008 F0D9          MOV       R13,R9
+;---- Variable 'p' assigned to Register 'R12/R13' ----
+000A 2804          SUB       R0,#04H
+                                           ; SOURCE LINE # 54
+                                           ; SOURCE LINE # 57
+000C DC59          EXTP      R9,#02H
+000E D4882400      MOV       R8,[R8+#POF(024H)]
+0012 D49C2600      MOV       R9,[R12+#POF(026H)]
+0016 DC5D          EXTP      R13,#02H
+0018 D46C2800      MOV       R6,[R12+#POF(028H)]
+001C D47C2A00      MOV       R7,[R12+#POF(02AH)]
+0020 2068          SUB       R6,R8
+0022 3079          SUBC      R7,R9
+0024 DC7D          EXTP      R13,#04H
+0026 C46C5000      MOV       [R12+#POF(050H)],R6
+002A C47C5200      MOV       [R12+#POF(052H)],R7
+                                           ; SOURCE LINE # 58
+002E D48C5000      MOV       R8,[R12+#POF(050H)]
+0032 D49C5200      MOV       R9,[R12+#POF(052H)]
+0036 F06C          MOV       R6,R12
+0038 06F64800      ADD       R6,#048H
+003C DC5D          EXTP      R13,#02H
+003E 9846          MOV       R4,[R6+]
+0040 A856          MOV       R5,[R6]
+0042 0048          ADD       R4,R8
+0044 1059          ADDC      R5,R9
+0046 DC7D          EXTP      R13,#04H
+0048 C446FEFF      MOV       [R6+#POF(0FFFFFFFEH)],R4
+004C B856          MOV       [R6],R5
+                                           ; SOURCE LINE # 60
+004E D4EC5000      MOV       R14,[R12+#POF(050H)]
+0052 D4FC5200      MOV       R15,[R12+#POF(052H)]
+0056 F04E          MOV       R4,R14
+0058 F05F          MOV       R5,R15
+005A F06F          MOV       R6,R15
+005C DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+0060 F064          MOV       R6,R4
+0062 F075          MOV       R7,R5
+0064 DC5D          EXTP      R13,#02H
+0066 A84C          MOV       R4,[R12]
+0068 D45C0200      MOV       R5,[R12+#POF(02H)]
+006C DA000000 E    CALLS     SEG (?C_FPMUL),?C_FPMUL
+0070 B840          MOV       [R0],R4       ; opt_p
+0072 C4500200      MOV       [R0+#02H],R5  ; opt_p+2
+                                           ; SOURCE LINE # 62
+                                           ; SOURCE LINE # 64
+0076 DC5D          EXTP      R13,#02H
+0078 D48C4C00      MOV       R8,[R12+#POF(04CH)]
+007C D49C4E00      MOV       R9,[R12+#POF(04EH)]
+0080 20E8          SUB       R14,R8
+0082 30F9          SUBC      R15,R9
+0084 F04E          MOV       R4,R14
+0086 F05F          MOV       R5,R15
+C166 COMPILER V7.57.0, PID                                                                 01/03/2020 16:20:13 PAGE 4   
+
+0088 F06F          MOV       R6,R15
+008A DA000000 E    CALLS     SEG (?C_FCAST),?C_FCAST
+008E F064          MOV       R6,R4
+0090 F075          MOV       R7,R5
+0092 DC5D          EXTP      R13,#02H
+0094 D44C0400      MOV       R4,[R12+#POF(04H)]
+0098 D45C0600      MOV       R5,[R12+#POF(06H)]
+009C DA000000 E    CALLS     SEG (?C_FPMUL),?C_FPMUL
+00A0 F0E4          MOV       R14,R4
+00A2 F0F5          MOV       R15,R5
+;---- Variable 'opt_d' assigned to Register 'R14/R15' ----
+                                           ; SOURCE LINE # 66
+00A4 DC7D          EXTP      R13,#04H
+00A6 D46C5000      MOV       R6,[R12+#POF(050H)]
+00AA D47C5200      MOV       R7,[R12+#POF(052H)]
+00AE C46C4C00      MOV       [R12+#POF(04CH)],R6
+00B2 C47C4E00      MOV       [R12+#POF(04EH)],R7
+                                           ; SOURCE LINE # 68
+00B6 A840          MOV       R4,[R0]       ; opt_p
+00B8 D4500200      MOV       R5,[R0+#02H]  ; opt_p+2
+00BC F06E          MOV       R6,R14
+00BE F07F          MOV       R7,R15
+00C0 DA000000 E    CALLS     SEG (?C_FPADD),?C_FPADD
+00C4 DC7D          EXTP      R13,#04H
+00C6 C44C5400      MOV       [R12+#POF(054H)],R4
+00CA C45C5600      MOV       [R12+#POF(056H)],R5
+                                           ; SOURCE LINE # 69
+00CE D44C5400      MOV       R4,[R12+#POF(054H)]
+00D2 D45C5600      MOV       R5,[R12+#POF(056H)]
+00D6 DA000000 E    CALLS     SEG (?C_CASTF),?C_CASTF
+                                           ; SOURCE LINE # 71
+00DA 0804          ADD       R0,#04H
+00DC FCFF          POP       R15
+00DE FCFE          POP       R14
+00E0 FCFD          POP       R13
+00E2 DB00          RETS      
+             ; FUNCTION PID_realize (END    RMASK = @0x77FE)
+
+             ; FUNCTION PID_Init (BEGIN  RMASK = @0x4040)
+                                           ; SOURCE LINE # 73
+;---- Variable 'p' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 75
+00E4 E006          MOV       R6,#00H
+00E6 DC79          EXTP      R9,#04H
+00E8 B868          MOV       [R8],R6
+00EA C4680200      MOV       [R8+#POF(02H)],R6
+                                           ; SOURCE LINE # 76
+00EE C4680400      MOV       [R8+#POF(04H)],R6
+00F2 C4680600      MOV       [R8+#POF(06H)],R6
+                                           ; SOURCE LINE # 77
+00F6 DC79          EXTP      R9,#04H
+00F8 C4680800      MOV       [R8+#POF(08H)],R6
+00FC C4680A00      MOV       [R8+#POF(0AH)],R6
+                                           ; SOURCE LINE # 78
+0100 C4681800      MOV       [R8+#POF(018H)],R6
+0104 C4681A00      MOV       [R8+#POF(01AH)],R6
+                                           ; SOURCE LINE # 79
+0108 DC79          EXTP      R9,#04H
+010A C4681C00      MOV       [R8+#POF(01CH)],R6
+010E C4681E00      MOV       [R8+#POF(01EH)],R6
+                                           ; SOURCE LINE # 80
+0112 C4682000      MOV       [R8+#POF(020H)],R6
+C166 COMPILER V7.57.0, PID                                                                 01/03/2020 16:20:13 PAGE 5   
+
+0116 C4682200      MOV       [R8+#POF(022H)],R6
+                                           ; SOURCE LINE # 81
+011A DC79          EXTP      R9,#04H
+011C C4682400      MOV       [R8+#POF(024H)],R6
+0120 C4682600      MOV       [R8+#POF(026H)],R6
+                                           ; SOURCE LINE # 82
+0124 C4682800      MOV       [R8+#POF(028H)],R6
+0128 C4682A00      MOV       [R8+#POF(02AH)],R6
+                                           ; SOURCE LINE # 83
+012C DC79          EXTP      R9,#04H
+012E C4682C00      MOV       [R8+#POF(02CH)],R6
+0132 C4682E00      MOV       [R8+#POF(02EH)],R6
+                                           ; SOURCE LINE # 84
+0136 C4683000      MOV       [R8+#POF(030H)],R6
+013A C4683200      MOV       [R8+#POF(032H)],R6
+                                           ; SOURCE LINE # 85
+013E DC79          EXTP      R9,#04H
+0140 C4683400      MOV       [R8+#POF(034H)],R6
+0144 C4683600      MOV       [R8+#POF(036H)],R6
+                                           ; SOURCE LINE # 86
+0148 C4683800      MOV       [R8+#POF(038H)],R6
+014C C4683A00      MOV       [R8+#POF(03AH)],R6
+                                           ; SOURCE LINE # 87
+0150 DC79          EXTP      R9,#04H
+0152 C4683C00      MOV       [R8+#POF(03CH)],R6
+0156 C4683E00      MOV       [R8+#POF(03EH)],R6
+                                           ; SOURCE LINE # 88
+015A C4684000      MOV       [R8+#POF(040H)],R6
+015E C4684200      MOV       [R8+#POF(042H)],R6
+                                           ; SOURCE LINE # 89
+0162 DC79          EXTP      R9,#04H
+0164 C4684400      MOV       [R8+#POF(044H)],R6
+0168 C4684600      MOV       [R8+#POF(046H)],R6
+                                           ; SOURCE LINE # 90
+016C C4684800      MOV       [R8+#POF(048H)],R6
+0170 C4684A00      MOV       [R8+#POF(04AH)],R6
+                                           ; SOURCE LINE # 91
+0174 DC79          EXTP      R9,#04H
+0176 C4684C00      MOV       [R8+#POF(04CH)],R6
+017A C4684E00      MOV       [R8+#POF(04EH)],R6
+                                           ; SOURCE LINE # 92
+017E C4685000      MOV       [R8+#POF(050H)],R6
+0182 C4685200      MOV       [R8+#POF(052H)],R6
+                                           ; SOURCE LINE # 93
+0186 DC59          EXTP      R9,#02H
+0188 C4685400      MOV       [R8+#POF(054H)],R6
+018C C4685600      MOV       [R8+#POF(056H)],R6
+                                           ; SOURCE LINE # 95
+0190 DB00          RETS      
+             ; FUNCTION PID_Init (END    RMASK = @0x4040)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         402     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+C166 COMPILER V7.57.0, PID                                                                 01/03/2020 16:20:13 PAGE 6   
+
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

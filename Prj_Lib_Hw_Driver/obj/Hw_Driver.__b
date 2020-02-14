@@ -1,0 +1,17 @@
+TRANSFER
+"..\objs\valve.obj",
+"..\objs\adc.obj",
+"..\objs\ccu6.obj",
+"..\objs\hcu.obj",
+"..\objs\hw.obj",
+"..\objs\Lib_Hw_Driver_Version.obj",
+"..\objs\motor.obj",
+"..\objs\rtc.obj",
+"..\objs\scs.obj",
+"..\objs\ssc.obj",
+"..\objs\timer.obj",
+"..\objs\tle6212.obj",
+"..\objs\trap.obj",
+"..\objs\uart.obj",
+"..\objs\quick_dbg.obj" 
+TO ".\obj\Hw_Driver.LIB"

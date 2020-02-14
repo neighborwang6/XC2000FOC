@@ -1,0 +1,780 @@
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE EEPROM
+OBJECT MODULE PLACED IN .\objs\eeprom.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\eeprom.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL
+                    -_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEB
+                    -UG CODE PRINT(.\objs\eeprom.lst) TABS(2) OBJECT(.\objs\eeprom.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "eeprom.h"
+   11         #include "hw.h"
+   12         
+   13         ////////////////////////////////////////////////////////////////////////////////
+   14         //
+   15         
+   16         // Chip: AT25010, etc.
+   17         // #define ADDR_LEN 8
+   18         // Chip: M95640, etc.
+   19         #define ADDR_LEN 16
+   20         
+   21         extern u8 eeprom_wr_hook(u16 addr,u8 len,u8 *buf);
+   22         extern u16 spi_eeprom_trans(u16 ch);
+   23         
+   24         #ifdef EE_HW_SPI
+              #define EE_HW_SPI_L
+              #endif
+   27         
+   28         #define CMD_WREN   0x06
+   29         #define CMD_WRDI   0x04
+   30         #define CMD_RDSR   0x05
+   31         #define CMD_WRSR   0x01
+   32         #define CMD_READ   0x03
+   33         #define CMD_WRITE  0x02
+   34         
+   35         void cmd_wren(void);
+   36         void cmd_wrdi(void);
+   37         u16 byte_shift(u16 dat,u8 bit_num);
+   38         u8 cmd_rdsr(void);
+   39         void cmd_wrsr(u8 ch);
+   40         
+   41         ////////////////////////////////////////////////////////////////////////////////
+   42         //
+   43         ////////////////////////////////////////////////////////////////////////////////
+   44         u8 eeprom_init(void)
+   45         {
+   46  1        u8 buf[2];
+   47  1        
+   48  1        // call gpio_setting first to init the corresponding PINs
+   49  1        
+   50  1        SET_EESS(1); delay_us(1);
+   51  1        SET_EESCK(0);delay_us(1);
+   52  1        SET_EEWP(0); delay_us(1);
+   53  1        SET_EESDI(1);delay_us(1);
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 2   
+
+   54  1        
+   55  1        SET_EEWP(1);
+   56  1        cmd_wren();
+   57  1        if(!(cmd_rdsr()&0x02))
+   58  1        {
+   59  2          SET_EEWP(0);
+   60  2          return 1;
+   61  2        }
+   62  1        cmd_wrdi();
+   63  1        if(cmd_rdsr()&0x02)
+   64  1        {
+   65  2          SET_EEWP(0);
+   66  2          return 2;
+   67  2        }
+   68  1        eeprom_rd(0,2,buf);
+   69  1        if(buf[0]!=0x55 || buf[1]!=0xaa)
+   70  1        {
+   71  2          buf[0]=0x55;buf[1]=0xaa;
+   72  2          if(eeprom_wr(0,2,buf))
+   73  2            return 3;
+   74  2          eeprom_rd(0,2,buf);
+   75  2          if(buf[0]!=0x55 || buf[1]!=0xaa)
+   76  2          {
+   77  3            return 4;
+   78  3          }
+   79  2        }
+   80  1        
+   81  1        return 0;
+   82  1      }
+   83         
+   84         ////////////////////////////////////////////////////////////////////////////////
+   85         //
+   86         ////////////////////////////////////////////////////////////////////////////////
+   87         u16 byte_shift(u16 dat,u8 bit_num)
+   88         {
+   89  1      #ifndef EE_HW_SPI_L
+   90  1        
+   91  1        u8 idx;
+   92  1        u16 tmp,tmp1;
+   93  1        
+   94  1        if(bit_num!=8 && bit_num!=16)
+   95  1          return 0;
+   96  1        
+   97  1        tmp=dat;
+   98  1        tmp1=0;
+   99  1        if(bit_num==8)
+  100  1          tmp<<=8;
+  101  1          
+  102  1        
+  103  1        for(idx=0;idx<bit_num;idx++)                  
+  104  1        {                                       
+  105  2          SET_EESCK(0);                 //   .....  (bit begin to shift)
+  106  2          SET_EESDI((tmp&0x8000)?1:0);  //   |
+  107  2          tmp<<=1;                      //   |
+  108  2          delay_us(1);                  //   |
+  109  2          SET_EESCK(1);                 //   |___   (bit ready and latch)
+  110  2          tmp1<<=1;                     //       |
+  111  2          tmp1|=GET_EESDO();            //       | 
+  112  2          delay_us(1);                  //   ....|
+  113  2        }
+  114  1        
+  115  1        return tmp1;
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 3   
+
+  116  1        
+  117  1      #else
+                
+                return spi_eeprom_trans(ch);
+                
+              #endif
+  122  1      }
+  123         
+  124         ////////////////////////////////////////////////////////////////////////////////
+  125         //
+  126         ////////////////////////////////////////////////////////////////////////////////
+  127         void cmd_wren(void)
+  128         {
+  129  1        SET_EESS(0); delay_us(1);
+  130  1        byte_shift(CMD_WREN,8);
+  131  1        SET_EESCK(0);delay_us(1);
+  132  1        SET_EESS(1); delay_us(1);
+  133  1      }
+  134         
+  135         ////////////////////////////////////////////////////////////////////////////////
+  136         //
+  137         ////////////////////////////////////////////////////////////////////////////////
+  138         void cmd_wrdi(void)
+  139         {
+  140  1        SET_EESS(0); delay_us(1);
+  141  1        byte_shift(CMD_WRDI,8);
+  142  1        SET_EESCK(0);delay_us(1);
+  143  1        SET_EESS(1); delay_us(1);
+  144  1      }
+  145         
+  146         ////////////////////////////////////////////////////////////////////////////////
+  147         //
+  148         ////////////////////////////////////////////////////////////////////////////////
+  149         u8 cmd_rdsr(void)
+  150         {
+  151  1        u8 tmp;
+  152  1        SET_EESS(0); delay_us(1);
+  153  1        byte_shift(CMD_RDSR,8);
+  154  1        tmp=(u8)byte_shift(0,8);
+  155  1        SET_EESCK(0);delay_us(1);
+  156  1        SET_EESS(1); delay_us(1);
+  157  1        
+  158  1        return tmp;
+  159  1      }
+  160         
+  161         ////////////////////////////////////////////////////////////////////////////////
+  162         //
+  163         ////////////////////////////////////////////////////////////////////////////////
+  164         void cmd_wrsr(u8 ch)
+  165         {
+  166  1        SET_EESS(0); delay_us(1);
+  167  1        byte_shift(CMD_WRSR,8);
+  168  1        byte_shift(ch,8);
+  169  1        SET_EESCK(0);delay_us(1);
+  170  1        SET_EESS(1); delay_us(1);
+  171  1      }
+  172         
+  173         ////////////////////////////////////////////////////////////////////////////////
+  174         //
+  175         ////////////////////////////////////////////////////////////////////////////////
+  176         u8 eeprom_wr(u16 addr,u8 len,u8 *buf)
+  177         {
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 4   
+
+  178  1        u8 idx;
+  179  1        
+  180  1        if(len>8) // 8 bytes per page
+  181  1          return 1;
+  182  1        
+  183  1        SET_EEWP(1); delay_us(1);
+  184  1        cmd_wren();
+  185  1        
+  186  1        SET_EESS(0); delay_us(1);
+  187  1        byte_shift(CMD_WRITE,8);
+  188  1        byte_shift(addr,16);
+  189  1        for(idx=0;idx<len;idx++)
+  190  1          byte_shift(buf[idx],8);
+  191  1        SET_EESCK(0);delay_us(1);
+  192  1        SET_EESS(1); delay_us(1);
+  193  1        
+  194  1        idx=0;
+  195  1        while(cmd_rdsr()&1)
+  196  1        {
+  197  2          delay_msx(1);
+  198  2          idx++;
+  199  2          if(idx>=100)
+  200  2            break;
+  201  2        }
+  202  1        
+  203  1        cmd_wrdi();
+  204  1        SET_EEWP(0); delay_us(1);
+  205  1        
+  206  1        eeprom_wr_hook(addr,len,buf);
+  207  1        
+  208  1        return (idx>=100)?1:0;
+  209  1      }
+  210         
+  211         ////////////////////////////////////////////////////////////////////////////////
+  212         //
+  213         ////////////////////////////////////////////////////////////////////////////////
+  214         u8 eeprom_rd(u16 addr,u8 len,u8 *buf)
+  215         {
+  216  1        u8 idx;
+  217  1        SET_EEWP(1); delay_us(1);
+  218  1        SET_EESS(0); delay_us(1);
+  219  1        byte_shift(CMD_READ,8);
+  220  1        byte_shift(addr,16);
+  221  1        for(idx=0;idx<len;idx++)
+  222  1          buf[idx]=(u8)byte_shift(0,8);
+  223  1        SET_EESCK(0);delay_us(1);
+  224  1        SET_EESS(1); delay_us(1);
+  225  1        SET_EEWP(0); delay_us(1);
+  226  1        
+  227  1        return 0;
+  228  1      }
+  229         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 5   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION eeprom_init (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 44
+0000 2802          SUB       R0,#02H
+                                           ; SOURCE LINE # 45
+                                           ; SOURCE LINE # 50
+0002 8FDB          BSET      P10_OUT_P8
+0004 E018          MOV       R8,#01H
+0006 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 51
+000A 5EDB          BCLR      P10_OUT_P5
+000C E018          MOV       R8,#01H
+000E DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 52
+0012 E018          MOV       R8,#01H
+0014 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 53
+0018 FFDB          BSET      P10_OUT_P15
+001A E018          MOV       R8,#01H
+001C DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 56
+0020 DA000000 R    CALLS     SEG (cmd_wren),cmd_wren
+                                           ; SOURCE LINE # 57
+0024 DA000000 R    CALLS     SEG (cmd_rdsr),cmd_rdsr
+0028 6982          ANDB      RL4,#02H
+002A C084          MOVBZ     R4,RL4
+002C 3D02          JMPR      cc_NZ,?C0001
+                                           ; SOURCE LINE # 60
+002E E118          MOVB      RL4,#01H
+0030 0D43          JMPR      cc_UC,?C0002
+                                           ; SOURCE LINE # 61
+0032         ?C0001:
+                                           ; SOURCE LINE # 62
+0032 DA000000 R    CALLS     SEG (cmd_wrdi),cmd_wrdi
+                                           ; SOURCE LINE # 63
+0036 DA000000 R    CALLS     SEG (cmd_rdsr),cmd_rdsr
+003A 9AF40210      JNB       R4.1,?C0003
+                                           ; SOURCE LINE # 66
+003E E128          MOVB      RL4,#02H
+0040 0D3B          JMPR      cc_UC,?C0002
+                                           ; SOURCE LINE # 67
+0042         ?C0003:
+                                           ; SOURCE LINE # 68
+0042 F0A0          MOV       R10,R0
+0044 66FAFF3F      AND       R10,#03FFFH
+0048 F2FB04FE      MOV       R11,DPP2
+004C E029          MOV       R9,#02H
+004E E008          MOV       R8,#00H
+0050 DA000000 R    CALLS     SEG (eeprom_rd),eeprom_rd
+                                           ; SOURCE LINE # 69
+0054 A980          MOVB      RL4,[R0]      ; buf
+0056 47F85500      CMPB      RL4,#055H
+005A 3D05          JMPR      cc_NZ,?C0005
+005C F4800100      MOVB      RL4,[R0+#01H] ; buf+1
+0060 47F8AA00      CMPB      RL4,#0AAH
+0064 2D28          JMPR      cc_Z,?C0004
+0066         ?C0005:
+                                           ; SOURCE LINE # 71
+0066 E7F85500      MOVB      RL4,#055H
+006A B980          MOVB      [R0],RL4      ; buf
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 6   
+
+006C E7F8AA00      MOVB      RL4,#0AAH
+0070 E4800100      MOVB      [R0+#01H],RL4 ; buf+1
+                                           ; SOURCE LINE # 72
+0074 F0A0          MOV       R10,R0
+0076 66FAFF3F      AND       R10,#03FFFH
+007A F2FB04FE      MOV       R11,DPP2
+007E E029          MOV       R9,#02H
+0080 E008          MOV       R8,#00H
+0082 DA000000 R    CALLS     SEG (eeprom_wr),eeprom_wr
+0086 4980          CMPB      RL4,#00H
+0088 2D02          JMPR      cc_Z,?C0006
+                                           ; SOURCE LINE # 73
+008A E138          MOVB      RL4,#03H
+008C 0D15          JMPR      cc_UC,?C0002
+008E         ?C0006:
+                                           ; SOURCE LINE # 74
+008E F0A0          MOV       R10,R0
+0090 66FAFF3F      AND       R10,#03FFFH
+0094 F2FB04FE      MOV       R11,DPP2
+0098 E029          MOV       R9,#02H
+009A E008          MOV       R8,#00H
+009C DA000000 R    CALLS     SEG (eeprom_rd),eeprom_rd
+                                           ; SOURCE LINE # 75
+00A0 A980          MOVB      RL4,[R0]      ; buf
+00A2 47F85500      CMPB      RL4,#055H
+00A6 3D05          JMPR      cc_NZ,?C0008
+00A8 F4800100      MOVB      RL4,[R0+#01H] ; buf+1
+00AC 47F8AA00      CMPB      RL4,#0AAH
+00B0 2D02          JMPR      cc_Z,?C0004
+00B2         ?C0008:
+                                           ; SOURCE LINE # 77
+00B2 E148          MOVB      RL4,#04H
+00B4 0D01          JMPR      cc_UC,?C0002
+                                           ; SOURCE LINE # 78
+00B6         ?C0004:
+                                           ; SOURCE LINE # 81
+00B6 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 82
+00B8         ?C0002:
+00B8 0802          ADD       R0,#02H
+00BA DB00          RETS      
+             ; FUNCTION eeprom_init (END    RMASK = @0x7FFF)
+
+             ; FUNCTION byte_shift (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 87
+00BC ECFD          PUSH      R13
+00BE ECFE          PUSH      R14
+00C0 ECFF          PUSH      R15
+00C2 F0D9          MOV       R13,R9
+;---- Variable 'bit_num' assigned to Register 'R13' ----
+;---- Variable 'dat' assigned to Register 'R8' ----
+00C4 2802          SUB       R0,#02H
+                                           ; SOURCE LINE # 88
+                                           ; SOURCE LINE # 94
+00C6 F049          MOV       R4,R9
+00C8 47F80800      CMPB      RL4,#08H
+00CC 2D05          JMPR      cc_Z,?C0009
+00CE 47F81000      CMPB      RL4,#010H
+00D2 2D02          JMPR      cc_Z,?C0009
+                                           ; SOURCE LINE # 95
+00D4 E004          MOV       R4,#00H
+00D6 0D27          JMPR      cc_UC,?C0010
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 7   
+
+00D8         ?C0009:
+                                           ; SOURCE LINE # 97
+00D8 F0F8          MOV       R15,R8
+;---- Variable 'tmp' assigned to Register 'R15' ----
+                                           ; SOURCE LINE # 98
+00DA E00E          MOV       R14,#00H
+;---- Variable 'tmp1' assigned to Register 'R14' ----
+                                           ; SOURCE LINE # 99
+00DC F04D          MOV       R4,R13
+00DE 47F80800      CMPB      RL4,#08H
+00E2 3D01          JMPR      cc_NZ,?C0016
+                                           ; SOURCE LINE # 100
+00E4 5C8F          SHL       R15,#08H
+                                           ; SOURCE LINE # 103
+00E6         ?C0016:
+00E6 E108          MOVB      RL4,#00H
+00E8 B980          MOVB      [R0],RL4      ; idx
+00EA 0D18          JMPR      cc_UC,?C0014
+00EC         ?C0015:
+                                           ; SOURCE LINE # 105
+00EC 5EDB          BCLR      P10_OUT_P5
+                                           ; SOURCE LINE # 106
+00EE 9AFF02F0      JNB       R15.15,?C0017
+00F2 0FF4          BSET      R4.0
+00F4 0D01          JMPR      cc_UC,?C0018
+00F6         ?C0017:
+00F6 0EF4          BCLR      R4.0
+00F8         ?C0018:
+00F8 4AF4DB0F      BMOV      P10_OUT_P15,R4.0
+                                           ; SOURCE LINE # 107
+00FC 5C1F          SHL       R15,#01H
+                                           ; SOURCE LINE # 108
+00FE E018          MOV       R8,#01H
+0100 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 109
+0104 5FDB          BSET      P10_OUT_P5
+                                           ; SOURCE LINE # 110
+0106 5C1E          SHL       R14,#01H
+                                           ; SOURCE LINE # 111
+0108 4ACAF4E0      BMOV      R4.0,P10_IN_P14
+010C 6841          AND       R4,#01H
+010E 70E4          OR        R14,R4
+                                           ; SOURCE LINE # 112
+0110 E018          MOV       R8,#01H
+0112 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 113
+0116 A980          MOVB      RL4,[R0]      ; idx
+0118 0981          ADDB      RL4,#01H
+011A B980          MOVB      [R0],RL4      ; idx
+011C         ?C0014:
+011C F05D          MOV       R5,R13
+011E A980          MOVB      RL4,[R0]      ; idx
+0120 418A          CMPB      RL4,RL5
+0122 8DE4          JMPR      cc_ULT,?C0015
+0124         ?C0013:
+                                           ; SOURCE LINE # 115
+0124 F04E          MOV       R4,R14
+                                           ; SOURCE LINE # 122
+0126         ?C0010:
+0126 0802          ADD       R0,#02H
+0128 FCFF          POP       R15
+012A FCFE          POP       R14
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 8   
+
+012C FCFD          POP       R13
+012E DB00          RETS      
+             ; FUNCTION byte_shift (END    RMASK = @0x7FFF)
+
+             ; FUNCTION cmd_wren (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 127
+                                           ; SOURCE LINE # 129
+0130 8EDB          BCLR      P10_OUT_P8
+0132 E018          MOV       R8,#01H
+0134 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 130
+0138 E089          MOV       R9,#08H
+013A E068          MOV       R8,#06H
+013C DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 131
+0140 5EDB          BCLR      P10_OUT_P5
+0142 E018          MOV       R8,#01H
+0144 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 132
+0148 8FDB          BSET      P10_OUT_P8
+014A E018          MOV       R8,#01H
+014C DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 133
+0150 DB00          RETS      
+             ; FUNCTION cmd_wren (END    RMASK = @0x7FFF)
+
+             ; FUNCTION cmd_wrdi (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 138
+                                           ; SOURCE LINE # 140
+0152 8EDB          BCLR      P10_OUT_P8
+0154 E018          MOV       R8,#01H
+0156 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 141
+015A E089          MOV       R9,#08H
+015C E048          MOV       R8,#04H
+015E DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 142
+0162 5EDB          BCLR      P10_OUT_P5
+0164 E018          MOV       R8,#01H
+0166 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 143
+016A 8FDB          BSET      P10_OUT_P8
+016C E018          MOV       R8,#01H
+016E DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 144
+0172 DB00          RETS      
+             ; FUNCTION cmd_wrdi (END    RMASK = @0x7FFF)
+
+             ; FUNCTION cmd_rdsr (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 149
+0174 ECFD          PUSH      R13
+                                           ; SOURCE LINE # 150
+                                           ; SOURCE LINE # 152
+0176 8EDB          BCLR      P10_OUT_P8
+0178 E018          MOV       R8,#01H
+017A DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 153
+017E E089          MOV       R9,#08H
+0180 E058          MOV       R8,#05H
+0182 DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 154
+0186 E089          MOV       R9,#08H
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 9   
+
+0188 E008          MOV       R8,#00H
+018A DA000000 R    CALLS     SEG (byte_shift),byte_shift
+018E F0D4          MOV       R13,R4
+;---- Variable 'tmp' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 155
+0190 5EDB          BCLR      P10_OUT_P5
+0192 E018          MOV       R8,#01H
+0194 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 156
+0198 8FDB          BSET      P10_OUT_P8
+019A E018          MOV       R8,#01H
+019C DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 158
+01A0 F04D          MOV       R4,R13
+                                           ; SOURCE LINE # 159
+01A2 FCFD          POP       R13
+01A4 DB00          RETS      
+             ; FUNCTION cmd_rdsr (END    RMASK = @0x7FFF)
+
+             ; FUNCTION cmd_wrsr (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 164
+01A6 ECFD          PUSH      R13
+01A8 F0D8          MOV       R13,R8
+;---- Variable 'ch' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 166
+01AA 8EDB          BCLR      P10_OUT_P8
+01AC E018          MOV       R8,#01H
+01AE DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 167
+01B2 E089          MOV       R9,#08H
+01B4 E018          MOV       R8,#01H
+01B6 DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 168
+01BA E089          MOV       R9,#08H
+01BC F04D          MOV       R4,R13
+01BE C088          MOVBZ     R8,RL4
+01C0 DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 169
+01C4 5EDB          BCLR      P10_OUT_P5
+01C6 E018          MOV       R8,#01H
+01C8 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 170
+01CC 8FDB          BSET      P10_OUT_P8
+01CE E018          MOV       R8,#01H
+01D0 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 171
+01D4 FCFD          POP       R13
+01D6 DB00          RETS      
+             ; FUNCTION cmd_wrsr (END    RMASK = @0x7FFF)
+
+             ; FUNCTION eeprom_wr (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 176
+01D8 ECFD          PUSH      R13
+01DA ECFE          PUSH      R14
+01DC ECFF          PUSH      R15
+01DE F0EA          MOV       R14,R10
+01E0 F0FB          MOV       R15,R11
+;---- Variable 'buf' assigned to Register 'R14/R15' ----
+01E2 F0D9          MOV       R13,R9
+;---- Variable 'len' assigned to Register 'R13' ----
+01E4 8880          MOV       [-R0],R8
+01E6 2802          SUB       R0,#02H
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 10  
+
+                                           ; SOURCE LINE # 177
+                                           ; SOURCE LINE # 180
+01E8 F049          MOV       R4,R9
+01EA 47F80800      CMPB      RL4,#08H
+01EE FD02          JMPR      cc_ULE,?C0020
+                                           ; SOURCE LINE # 181
+01F0 E118          MOVB      RL4,#01H
+01F2 0D54          JMPR      cc_UC,?C0021
+01F4         ?C0020:
+                                           ; SOURCE LINE # 183
+01F4 E018          MOV       R8,#01H
+01F6 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 184
+01FA DA000000 R    CALLS     SEG (cmd_wren),cmd_wren
+                                           ; SOURCE LINE # 186
+01FE 8EDB          BCLR      P10_OUT_P8
+0200 E018          MOV       R8,#01H
+0202 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 187
+0206 E089          MOV       R9,#08H
+0208 E028          MOV       R8,#02H
+020A DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 188
+020E E6F91000      MOV       R9,#010H
+0212 D4800200      MOV       R8,[R0+#02H]  ; addr
+0216 DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 189
+021A E108          MOVB      RL4,#00H
+021C B980          MOVB      [R0],RL4      ; idx
+021E 0D0D          JMPR      cc_UC,?C0024
+0220         ?C0025:
+                                           ; SOURCE LINE # 190
+0220 E089          MOV       R9,#08H
+0222 A980          MOVB      RL4,[R0]      ; idx
+0224 C086          MOVBZ     R6,RL4
+0226 F04E          MOV       R4,R14
+0228 0046          ADD       R4,R6
+022A DC4F          EXTP      R15,#01H
+022C A984          MOVB      RL4,[R4]
+022E C088          MOVBZ     R8,RL4
+0230 DA000000 R    CALLS     SEG (byte_shift),byte_shift
+0234 A980          MOVB      RL4,[R0]      ; idx
+0236 0981          ADDB      RL4,#01H
+0238 B980          MOVB      [R0],RL4      ; idx
+023A         ?C0024:
+023A F05D          MOV       R5,R13
+023C A980          MOVB      RL4,[R0]      ; idx
+023E 418A          CMPB      RL4,RL5
+0240 8DEF          JMPR      cc_ULT,?C0025
+0242         ?C0023:
+                                           ; SOURCE LINE # 191
+0242 5EDB          BCLR      P10_OUT_P5
+0244 E018          MOV       R8,#01H
+0246 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 192
+024A 8FDB          BSET      P10_OUT_P8
+024C E018          MOV       R8,#01H
+024E DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 194
+0252 E108          MOVB      RL4,#00H
+0254 B980          MOVB      [R0],RL4      ; idx
+                                           ; SOURCE LINE # 195
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 11  
+
+0256 0D0A          JMPR      cc_UC,?C0027
+0258         ?C0029:
+                                           ; SOURCE LINE # 197
+0258 E018          MOV       R8,#01H
+025A DA000000 E    CALLS     SEG (delay_msx),delay_msx
+                                           ; SOURCE LINE # 198
+025E A980          MOVB      RL4,[R0]      ; idx
+0260 0981          ADDB      RL4,#01H
+0262 B980          MOVB      [R0],RL4      ; idx
+                                           ; SOURCE LINE # 199
+0264 A980          MOVB      RL4,[R0]      ; idx
+0266 47F86400      CMPB      RL4,#064H
+026A 9D04          JMPR      cc_UGE,?C0028
+                                           ; SOURCE LINE # 200
+                                           ; SOURCE LINE # 201
+026C         ?C0027:
+026C DA000000 R    CALLS     SEG (cmd_rdsr),cmd_rdsr
+0270 8AF4F200      JB        R4.0,?C0029
+0274         ?C0028:
+                                           ; SOURCE LINE # 203
+0274 DA000000 R    CALLS     SEG (cmd_wrdi),cmd_wrdi
+                                           ; SOURCE LINE # 204
+0278 E018          MOV       R8,#01H
+027A DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 206
+027E F0BF          MOV       R11,R15
+0280 F0AE          MOV       R10,R14
+0282 F04D          MOV       R4,R13
+0284 C089          MOVBZ     R9,RL4
+0286 D4800200      MOV       R8,[R0+#02H]  ; addr
+028A DA000000 E    CALLS     SEG (eeprom_wr_hook),eeprom_wr_hook
+                                           ; SOURCE LINE # 208
+028E A980          MOVB      RL4,[R0]      ; idx
+0290 47F86400      CMPB      RL4,#064H
+0294 8D02          JMPR      cc_ULT,?C0032
+0296 E118          MOVB      RL4,#01H
+0298 0D01          JMPR      cc_UC,?C0033
+029A         ?C0032:
+029A E108          MOVB      RL4,#00H
+029C         ?C0033:
+                                           ; SOURCE LINE # 209
+029C         ?C0021:
+029C 0804          ADD       R0,#04H
+029E FCFF          POP       R15
+02A0 FCFE          POP       R14
+02A2 FCFD          POP       R13
+02A4 DB00          RETS      
+             ; FUNCTION eeprom_wr (END    RMASK = @0x7FFF)
+
+             ; FUNCTION eeprom_rd (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 214
+02A6 ECFD          PUSH      R13
+02A8 ECFE          PUSH      R14
+02AA ECFF          PUSH      R15
+02AC F0EA          MOV       R14,R10
+02AE F0FB          MOV       R15,R11
+;---- Variable 'buf' assigned to Register 'R14/R15' ----
+02B0 F0D9          MOV       R13,R9
+;---- Variable 'len' assigned to Register 'R13' ----
+02B2 8880          MOV       [-R0],R8
+02B4 2802          SUB       R0,#02H
+                                           ; SOURCE LINE # 215
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 12  
+
+                                           ; SOURCE LINE # 217
+02B6 E018          MOV       R8,#01H
+02B8 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 218
+02BC 8EDB          BCLR      P10_OUT_P8
+02BE E018          MOV       R8,#01H
+02C0 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 219
+02C4 E089          MOV       R9,#08H
+02C6 E038          MOV       R8,#03H
+02C8 DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 220
+02CC E6F91000      MOV       R9,#010H
+02D0 D4800200      MOV       R8,[R0+#02H]  ; addr
+02D4 DA000000 R    CALLS     SEG (byte_shift),byte_shift
+                                           ; SOURCE LINE # 221
+02D8 E108          MOVB      RL4,#00H
+02DA B980          MOVB      [R0],RL4      ; idx
+02DC 0D0E          JMPR      cc_UC,?C0036
+02DE         ?C0037:
+                                           ; SOURCE LINE # 222
+02DE E089          MOV       R9,#08H
+02E0 E008          MOV       R8,#00H
+02E2 DA000000 R    CALLS     SEG (byte_shift),byte_shift
+02E6 F1E8          MOVB      RL7,RL4
+02E8 A980          MOVB      RL4,[R0]      ; idx
+02EA C086          MOVBZ     R6,RL4
+02EC F04E          MOV       R4,R14
+02EE 0046          ADD       R4,R6
+02F0 DC4F          EXTP      R15,#01H
+02F2 B9E4          MOVB      [R4],RL7
+02F4 A980          MOVB      RL4,[R0]      ; idx
+02F6 0981          ADDB      RL4,#01H
+02F8 B980          MOVB      [R0],RL4      ; idx
+02FA         ?C0036:
+02FA F05D          MOV       R5,R13
+02FC A980          MOVB      RL4,[R0]      ; idx
+02FE 418A          CMPB      RL4,RL5
+0300 8DEE          JMPR      cc_ULT,?C0037
+0302         ?C0035:
+                                           ; SOURCE LINE # 223
+0302 5EDB          BCLR      P10_OUT_P5
+0304 E018          MOV       R8,#01H
+0306 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 224
+030A 8FDB          BSET      P10_OUT_P8
+030C E018          MOV       R8,#01H
+030E DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 225
+0312 E018          MOV       R8,#01H
+0314 DA000000 E    CALLS     SEG (delay_us),delay_us
+                                           ; SOURCE LINE # 227
+0318 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 228
+031A 0804          ADD       R0,#04H
+031C FCFF          POP       R15
+031E FCFE          POP       R14
+0320 FCFD          POP       R13
+0322 DB00          RETS      
+             ; FUNCTION eeprom_rd (END    RMASK = @0x7FFF)
+
+
+C166 COMPILER V7.57.0, EEPROM                                                              01/03/2020 16:20:09 PAGE 13  
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         804     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

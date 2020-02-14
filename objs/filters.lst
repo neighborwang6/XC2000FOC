@@ -1,0 +1,483 @@
+C166 COMPILER V7.57.0, FILTERS                                                             01/03/2020 16:20:12 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE FILTERS
+OBJECT MODULE PLACED IN .\objs\filters.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\filters.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_Dia
+                    -g;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG C
+                    -ODE PRINT(.\objs\filters.lst) TABS(2) OBJECT(.\objs\filters.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "filters.h"
+   11         
+   12         u16 sum_currentA=0;
+   13         u16 phase_currentA=0;
+   14         u16 sum_currentB=0;
+   15         u16 phase_currentB=0;
+   16         u16 sum_currentC=0;
+   17         u16 phase_currentC=0;
+   18         u16 sum_currentM=0;
+   19         u16 phase_currentM=0;
+   20         u16 sum_currentD=0;
+   21         u16 currentD=0;
+   22         u16 sum_currentQ=0;
+   23         u16 currentQ=0;
+   24         
+   25         s32 sum_motor_m_angle=0;
+   26         s32 motor_m_angle=0;
+   27         
+   28         s32 sum_s_sense=0;
+   29         s32 s_sense=0;
+   30         
+   31         ////////////////////////////////////////////////////////////////////////////////
+   32         //
+   33         ////////////////////////////////////////////////////////////////////////////////
+   34         s32 filter_motor_m_angle(s32 motor_m_angle_get)
+   35         {
+   36  1        s32 sum_temp;
+   37  1      
+   38  1        sum_motor_m_angle+=motor_m_angle_get;
+   39  1        sum_motor_m_angle-=motor_m_angle;
+   40  1        sum_temp=sum_motor_m_angle;
+   41  1        sum_temp=(sum_temp*160)>>8;
+   42  1        motor_m_angle=sum_temp;
+   43  1      
+   44  1        return motor_m_angle;
+   45  1      }
+   46         
+   47         ////////////////////////////////////////////////////////////////////////////////
+   48         //
+   49         ////////////////////////////////////////////////////////////////////////////////
+   50         s32 filter_s_sense(s32 s_sense_get)
+   51         {
+   52  1        s32 sum_temp;
+   53  1      
+C166 COMPILER V7.57.0, FILTERS                                                             01/03/2020 16:20:12 PAGE 2   
+
+   54  1        sum_s_sense+=s_sense_get;
+   55  1        sum_s_sense-=s_sense;
+   56  1        sum_temp=sum_s_sense;
+   57  1        sum_temp=(sum_temp*160)>>8;
+   58  1        s_sense=sum_temp;
+   59  1      
+   60  1        return s_sense;
+   61  1      }
+   62         
+   63         ////////////////////////////////////////////////////////////////////////////////
+   64         //
+   65         ////////////////////////////////////////////////////////////////////////////////
+   66         u16 filter_currentD(u16 currentD_calc)
+   67         {
+   68  1        s32 sum_temp;
+   69  1      
+   70  1        sum_currentD+=currentD_calc;
+   71  1        sum_currentD-=currentD;
+   72  1        sum_temp=sum_currentD;
+   73  1        sum_temp=(sum_temp*160)>>8;
+   74  1        currentD=(u16)sum_temp;
+   75  1      
+   76  1        return currentD;
+   77  1      }
+   78         
+   79         ////////////////////////////////////////////////////////////////////////////////
+   80         //
+   81         ////////////////////////////////////////////////////////////////////////////////
+   82         u16 filter_currentQ(u16 currentQ_calc)
+   83         {
+   84  1        s32 sum_temp;
+   85  1      
+   86  1        sum_currentQ+=currentQ_calc;
+   87  1        sum_currentQ-=currentQ;
+   88  1        sum_temp=sum_currentQ;
+   89  1        sum_temp=(sum_temp*160)>>8;
+   90  1        currentQ=(u16)sum_temp;
+   91  1      
+   92  1        return currentQ;
+   93  1      }
+   94         
+   95         ////////////////////////////////////////////////////////////////////////////////
+   96         //
+   97         ////////////////////////////////////////////////////////////////////////////////
+   98         u16 filter_currentA(u16 currentA_adc)
+   99         {
+  100  1        s32 sum_temp;
+  101  1      
+  102  1        sum_currentA+=currentA_adc;
+  103  1        sum_currentA-=phase_currentA;
+  104  1        sum_temp=sum_currentA;
+  105  1        sum_temp=(sum_temp*160)>>8;
+  106  1        phase_currentA=(u16)sum_temp;
+  107  1      
+  108  1        return phase_currentA;
+  109  1      }
+  110         
+  111         ////////////////////////////////////////////////////////////////////////////////
+  112         //
+  113         ////////////////////////////////////////////////////////////////////////////////
+  114         u16 filter_currentB(u16 currentB_adc)
+  115         {
+C166 COMPILER V7.57.0, FILTERS                                                             01/03/2020 16:20:12 PAGE 3   
+
+  116  1        s32 sum_temp;
+  117  1      
+  118  1        sum_currentB+=currentB_adc;
+  119  1        sum_currentB-=phase_currentB;
+  120  1        sum_temp=sum_currentB;
+  121  1        sum_temp=(sum_temp*160)>>8;
+  122  1        phase_currentB=(u16)sum_temp;
+  123  1      
+  124  1        return phase_currentB;
+  125  1      }
+  126         
+  127         ////////////////////////////////////////////////////////////////////////////////
+  128         //
+  129         ////////////////////////////////////////////////////////////////////////////////
+  130         u16 filter_currentC(u16 currentC_adc)
+  131         {
+  132  1        s32 sum_temp;
+  133  1        
+  134  1        sum_currentC+=currentC_adc;
+  135  1        sum_currentC-=phase_currentC;
+  136  1        sum_temp=sum_currentC;
+  137  1        sum_temp=(sum_temp*160)>>8;
+  138  1        phase_currentC=(u16)sum_temp;
+  139  1      
+  140  1        return phase_currentC;
+  141  1      }
+  142         
+  143         ////////////////////////////////////////////////////////////////////////////////
+  144         //
+  145         ////////////////////////////////////////////////////////////////////////////////
+  146         u16 filter_currentM(u16 currentM_adc)
+  147         {
+  148  1        s32 sum_temp;
+  149  1      
+  150  1        sum_currentM+=currentM_adc;
+  151  1        sum_currentM-=phase_currentM;
+  152  1        sum_temp=sum_currentM;
+  153  1        sum_temp=(sum_temp*160)>>8;
+  154  1        phase_currentM=(u16)sum_temp;
+  155  1      
+  156  1        return phase_currentM;
+  157  1      }
+  158         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, FILTERS                                                             01/03/2020 16:20:12 PAGE 4   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION filter_motor_m_angle (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 34
+;---- Variable 'motor_m_angle_get' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 35
+                                           ; SOURCE LINE # 38
+0000 04F81800 R    ADD       sum_motor_m_angle,R8
+0004 14F91A00 R    ADDC      sum_motor_m_angle+02H,R9
+                                           ; SOURCE LINE # 39
+0008 F2F40400 R    MOV       R4,motor_m_angle
+000C F2F50600 R    MOV       R5,motor_m_angle+02H
+0010 24F41800 R    SUB       sum_motor_m_angle,R4
+0014 34F51A00 R    SUBC      sum_motor_m_angle+02H,R5
+                                           ; SOURCE LINE # 40
+0018 F2F81800 R    MOV       R8,sum_motor_m_angle
+001C F2F91A00 R    MOV       R9,sum_motor_m_angle+02H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 41
+0020 E6F6A000      MOV       R6,#0A0H
+0024 E007          MOV       R7,#00H
+0026 F048          MOV       R4,R8
+0028 F059          MOV       R5,R9
+002A DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+002E F084          MOV       R8,R4
+0030 F095          MOV       R9,R5
+0032 F065          MOV       R6,R5
+0034 7C88          SHR       R8,#08H
+0036 BC89          ASHR      R9,#08H
+0038 5C86          SHL       R6,#08H
+003A 7086          OR        R8,R6
+                                           ; SOURCE LINE # 42
+003C F6F80400 R    MOV       motor_m_angle,R8
+0040 F6F90600 R    MOV       motor_m_angle+02H,R9
+                                           ; SOURCE LINE # 44
+0044 F2F40400 R    MOV       R4,motor_m_angle
+0048 F2F50600 R    MOV       R5,motor_m_angle+02H
+                                           ; SOURCE LINE # 45
+004C DB00          RETS      
+             ; FUNCTION filter_motor_m_angle (END    RMASK = @0x63F0)
+
+             ; FUNCTION filter_s_sense (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 50
+;---- Variable 's_sense_get' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 51
+                                           ; SOURCE LINE # 54
+004E 04F81400 R    ADD       sum_s_sense,R8
+0052 14F91600 R    ADDC      sum_s_sense+02H,R9
+                                           ; SOURCE LINE # 55
+0056 F2F40000 R    MOV       R4,s_sense
+005A F2F50200 R    MOV       R5,s_sense+02H
+005E 24F41400 R    SUB       sum_s_sense,R4
+0062 34F51600 R    SUBC      sum_s_sense+02H,R5
+                                           ; SOURCE LINE # 56
+0066 F2F81400 R    MOV       R8,sum_s_sense
+006A F2F91600 R    MOV       R9,sum_s_sense+02H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 57
+006E E6F6A000      MOV       R6,#0A0H
+0072 E007          MOV       R7,#00H
+0074 F048          MOV       R4,R8
+C166 COMPILER V7.57.0, FILTERS                                                             01/03/2020 16:20:12 PAGE 5   
+
+0076 F059          MOV       R5,R9
+0078 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+007C F084          MOV       R8,R4
+007E F095          MOV       R9,R5
+0080 F065          MOV       R6,R5
+0082 7C88          SHR       R8,#08H
+0084 BC89          ASHR      R9,#08H
+0086 5C86          SHL       R6,#08H
+0088 7086          OR        R8,R6
+                                           ; SOURCE LINE # 58
+008A F6F80000 R    MOV       s_sense,R8
+008E F6F90200 R    MOV       s_sense+02H,R9
+                                           ; SOURCE LINE # 60
+0092 F2F40000 R    MOV       R4,s_sense
+0096 F2F50200 R    MOV       R5,s_sense+02H
+                                           ; SOURCE LINE # 61
+009A DB00          RETS      
+             ; FUNCTION filter_s_sense (END    RMASK = @0x63F0)
+
+             ; FUNCTION filter_currentD (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 66
+;---- Variable 'currentD_calc' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 67
+                                           ; SOURCE LINE # 70
+009C 04F82000 R    ADD       sum_currentD,R8
+                                           ; SOURCE LINE # 71
+00A0 F2F40A00 R    MOV       R4,currentD
+00A4 24F42000 R    SUB       sum_currentD,R4
+                                           ; SOURCE LINE # 72
+00A8 F2F82000 R    MOV       R8,sum_currentD
+00AC E009          MOV       R9,#00H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 73
+00AE E6F6A000      MOV       R6,#0A0H
+00B2 E007          MOV       R7,#00H
+00B4 F048          MOV       R4,R8
+00B6 F059          MOV       R5,R9
+00B8 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+00BC F084          MOV       R8,R4
+00BE F095          MOV       R9,R5
+00C0 F065          MOV       R6,R5
+00C2 7C88          SHR       R8,#08H
+00C4 5C86          SHL       R6,#08H
+00C6 7086          OR        R8,R6
+                                           ; SOURCE LINE # 74
+00C8 F048          MOV       R4,R8
+00CA F6F80A00 R    MOV       currentD,R8
+                                           ; SOURCE LINE # 76
+                                           ; SOURCE LINE # 77
+00CE DB00          RETS      
+             ; FUNCTION filter_currentD (END    RMASK = @0x63F0)
+
+             ; FUNCTION filter_currentQ (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 82
+;---- Variable 'currentQ_calc' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 83
+                                           ; SOURCE LINE # 86
+00D0 04F81C00 R    ADD       sum_currentQ,R8
+                                           ; SOURCE LINE # 87
+00D4 F2F40800 R    MOV       R4,currentQ
+00D8 24F41C00 R    SUB       sum_currentQ,R4
+                                           ; SOURCE LINE # 88
+C166 COMPILER V7.57.0, FILTERS                                                             01/03/2020 16:20:12 PAGE 6   
+
+00DC F2F81C00 R    MOV       R8,sum_currentQ
+00E0 E009          MOV       R9,#00H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 89
+00E2 E6F6A000      MOV       R6,#0A0H
+00E6 E007          MOV       R7,#00H
+00E8 F048          MOV       R4,R8
+00EA F059          MOV       R5,R9
+00EC DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+00F0 F084          MOV       R8,R4
+00F2 F095          MOV       R9,R5
+00F4 F065          MOV       R6,R5
+00F6 7C88          SHR       R8,#08H
+00F8 5C86          SHL       R6,#08H
+00FA 7086          OR        R8,R6
+                                           ; SOURCE LINE # 90
+00FC F048          MOV       R4,R8
+00FE F6F80800 R    MOV       currentQ,R8
+                                           ; SOURCE LINE # 92
+                                           ; SOURCE LINE # 93
+0102 DB00          RETS      
+             ; FUNCTION filter_currentQ (END    RMASK = @0x63F0)
+
+             ; FUNCTION filter_currentA (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 98
+;---- Variable 'currentA_adc' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 99
+                                           ; SOURCE LINE # 102
+0104 04F82600 R    ADD       sum_currentA,R8
+                                           ; SOURCE LINE # 103
+0108 F2F41200 R    MOV       R4,phase_currentA
+010C 24F42600 R    SUB       sum_currentA,R4
+                                           ; SOURCE LINE # 104
+0110 F2F82600 R    MOV       R8,sum_currentA
+0114 E009          MOV       R9,#00H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 105
+0116 E6F6A000      MOV       R6,#0A0H
+011A E007          MOV       R7,#00H
+011C F048          MOV       R4,R8
+011E F059          MOV       R5,R9
+0120 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+0124 F084          MOV       R8,R4
+0126 F095          MOV       R9,R5
+0128 F065          MOV       R6,R5
+012A 7C88          SHR       R8,#08H
+012C 5C86          SHL       R6,#08H
+012E 7086          OR        R8,R6
+                                           ; SOURCE LINE # 106
+0130 F048          MOV       R4,R8
+0132 F6F81200 R    MOV       phase_currentA,R8
+                                           ; SOURCE LINE # 108
+                                           ; SOURCE LINE # 109
+0136 DB00          RETS      
+             ; FUNCTION filter_currentA (END    RMASK = @0x63F0)
+
+             ; FUNCTION filter_currentB (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 114
+;---- Variable 'currentB_adc' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 115
+                                           ; SOURCE LINE # 118
+0138 04F82400 R    ADD       sum_currentB,R8
+C166 COMPILER V7.57.0, FILTERS                                                             01/03/2020 16:20:12 PAGE 7   
+
+                                           ; SOURCE LINE # 119
+013C F2F41000 R    MOV       R4,phase_currentB
+0140 24F42400 R    SUB       sum_currentB,R4
+                                           ; SOURCE LINE # 120
+0144 F2F82400 R    MOV       R8,sum_currentB
+0148 E009          MOV       R9,#00H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 121
+014A E6F6A000      MOV       R6,#0A0H
+014E E007          MOV       R7,#00H
+0150 F048          MOV       R4,R8
+0152 F059          MOV       R5,R9
+0154 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+0158 F084          MOV       R8,R4
+015A F095          MOV       R9,R5
+015C F065          MOV       R6,R5
+015E 7C88          SHR       R8,#08H
+0160 5C86          SHL       R6,#08H
+0162 7086          OR        R8,R6
+                                           ; SOURCE LINE # 122
+0164 F048          MOV       R4,R8
+0166 F6F81000 R    MOV       phase_currentB,R8
+                                           ; SOURCE LINE # 124
+                                           ; SOURCE LINE # 125
+016A DB00          RETS      
+             ; FUNCTION filter_currentB (END    RMASK = @0x63F0)
+
+             ; FUNCTION filter_currentC (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 130
+;---- Variable 'currentC_adc' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 131
+                                           ; SOURCE LINE # 134
+016C 04F82200 R    ADD       sum_currentC,R8
+                                           ; SOURCE LINE # 135
+0170 F2F40E00 R    MOV       R4,phase_currentC
+0174 24F42200 R    SUB       sum_currentC,R4
+                                           ; SOURCE LINE # 136
+0178 F2F82200 R    MOV       R8,sum_currentC
+017C E009          MOV       R9,#00H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 137
+017E E6F6A000      MOV       R6,#0A0H
+0182 E007          MOV       R7,#00H
+0184 F048          MOV       R4,R8
+0186 F059          MOV       R5,R9
+0188 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+018C F084          MOV       R8,R4
+018E F095          MOV       R9,R5
+0190 F065          MOV       R6,R5
+0192 7C88          SHR       R8,#08H
+0194 5C86          SHL       R6,#08H
+0196 7086          OR        R8,R6
+                                           ; SOURCE LINE # 138
+0198 F048          MOV       R4,R8
+019A F6F80E00 R    MOV       phase_currentC,R8
+                                           ; SOURCE LINE # 140
+                                           ; SOURCE LINE # 141
+019E DB00          RETS      
+             ; FUNCTION filter_currentC (END    RMASK = @0x63F0)
+
+             ; FUNCTION filter_currentM (BEGIN  RMASK = @0x63F0)
+                                           ; SOURCE LINE # 146
+C166 COMPILER V7.57.0, FILTERS                                                             01/03/2020 16:20:12 PAGE 8   
+
+;---- Variable 'currentM_adc' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 147
+                                           ; SOURCE LINE # 150
+01A0 04F81E00 R    ADD       sum_currentM,R8
+                                           ; SOURCE LINE # 151
+01A4 F2F40C00 R    MOV       R4,phase_currentM
+01A8 24F41E00 R    SUB       sum_currentM,R4
+                                           ; SOURCE LINE # 152
+01AC F2F81E00 R    MOV       R8,sum_currentM
+01B0 E009          MOV       R9,#00H
+;---- Variable 'sum_temp' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 153
+01B2 E6F6A000      MOV       R6,#0A0H
+01B6 E007          MOV       R7,#00H
+01B8 F048          MOV       R4,R8
+01BA F059          MOV       R5,R9
+01BC DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+01C0 F084          MOV       R8,R4
+01C2 F095          MOV       R9,R5
+01C4 F065          MOV       R6,R5
+01C6 7C88          SHR       R8,#08H
+01C8 5C86          SHL       R6,#08H
+01CA 7086          OR        R8,R6
+                                           ; SOURCE LINE # 154
+01CC F048          MOV       R4,R8
+01CE F6F80C00 R    MOV       phase_currentM,R8
+                                           ; SOURCE LINE # 156
+                                           ; SOURCE LINE # 157
+01D2 DB00          RETS      
+             ; FUNCTION filter_currentM (END    RMASK = @0x63F0)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         468     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          40     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =         104     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,387 @@
+C166 COMPILER V7.57.0, MCU1_IMP                                                            01/03/2020 16:20:08 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE MCU1_IMP
+OBJECT MODULE PLACED IN .\objs\mcu1_imp.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu1_imp.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\E
+                    -OL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 D
+                    -EBUG CODE PRINT(.\objs\mcu1_imp.lst) TABS(2) OBJECT(.\objs\mcu1_imp.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "string.h"
+   11         #include "mcu1_imp.h"
+   12         #include "mcu2_imp.h"
+   13         #include "diag_hw.h"
+   14         #include "dtc_man.h"
+   15         #include "task_man.h"
+   16         
+   17         #include "hican.h"
+   18         #include "ypara.h"
+   19         
+   20         #include "adc.h"
+   21         
+   22         ////////////////////////////////////////////////////////////////////////////////
+   23         // Quick test only
+   24         void system_quick_diag(void);
+   25         u16 g_sys_dtc_uw=0;
+   26         
+   27         ////////////////////////////////////////////////////////////////////////////////
+   28         
+   29         extern void timer_hook_50ms(void);
+   30         ////////////////////////////////////////////////////////////////////////////////
+   31         // Legacy variables from old project: FIXME: yly
+   32         extern u16 routine_id;
+   33         extern u8 gee_stat;
+   34         extern u8 sys_state;
+   35         
+   36         extern u16 on_toutx;
+   37         extern u8 task_ctrl_valid;
+   38         extern u8 task_stat;
+   39         extern u16 diag_timeout;
+   40         
+   41         #define SYS_INIT 0x00   // FIXME : defined in abs_ctrl.h already
+   42         
+   43         ////////////////////////////////////////////////////////////////////////////////
+   44         // MCU1 message buffer (Tx)
+   45         MCUMSG1 mcumsg1;
+   46         // MCU2 message buffer (Rx)
+   47         MCUMSG2 mcumsg2;
+   48         // Dat message buffer
+   49         MCUMSGDAT mcumsgdat;
+   50         
+   51         u8 mcu2_status=0x01;
+   52         
+   53         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, MCU1_IMP                                                            01/03/2020 16:20:08 PAGE 2   
+
+   54         //
+   55         void mcu1_imp_init(void)
+   56         {
+   57  1      }
+   58         
+   59         ////////////////////////////////////////////////////////////////////////////////
+   60         // Generate new transmitt message
+   61         void do_mcu1(void)
+   62         {
+   63  1      }
+   64         
+   65         ////////////////////////////////////////////////////////////////////////////////
+   66         // Deal with received message
+   67         void do_mcu2_msg(void)
+   68         {
+   69  1      
+   70  1      }
+   71         
+   72         ////////////////////////////////////////////////////////////////////////////////
+   73         //
+   74         void diag_timer_10ms_hook(void)
+   75         {
+   76  1        static u8 tmx=0;
+   77  1      
+   78  1         if(++tmx>=5)
+   79  1         {
+   80  2            diag_timer_50ms_hook();
+   81  2          tmx=0;
+   82  2         }
+   83  1      
+   84  1         hican_10ms_hook();
+   85  1         system_quick_diag();
+   86  1      }
+   87         ////////////////////////////////////////////////////////////////////////////////
+   88         //
+   89         void diag_timer_50ms_hook(void)
+   90         {
+   91  1        ///////////////////////////////////////////////////////
+   92  1        // Update MCU1/MCU2 Status
+   93  1          do_mcu1();
+   94  1          do_mcu2();
+   95  1        ///////////////////////////////////////////////////////
+   96  1        timer_hook_50ms();
+   97  1      }
+   98         
+   99         ////////////////////////////////////////////////////////////////////////////////
+  100         //
+  101         void system_quick_diag(void)
+  102         {
+  103  1      #if 1
+  104  1        u16 tmpu16;
+  105  1      
+  106  1        // Monitor the following ...
+  107  1        
+  108  1        ////////////////////////////////////////////////////////
+  109  1        // BAT12V_MONX
+  110  1        tmpu16=get_ad_value(AD_BAT12V_MON)*4; // *(1000+330)/330;
+  111  1        if(tmpu16>F_VOLT(18) || tmpu16<F_VOLT(9))
+  112  1          g_sys_dtc_uw|=0x0002;
+  113  1        else
+  114  1          g_sys_dtc_uw&=~((u16)0x0002);
+  115  1        
+C166 COMPILER V7.57.0, MCU1_IMP                                                            01/03/2020 16:20:08 PAGE 3   
+
+  116  1        ////////////////////////////////////////////////////////
+  117  1        // BAT12V_MONYX
+  118  1        tmpu16=get_ad_value(AD_BAT12V_MONY)*4; // *(1000+330)/330;
+  119  1        if(tmpu16>F_VOLT(18) || tmpu16<F_VOLT(9))
+  120  1          g_sys_dtc_uw|=0x0002;
+  121  1        else
+  122  1          g_sys_dtc_uw&=~((u16)0x0002);
+  123  1        
+  124  1        ////////////////////////////////////////////////////////
+  125  1        // VCC5_SW_MONX (VCC5_SS: Hella TAS)
+  126  1        tmpu16=get_ad_value(AD_VCC5_SW_MON)*3/2; // *(10+5.1)/10;
+  127  1        if(tmpu16>F_VOLT(5.5) || tmpu16<F_VOLT(4.5))
+  128  1          g_sys_dtc_uw|=0x0004;
+  129  1        else
+  130  1          g_sys_dtc_uw&=~((u16)0x0004);
+  131  1      
+  132  1        ////////////////////////////////////////////////////////
+  133  1        // ERR1/ERR2
+  134  1        if(GET_TLE_ERR1()==0 || GET_TLE_ERR2()==0)
+  135  1        {
+  136  2          SET_TLE_ENA(0);
+  137  2          g_sys_dtc_uw|=0x0008;
+  138  2        }
+  139  1        else
+  140  1        {
+  141  2          SET_TLE_ENA(1);
+  142  2        }
+  143  1        ////////////////////////////////////////////////////////
+  144  1        // VO1X
+  145  1        
+  146  1        ////////////////////////////////////////////////////////
+  147  1        // VO2X
+  148  1        
+  149  1        ////////////////////////////////////////////////////////
+  150  1        // VROX
+  151  1        
+  152  1        ////////////////////////////////////////////////////////
+  153  1        // SCDLX
+  154  1        
+  155  1        ////////////////////////////////////////////////////////
+  156  1        // SH1_MON
+  157  1        
+  158  1        ////////////////////////////////////////////////////////
+  159  1        // SH2_MON
+  160  1        
+  161  1        ////////////////////////////////////////////////////////
+  162  1        // SH3_MON
+  163  1        
+  164  1        ////////////////////////////////////////////////////////
+  165  1        // TEMP_SS1X
+  166  1        
+  167  1        ////////////////////////////////////////////////////////
+  168  1        // VCC5B_MONX
+  169  1        
+  170  1        ////////////////////////////////////////////////////////
+  171  1        // DIS_UVW_X
+  172  1        
+  173  1        ////////////////////////////////////////////////////////
+  174  1        // AD2S_DOS
+  175  1        
+  176  1        ////////////////////////////////////////////////////////
+  177  1        // AD2S_LOT
+C166 COMPILER V7.57.0, MCU1_IMP                                                            01/03/2020 16:20:08 PAGE 4   
+
+  178  1        
+  179  1        ////////////////////////////////////////////////////////
+  180  1      #endif
+  181  1      }
+  182         
+  183         ////////////////////////////////////////////////////////////////////////////////
+  184         //
+  185         ////////////////////////////////////////////////////////////////////////////////
+  186         void system_dtc_handling(void)
+  187         {
+  188  1        if(!g_sys_dtc_uw)
+  189  1          return;
+  190  1      }
+  191         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, MCU1_IMP                                                            01/03/2020 16:20:08 PAGE 5   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION mcu1_imp_init (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 55
+                                           ; SOURCE LINE # 57
+0000 DB00          RETS      
+             ; FUNCTION mcu1_imp_init (END    RMASK = @0x8000)
+
+             ; FUNCTION do_mcu1 (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 61
+                                           ; SOURCE LINE # 63
+0002 DB00          RETS      
+             ; FUNCTION do_mcu1 (END    RMASK = @0x8000)
+
+             ; FUNCTION do_mcu2_msg (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 67
+                                           ; SOURCE LINE # 70
+0004 DB00          RETS      
+             ; FUNCTION do_mcu2_msg (END    RMASK = @0x8000)
+
+             ; FUNCTION diag_timer_10ms_hook (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 74
+                                           ; SOURCE LINE # 75
+                                           ; SOURCE LINE # 78
+0006 258F0200 R    SUBB      tmx,ONES
+000A F3F80200 R    MOVB      RL4,tmx
+000E 4985          CMPB      RL4,#05H
+0010 8D04          JMPR      cc_ULT,?C0001
+                                           ; SOURCE LINE # 80
+0012 DA000000 R    CALLS     SEG (diag_timer_50ms_hook),diag_timer_50ms_hook
+                                           ; SOURCE LINE # 81
+0016 F78E0200 R    MOVB      tmx,ZEROS
+                                           ; SOURCE LINE # 82
+001A         ?C0001:
+                                           ; SOURCE LINE # 84
+001A DA000000 E    CALLS     SEG (hican_10ms_hook),hican_10ms_hook
+                                           ; SOURCE LINE # 85
+001E DA000000 R    CALLS     SEG (system_quick_diag),system_quick_diag
+                                           ; SOURCE LINE # 86
+0022 DB00          RETS      
+             ; FUNCTION diag_timer_10ms_hook (END    RMASK = @0x7FFF)
+
+             ; FUNCTION diag_timer_50ms_hook (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 89
+                                           ; SOURCE LINE # 93
+0024 DA000000 R    CALLS     SEG (do_mcu1),do_mcu1
+                                           ; SOURCE LINE # 94
+0028 DA000000 E    CALLS     SEG (do_mcu2),do_mcu2
+                                           ; SOURCE LINE # 96
+002C DA000000 E    CALLS     SEG (timer_hook_50ms),timer_hook_50ms
+                                           ; SOURCE LINE # 97
+0030 DB00          RETS      
+             ; FUNCTION diag_timer_50ms_hook (END    RMASK = @0x7FFF)
+
+             ; FUNCTION system_quick_diag (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 101
+0032 ECFD          PUSH      R13
+                                           ; SOURCE LINE # 102
+                                           ; SOURCE LINE # 110
+0034 E058          MOV       R8,#05H
+0036 DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+C166 COMPILER V7.57.0, MCU1_IMP                                                            01/03/2020 16:20:08 PAGE 6   
+
+003A F0D4          MOV       R13,R4
+003C 5C2D          SHL       R13,#02H
+;---- Variable 'tmpu16' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 111
+003E 46FD620E      CMP       R13,#0E62H
+0042 ED03          JMPR      cc_UGT,?C0003
+0044 46FD3107      CMP       R13,#0731H
+0048 9D04          JMPR      cc_UGE,?C0002
+004A         ?C0003:
+                                           ; SOURCE LINE # 112
+004A E024          MOV       R4,#02H
+004C 74F40000 R    OR        g_sys_dtc_uw,R4
+0050 0D04          JMPR      cc_UC,?C0004
+0052         ?C0002:
+                                           ; SOURCE LINE # 114
+0052 E6F4FDFF      MOV       R4,#0FFFDH
+0056 64F40000 R    AND       g_sys_dtc_uw,R4
+005A         ?C0004:
+                                           ; SOURCE LINE # 118
+005A E0A8          MOV       R8,#0AH
+005C DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+0060 F0D4          MOV       R13,R4
+0062 5C2D          SHL       R13,#02H
+                                           ; SOURCE LINE # 119
+0064 46FD620E      CMP       R13,#0E62H
+0068 ED03          JMPR      cc_UGT,?C0006
+006A 46FD3107      CMP       R13,#0731H
+006E 9D04          JMPR      cc_UGE,?C0005
+0070         ?C0006:
+                                           ; SOURCE LINE # 120
+0070 E024          MOV       R4,#02H
+0072 74F40000 R    OR        g_sys_dtc_uw,R4
+0076 0D04          JMPR      cc_UC,?C0007
+0078         ?C0005:
+                                           ; SOURCE LINE # 122
+0078 E6F4FDFF      MOV       R4,#0FFFDH
+007C 64F40000 R    AND       g_sys_dtc_uw,R4
+0080         ?C0007:
+                                           ; SOURCE LINE # 126
+0080 E088          MOV       R8,#08H
+0082 DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+0086 F054          MOV       R5,R4
+0088 5C24          SHL       R4,#02H
+008A 2045          SUB       R4,R5
+008C F0D4          MOV       R13,R4
+008E 7C1D          SHR       R13,#01H
+                                           ; SOURCE LINE # 127
+0090 46FD6504      CMP       R13,#0465H
+0094 ED03          JMPR      cc_UGT,?C0009
+0096 46FD9803      CMP       R13,#0398H
+009A 9D04          JMPR      cc_UGE,?C0008
+009C         ?C0009:
+                                           ; SOURCE LINE # 128
+009C E044          MOV       R4,#04H
+009E 74F40000 R    OR        g_sys_dtc_uw,R4
+00A2 0D04          JMPR      cc_UC,?C0010
+00A4         ?C0008:
+                                           ; SOURCE LINE # 130
+00A4 E6F4FBFF      MOV       R4,#0FFFBH
+00A8 64F40000 R    AND       g_sys_dtc_uw,R4
+00AC         ?C0010:
+                                           ; SOURCE LINE # 134
+C166 COMPILER V7.57.0, MCU1_IMP                                                            01/03/2020 16:20:08 PAGE 7   
+
+00AC 9AC70210      JNB       P7_IN_P1,?C0012
+00B0 8ACF0550      JB        P15_IN_P5,?C0011
+00B4         ?C0012:
+                                           ; SOURCE LINE # 136
+00B4 7ED1          BCLR      P0_OUT_P7
+                                           ; SOURCE LINE # 137
+00B6 E084          MOV       R4,#08H
+00B8 74F40000 R    OR        g_sys_dtc_uw,R4
+                                           ; SOURCE LINE # 138
+00BC 0D01          JMPR      cc_UC,?C0013
+00BE         ?C0011:
+                                           ; SOURCE LINE # 141
+00BE 7FD1          BSET      P0_OUT_P7
+                                           ; SOURCE LINE # 142
+00C0         ?C0013:
+                                           ; SOURCE LINE # 181
+00C0 FCFD          POP       R13
+00C2 DB00          RETS      
+             ; FUNCTION system_quick_diag (END    RMASK = @0x7FFF)
+
+             ; FUNCTION system_dtc_handling (BEGIN  RMASK = @0x8000)
+                                           ; SOURCE LINE # 186
+                                           ; SOURCE LINE # 188
+                                           ; SOURCE LINE # 189
+                                           ; SOURCE LINE # 190
+00C4 DB00          RETS      
+             ; FUNCTION system_dtc_handling (END    RMASK = @0x8000)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         198     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           4     --------
+  FAR-DATA SIZE    =          80     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          18     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

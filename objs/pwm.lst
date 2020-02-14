@@ -1,0 +1,289 @@
+C166 COMPILER V7.57.0, PWM                                                                 01/03/2020 16:20:12 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE PWM
+OBJECT MODULE PLACED IN .\objs\pwm.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\pwm.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_Diag;.\
+                    -DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG CODE 
+                    -PRINT(.\objs\pwm.lst) TABS(2) OBJECT(.\objs\pwm.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "board.h"
+   11         #include "pwm.h"
+   12         
+   13         ////////////////////////////////////////////////////////////////////////////////
+   14         //
+   15         ////////////////////////////////////////////////////////////////////////////////
+   16         u8 pwm_init(void)
+   17         {
+   18  1        set_phase_on(0,0);
+   19  1        set_phase_on(1,0);
+   20  1        set_phase_on(2,0);
+   21  1        
+   22  1        pwm_setduty(0,0);
+   23  1        pwm_setduty(1,0);
+   24  1        pwm_setduty(2,0);
+   25  1      
+   26  1        return 0;
+   27  1      }
+   28         ////////////////////////////////////////////////////////////////////////////////
+   29         // ch_num: 0/1/2: Phase A/B/C, duty: 0~1000 => 0~100%
+   30         ////////////////////////////////////////////////////////////////////////////////
+   31         u8 pwm_setduty(u8 ch_num, u16 duty)
+   32         {
+   33  1        // Parameters check
+   34  1        if(ch_num>3)
+   35  1          return 1;
+   36  1      
+   37  1        if(duty>1000)
+   38  1          return 2;
+   39  1        
+   40  1        ////////////////////////////////////////////////////////
+   41  1        switch(ch_num)
+   42  1        {
+   43  2          // Center-aligned/Edge-aligned Mode: -duty*4 / -duty*8
+   44  2          //      |<----- Update the duty ---------->|<--- Shadow transfer enable --->|
+   45  2          case 0: CCU61_CC60SR = MOT_PWM_PERIOD-duty*4; CCU61_TCTR4|=0x40; break;
+   46  2          case 1: CCU61_CC61SR = MOT_PWM_PERIOD-duty*4; CCU61_TCTR4|=0x40; break;
+   47  2          case 2: CCU61_CC62SR = MOT_PWM_PERIOD-duty*4; CCU61_TCTR4|=0x40; break;
+   48  2            
+   49  2          default: break;
+   50  2        }
+   51  1        
+   52  1        return 0;
+   53  1      }
+C166 COMPILER V7.57.0, PWM                                                                 01/03/2020 16:20:12 PAGE 2   
+
+   54         
+   55         ////////////////////////////////////////////////////////////////////////////////
+   56         // Set Phase A/B/C: On/Off
+   57         ////////////////////////////////////////////////////////////////////////////////
+   58         u8 set_phase_on(u8 phase_no,u8 on_off)
+   59         {
+   60  1        // Set the IHx/ILx Pin of TLE7189F as INPUT to shut down the phase.
+   61  1        // Restore the previous setting to turn the phase ON.
+   62  1        switch(phase_no)
+   63  1        {
+   64  2          //              |<------ Set port dir: input ---->|       |<----- Set port dir: output ------>|
+   65  2          case 0:
+   66  2            if(!on_off){P0_IOCR00=0x0000; P0_IOCR03=0x0000;} else {P0_IOCR00=0x00B0; P0_IOCR03=0x00B0;}; break;
+   67  2          case 1:
+   68  2            if(!on_off){P0_IOCR01=0x0000; P0_IOCR04=0x0000;} else {P0_IOCR01=0x00B0; P0_IOCR04=0x00B0;}; break;
+   69  2          case 2:
+   70  2            if(!on_off){P0_IOCR02=0x0000; P0_IOCR05=0x0000;} else {P0_IOCR02=0x00B0; P0_IOCR05=0x00B0;}; break;
+   71  2          default:
+   72  2            break;
+   73  2        }
+   74  1        
+   75  1        return 0;
+   76  1      }
+   77         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, PWM                                                                 01/03/2020 16:20:12 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION pwm_init (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 16
+                                           ; SOURCE LINE # 18
+0000 E009          MOV       R9,#00H
+0002 E008          MOV       R8,#00H
+0004 DA000000 R    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 19
+0008 E009          MOV       R9,#00H
+000A E018          MOV       R8,#01H
+000C DA000000 R    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 20
+0010 E009          MOV       R9,#00H
+0012 E028          MOV       R8,#02H
+0014 DA000000 R    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 22
+0018 E009          MOV       R9,#00H
+001A E008          MOV       R8,#00H
+001C DA000000 R    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 23
+0020 E009          MOV       R9,#00H
+0022 E018          MOV       R8,#01H
+0024 DA000000 R    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 24
+0028 E009          MOV       R9,#00H
+002A E028          MOV       R8,#02H
+002C DA000000 R    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 26
+0030 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 27
+0032 DB00          RETS      
+             ; FUNCTION pwm_init (END    RMASK = @0x7FFF)
+
+             ; FUNCTION pwm_setduty (BEGIN  RMASK = @0x4030)
+                                           ; SOURCE LINE # 31
+;---- Variable 'duty' assigned to Register 'R9' ----
+;---- Variable 'ch_num' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 34
+0034 F048          MOV       R4,R8
+0036 4983          CMPB      RL4,#03H
+0038 FD02          JMPR      cc_ULE,?C0002
+                                           ; SOURCE LINE # 35
+003A E118          MOVB      RL4,#01H
+003C DB00          RETS      
+003E         ?C0002:
+                                           ; SOURCE LINE # 37
+003E 46F9E803      CMP       R9,#03E8H
+0042 FD02          JMPR      cc_ULE,?C0004
+                                           ; SOURCE LINE # 38
+0044 E128          MOVB      RL4,#02H
+0046 DB00          RETS      
+0048         ?C0004:
+                                           ; SOURCE LINE # 41
+0048 F048          MOV       R4,R8
+004A 2981          SUBB      RL4,#01H
+004C 2D11          JMPR      cc_Z,?C0008
+004E 2981          SUBB      RL4,#01H
+0050 2D1C          JMPR      cc_Z,?C0009
+0052 0982          ADDB      RL4,#02H
+0054 3D26          JMPR      cc_NZ,?C0005
+C166 COMPILER V7.57.0, PWM                                                                 01/03/2020 16:20:12 PAGE 4   
+
+                                           ; SOURCE LINE # 45
+0056         ?C0006:
+0056 F059          MOV       R5,R9
+0058 5C25          SHL       R5,#02H
+005A E6F4A00F      MOV       R4,#0FA0H
+005E 2045          SUB       R4,R5
+0060 F6F4A0EA      MOV       0EAA0H,R4
+0064 F2F4A6EA      MOV       R4,0EAA6H
+0068 6FF4          BSET      R4.6
+006A F6F4A6EA      MOV       0EAA6H,R4
+006E 0D19          JMPR      cc_UC,?C0005
+                                           ; SOURCE LINE # 46
+0070         ?C0008:
+0070 F059          MOV       R5,R9
+0072 5C25          SHL       R5,#02H
+0074 E6F4A00F      MOV       R4,#0FA0H
+0078 2045          SUB       R4,R5
+007A F6F4A2EA      MOV       0EAA2H,R4
+007E F2F4A6EA      MOV       R4,0EAA6H
+0082 6FF4          BSET      R4.6
+0084 F6F4A6EA      MOV       0EAA6H,R4
+0088 0D0C          JMPR      cc_UC,?C0005
+                                           ; SOURCE LINE # 47
+008A         ?C0009:
+008A F059          MOV       R5,R9
+008C 5C25          SHL       R5,#02H
+008E E6F4A00F      MOV       R4,#0FA0H
+0092 2045          SUB       R4,R5
+0094 F6F4A4EA      MOV       0EAA4H,R4
+0098 F2F4A6EA      MOV       R4,0EAA6H
+009C 6FF4          BSET      R4.6
+009E F6F4A6EA      MOV       0EAA6H,R4
+                                           ; SOURCE LINE # 49
+                                           ; SOURCE LINE # 50
+00A2         ?C0005:
+                                           ; SOURCE LINE # 52
+00A2 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 53
+00A4         ?C0003:
+00A4 DB00          RETS      
+             ; FUNCTION pwm_setduty (END    RMASK = @0x4030)
+
+             ; FUNCTION set_phase_on (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 58
+;---- Variable 'on_off' assigned to Register 'R9' ----
+;---- Variable 'phase_no' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 62
+00A6 F048          MOV       R4,R8
+00A8 2981          SUBB      RL4,#01H
+00AA 2D14          JMPR      cc_Z,?C0013
+00AC 2981          SUBB      RL4,#01H
+00AE 2D22          JMPR      cc_Z,?C0014
+00B0 0982          ADDB      RL4,#02H
+00B2 3D2F          JMPR      cc_NZ,?C0010
+                                           ; SOURCE LINE # 65
+00B4         ?C0011:
+                                           ; SOURCE LINE # 66
+00B4 F049          MOV       R4,R9
+00B6 4980          CMPB      RL4,#00H
+00B8 3D06          JMPR      cc_NZ,?C0015
+00BA E004          MOV       R4,#00H
+00BC F6F400E8      MOV       0E800H,R4
+C166 COMPILER V7.57.0, PWM                                                                 01/03/2020 16:20:12 PAGE 5   
+
+00C0 F6F406E8      MOV       0E806H,R4
+00C4 0D26          JMPR      cc_UC,?C0010
+00C6         ?C0015:
+00C6 E6F4B000      MOV       R4,#0B0H
+00CA F6F400E8      MOV       0E800H,R4
+00CE F6F406E8      MOV       0E806H,R4
+00D2 0D1F          JMPR      cc_UC,?C0010
+                                           ; SOURCE LINE # 67
+00D4         ?C0013:
+                                           ; SOURCE LINE # 68
+00D4 F049          MOV       R4,R9
+00D6 4980          CMPB      RL4,#00H
+00D8 3D06          JMPR      cc_NZ,?C0017
+00DA E004          MOV       R4,#00H
+00DC F6F402E8      MOV       0E802H,R4
+00E0 F6F408E8      MOV       0E808H,R4
+00E4 0D16          JMPR      cc_UC,?C0010
+00E6         ?C0017:
+00E6 E6F4B000      MOV       R4,#0B0H
+00EA F6F402E8      MOV       0E802H,R4
+00EE F6F408E8      MOV       0E808H,R4
+00F2 0D0F          JMPR      cc_UC,?C0010
+                                           ; SOURCE LINE # 69
+00F4         ?C0014:
+                                           ; SOURCE LINE # 70
+00F4 F049          MOV       R4,R9
+00F6 4980          CMPB      RL4,#00H
+00F8 3D06          JMPR      cc_NZ,?C0019
+00FA E004          MOV       R4,#00H
+00FC F6F404E8      MOV       0E804H,R4
+0100 F6F40AE8      MOV       0E80AH,R4
+0104 0D06          JMPR      cc_UC,?C0010
+0106         ?C0019:
+0106 E6F4B000      MOV       R4,#0B0H
+010A F6F404E8      MOV       0E804H,R4
+010E F6F40AE8      MOV       0E80AH,R4
+                                           ; SOURCE LINE # 71
+                                           ; SOURCE LINE # 72
+                                           ; SOURCE LINE # 73
+0112         ?C0010:
+                                           ; SOURCE LINE # 75
+0112 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 76
+0114 DB00          RETS      
+             ; FUNCTION set_phase_on (END    RMASK = @0x4010)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         278     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+C166 COMPILER V7.57.0, PWM                                                                 01/03/2020 16:20:12 PAGE 6   
+
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

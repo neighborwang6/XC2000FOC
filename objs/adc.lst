@@ -1,0 +1,543 @@
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\objs\adc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\adc.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_D
+                    -iag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG
+                    - CODE PRINT(.\objs\adc.lst) TABS(2) OBJECT(.\objs\adc.obj) 
+
+ stmt lvl     source
+
+    1         ///////////////////////////////////////////////////////////////////////
+    2         #include "adc.h"
+    3         
+    4         ///////////////////////////////////////////////////////////////////////
+    5         
+    6         ///////////////////////////////////////////////////////////////////////
+    7         // ADC0
+    8         u16 g_ad0[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    9         const u8 ad0_chx[16]={0,2,3,4,5,8,9,10,11,13,15,255};
+   10         
+   11         // ADC1
+   12         u16 g_ad1[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+   13         const u8 ad1_chx[16]={0,2,4,5,6,255};
+   14         
+   15         ///////////////////////////////////////////////////////////////////////
+   16         void ad_setting(void)
+   17         {
+   18  1        ADC0_KSCFG     =  0x0003;      //ADC0 kernel configuration : fADC=80MHz
+   19  1        _nop_();  _nop_();
+   20  1        
+   21  1        // conversion time (CTC)    = 03.09 us
+   22  1        // Analog clock is 1/12th of module clock and digital clock is 1/1 times 
+   23  1        // of module clock
+   24  1        
+   25  1        // Permanent arbitration mode
+   26  1        ADC0_GLOBCTR   =  0x000B;
+   27  1        
+   28  1        // Arbitration Slot 0 is enabled
+   29  1        // wait-for-start mode
+   30  1        ADC0_ASENR     =  0x0001;
+   31  1        ADC0_RSPR0     =  0x0000;
+   32  1        
+   33  1        // Configuration of Channel Control Registers:
+   34  1        // the result register0 is selected
+   35  1        // the reference voltage selected is Standard Voltage (Varef)
+   36  1        // the input class selected is Input Class 0
+   37  1      
+   38  1        ADC0_CHCTR0    =  0x0004;
+   39  1        ADC0_CHCTR1    =  0x0004;
+   40  1        ADC0_CHCTR2    =  0x0004;
+   41  1        ADC0_CHCTR3    =  0x0004;
+   42  1        ADC0_CHCTR4    =  0x0004;
+   43  1        ADC0_CHCTR5    =  0x0004;
+   44  1        ADC0_CHCTR6    =  0x0004;
+   45  1        ADC0_CHCTR10   =  0x0004;
+   46  1        ADC0_CHCTR11   =  0x0004;
+   47  1        ADC0_CHCTR12   =  0x0004;
+   48  1        
+   49  1        // 10 bit resolution selected
+   50  1        ADC0_INPCR0    =  0x0000;
+   51  1        ADC0_INPCR1    =  0x0000;
+   52  1        
+   53  1        // Configuration of Result Control Registers:
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 2   
+
+   54  1        // the data reduction filter is disabled
+   55  1        // the event interrupt is disabled
+   56  1        // the wait-for-read mode is enabled
+   57  1        // the FIFO functionality is disabled
+   58  1        ADC0_RCR0      =  0x0040;
+   59  1        ADC0_RCR1      =  0x0000;
+   60  1        ADC0_RCR2      =  0x0000;
+   61  1        ADC0_RCR3      =  0x0000;
+   62  1        ADC0_RCR4      =  0x0000;
+   63  1        ADC0_RCR5      =  0x0000;
+   64  1        ADC0_RCR6      =  0x0000;
+   65  1        ADC0_RCR7      =  0x0000;
+   66  1        
+   67  1        // Configuration of Channel Interrupt Node Pointer Register:
+   68  1        ADC0_CHINPR0   =  0x0000;
+   69  1        ADC0_CHINPR4   =  0x0000;
+   70  1        ADC0_CHINPR8   =  0x0000;
+   71  1        ADC0_CHINPR12  =  0x0000;
+   72  1        
+   73  1        // Configuration of Event Interrupt Node Pointer Register
+   74  1        ADC0_EVINPR0   =  0x0000;
+   75  1        ADC0_EVINPR8   =  0x0000;
+   76  1        ADC0_EVINPR12  =  0x0000;
+   77  1        
+   78  1        ADC0_QMR0      =  0x0001;
+   79  1        ADC0_QMR2      =  0x0000;
+   80  1        
+   81  1        // Configuration of Conversion Request Mode Registers:Parallel Source 
+   82  1        // the gating line is permanently Disabled
+   83  1        // the external trigger is disabled
+   84  1        // the source interrupt is disabled
+   85  1        // the autoscan functionality is disabled
+   86  1        ADC0_CRMR1     =  0x0000;      // conversion request mode register 1
+   87  1        
+   88  1        ADC0_SYNCTR   |=  0x0010;
+   89  1        P5_DIDIS       =  0x1C7F;      // Digital input disable register
+   90  1        ADC0_GLOBCTR  |=  0x0300;      // turn on Analog part
+   91  1      
+   92  1        ////////////////////////////////////////////////////////
+   93  1        // ADC0_KSCFG = 0x0003;
+   94  1        _nop_(); _nop_();
+   95  1        
+   96  1        ADC1_GLOBCTR   =  0x000B;
+   97  1        ADC1_ASENR     =  0x0001;
+   98  1        ADC1_RSPR0     =  0x0000;
+   99  1        
+  100  1        ADC1_CHCTR0    =  0x0004;
+  101  1        ADC1_CHCTR1    =  0x0004;
+  102  1        ADC1_CHCTR2    =  0x0004;
+  103  1        ADC1_CHCTR3    =  0x0004;
+  104  1        ADC1_CHCTR4    =  0x0004;
+  105  1        ADC1_CHCTR5    =  0x0004;
+  106  1        ADC1_CHCTR6    =  0x0004;
+  107  1        
+  108  1        ADC1_INPCR0    =  0x0000;
+  109  1        ADC1_INPCR1    =  0x0000;
+  110  1        
+  111  1        ADC1_RCR0      =  0x0040;
+  112  1        ADC1_RCR1      =  0x0000;
+  113  1        ADC1_RCR2      =  0x0000;
+  114  1        ADC1_RCR3      =  0x0000;
+  115  1        ADC1_RCR4      =  0x0000;
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 3   
+
+  116  1        ADC1_RCR5      =  0x0000;
+  117  1        ADC1_RCR6      =  0x0000;
+  118  1        ADC1_RCR7      =  0x0000;
+  119  1        
+  120  1        ADC1_CHINPR0   =  0x0000;
+  121  1        ADC1_CHINPR4   =  0x0000;
+  122  1        
+  123  1        ADC1_EVINPR0   =  0x0000;
+  124  1        ADC1_EVINPR8   =  0x0000;
+  125  1        ADC1_EVINPR12  =  0x0000;
+  126  1        
+  127  1        ADC1_QMR0      =  0x0001;
+  128  1        ADC1_QMR2      =  0x0000;
+  129  1        ADC1_CRMR1     =  0x0000;
+  130  1        
+  131  1        ADC1_SYNCTR   |=  0x0010;
+  132  1        P15_DIDIS      =  0x007F;
+  133  1        ADC1_GLOBCTR  |=  0x0300;
+  134  1      
+  135  1        ////////////////////////////////////////////////////////
+  136  1        ADC0_QINR0=0;
+  137  1        ADC1_QINR0=0;
+  138  1        ////////////////////////////////////////////////////////
+  139  1      }
+  140         
+  141         ///////////////////////////////////////////////////////////////////////
+  142         void ad_scan(void)
+  143         {
+  144  1        static u8 ad0_idx=0;
+  145  1        static u8 ad1_idx=0;
+  146  1      
+  147  1        u8 chnum;
+  148  1        u16 val;
+  149  1      
+  150  1        // ADC0 Data Valid
+  151  1        if(!(ADC0_GLOBSTR & 0x0001) && (ADC0_RCR0 & 0x1000))
+  152  1        {
+  153  2            chnum=(u8)(ADC0_RESRV0 >> 12);
+  154  2          val=(ADC0_RESR0 & 0x0fff) >> 2;
+  155  2          g_ad0[chnum]=val;
+  156  2      
+  157  2            if(ad0_chx[++ad0_idx]==(u8)255)
+  158  2               ad0_idx=0;
+  159  2          ADC0_QINR0=ad0_chx[ad0_idx];
+  160  2        }
+  161  1      
+  162  1        // ADC1 Data Valid
+  163  1        if(!(ADC1_GLOBSTR & 0x0001) && (ADC1_RCR0 & 0x1000))
+  164  1        {
+  165  2          chnum=(u8)(ADC1_RESRV0 >> 12);
+  166  2          val=(ADC1_RESR0 & 0x0fff) >> 2;
+  167  2          g_ad1[chnum]=val;
+  168  2      
+  169  2            if(ad1_chx[++ad1_idx]==(u8)255)
+  170  2               ad1_idx=0;
+  171  2          ADC1_QINR0=ad1_chx[ad1_idx];
+  172  2        }
+  173  1      }
+  174         /////////////////////////////////////////////////////////
+  175         u16 get_ad_value(u8 chan_no)
+  176         {
+  177  1         u16 g_ad_tmp=0;
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 4   
+
+  178  1      
+  179  1         if((chan_no&0xf0)==0x10) // ADC1
+  180  1         {
+  181  2            g_ad_tmp=(u16)g_ad1[chan_no&0x0f];
+  182  2         }
+  183  1         else           // ADC0
+  184  1         {
+  185  2            g_ad_tmp=(u16)g_ad0[chan_no];
+  186  2         }
+  187  1      
+  188  1         return g_ad_tmp;
+  189  1      }
+  190         /////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 5   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION ad_setting (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 16
+                                           ; SOURCE LINE # 18
+0000 E034          MOV       R4,#03H
+0002 F6F40CE0      MOV       0E00CH,R4
+                                           ; SOURCE LINE # 19
+0006 CC00          NOP       
+0008 CC00          NOP       
+                                           ; SOURCE LINE # 26
+000A E0B4          MOV       R4,#0BH
+000C F6F410E0      MOV       0E010H,R4
+                                           ; SOURCE LINE # 30
+0010 E014          MOV       R4,#01H
+0012 F6F418E0      MOV       0E018H,R4
+                                           ; SOURCE LINE # 31
+0016 E004          MOV       R4,#00H
+0018 F6F414E0      MOV       0E014H,R4
+                                           ; SOURCE LINE # 38
+001C E044          MOV       R4,#04H
+001E F6F420E0      MOV       0E020H,R4
+                                           ; SOURCE LINE # 39
+0022 F6F422E0      MOV       0E022H,R4
+                                           ; SOURCE LINE # 40
+0026 F6F424E0      MOV       0E024H,R4
+                                           ; SOURCE LINE # 41
+002A F6F426E0      MOV       0E026H,R4
+                                           ; SOURCE LINE # 42
+002E F6F428E0      MOV       0E028H,R4
+                                           ; SOURCE LINE # 43
+0032 F6F42AE0      MOV       0E02AH,R4
+                                           ; SOURCE LINE # 44
+0036 F6F42CE0      MOV       0E02CH,R4
+                                           ; SOURCE LINE # 45
+003A F6F434E0      MOV       0E034H,R4
+                                           ; SOURCE LINE # 46
+003E F6F436E0      MOV       0E036H,R4
+                                           ; SOURCE LINE # 47
+0042 F6F438E0      MOV       0E038H,R4
+                                           ; SOURCE LINE # 50
+0046 E004          MOV       R4,#00H
+0048 F6F4C0E0      MOV       0E0C0H,R4
+                                           ; SOURCE LINE # 51
+004C F6F4C2E0      MOV       0E0C2H,R4
+                                           ; SOURCE LINE # 58
+0050 E6F44000      MOV       R4,#040H
+0054 F6F4B0E0      MOV       0E0B0H,R4
+                                           ; SOURCE LINE # 59
+0058 E004          MOV       R4,#00H
+005A F6F4B2E0      MOV       0E0B2H,R4
+                                           ; SOURCE LINE # 60
+005E F6F4B4E0      MOV       0E0B4H,R4
+                                           ; SOURCE LINE # 61
+0062 F6F4B6E0      MOV       0E0B6H,R4
+                                           ; SOURCE LINE # 62
+0066 F6F4B8E0      MOV       0E0B8H,R4
+                                           ; SOURCE LINE # 63
+006A F6F4BAE0      MOV       0E0BAH,R4
+                                           ; SOURCE LINE # 64
+006E F6F4BCE0      MOV       0E0BCH,R4
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 6   
+
+                                           ; SOURCE LINE # 65
+0072 F6F4BEE0      MOV       0E0BEH,R4
+                                           ; SOURCE LINE # 68
+0076 F6F498E0      MOV       0E098H,R4
+                                           ; SOURCE LINE # 69
+007A F6F49AE0      MOV       0E09AH,R4
+                                           ; SOURCE LINE # 70
+007E F6F49CE0      MOV       0E09CH,R4
+                                           ; SOURCE LINE # 71
+0082 F6F49EE0      MOV       0E09EH,R4
+                                           ; SOURCE LINE # 74
+0086 F6F4A8E0      MOV       0E0A8H,R4
+                                           ; SOURCE LINE # 75
+008A F6F4ACE0      MOV       0E0ACH,R4
+                                           ; SOURCE LINE # 76
+008E F6F4AEE0      MOV       0E0AEH,R4
+                                           ; SOURCE LINE # 78
+0092 E014          MOV       R4,#01H
+0094 F6F4E0E0      MOV       0E0E0H,R4
+                                           ; SOURCE LINE # 79
+0098 E004          MOV       R4,#00H
+009A F6F4F0E0      MOV       0E0F0H,R4
+                                           ; SOURCE LINE # 86
+009E F6F4ECE0      MOV       0E0ECH,R4
+                                           ; SOURCE LINE # 88
+00A2 F2F41AE0      MOV       R4,0E01AH
+00A6 4FF4          BSET      R4.4
+00A8 F6F41AE0      MOV       0E01AH,R4
+                                           ; SOURCE LINE # 89
+00AC E6457F1C      MOV       P5_DIDIS,#01C7FH
+                                           ; SOURCE LINE # 90
+00B0 F2F410E0      MOV       R4,0E010H
+00B4 76F40003      OR        R4,#0300H
+00B8 F6F410E0      MOV       0E010H,R4
+                                           ; SOURCE LINE # 94
+00BC CC00          NOP       
+00BE CC00          NOP       
+                                           ; SOURCE LINE # 96
+00C0 E0B4          MOV       R4,#0BH
+00C2 F6F410E1      MOV       0E110H,R4
+                                           ; SOURCE LINE # 97
+00C6 E014          MOV       R4,#01H
+00C8 F6F418E1      MOV       0E118H,R4
+                                           ; SOURCE LINE # 98
+00CC E004          MOV       R4,#00H
+00CE F6F414E1      MOV       0E114H,R4
+                                           ; SOURCE LINE # 100
+00D2 E044          MOV       R4,#04H
+00D4 F6F420E1      MOV       0E120H,R4
+                                           ; SOURCE LINE # 101
+00D8 F6F422E1      MOV       0E122H,R4
+                                           ; SOURCE LINE # 102
+00DC F6F424E1      MOV       0E124H,R4
+                                           ; SOURCE LINE # 103
+00E0 F6F426E1      MOV       0E126H,R4
+                                           ; SOURCE LINE # 104
+00E4 F6F428E1      MOV       0E128H,R4
+                                           ; SOURCE LINE # 105
+00E8 F6F42AE1      MOV       0E12AH,R4
+                                           ; SOURCE LINE # 106
+00EC F6F42CE1      MOV       0E12CH,R4
+                                           ; SOURCE LINE # 108
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 7   
+
+00F0 E004          MOV       R4,#00H
+00F2 F6F4C0E1      MOV       0E1C0H,R4
+                                           ; SOURCE LINE # 109
+00F6 F6F4C2E1      MOV       0E1C2H,R4
+                                           ; SOURCE LINE # 111
+00FA E6F44000      MOV       R4,#040H
+00FE F6F4B0E1      MOV       0E1B0H,R4
+                                           ; SOURCE LINE # 112
+0102 E004          MOV       R4,#00H
+0104 F6F4B2E1      MOV       0E1B2H,R4
+                                           ; SOURCE LINE # 113
+0108 F6F4B4E1      MOV       0E1B4H,R4
+                                           ; SOURCE LINE # 114
+010C F6F4B6E1      MOV       0E1B6H,R4
+                                           ; SOURCE LINE # 115
+0110 F6F4B8E1      MOV       0E1B8H,R4
+                                           ; SOURCE LINE # 116
+0114 F6F4BAE1      MOV       0E1BAH,R4
+                                           ; SOURCE LINE # 117
+0118 F6F4BCE1      MOV       0E1BCH,R4
+                                           ; SOURCE LINE # 118
+011C F6F4BEE1      MOV       0E1BEH,R4
+                                           ; SOURCE LINE # 120
+0120 F6F498E1      MOV       0E198H,R4
+                                           ; SOURCE LINE # 121
+0124 F6F49AE1      MOV       0E19AH,R4
+                                           ; SOURCE LINE # 123
+0128 F6F4A8E1      MOV       0E1A8H,R4
+                                           ; SOURCE LINE # 124
+012C F6F4ACE1      MOV       0E1ACH,R4
+                                           ; SOURCE LINE # 125
+0130 F6F4AEE1      MOV       0E1AEH,R4
+                                           ; SOURCE LINE # 127
+0134 E014          MOV       R4,#01H
+0136 F6F4E0E1      MOV       0E1E0H,R4
+                                           ; SOURCE LINE # 128
+013A E004          MOV       R4,#00H
+013C F6F4F0E1      MOV       0E1F0H,R4
+                                           ; SOURCE LINE # 129
+0140 F6F4ECE1      MOV       0E1ECH,R4
+                                           ; SOURCE LINE # 131
+0144 F2F41AE1      MOV       R4,0E11AH
+0148 4FF4          BSET      R4.4
+014A F6F41AE1      MOV       0E11AH,R4
+                                           ; SOURCE LINE # 132
+014E E64F7F00      MOV       P15_DIDIS,#07FH
+                                           ; SOURCE LINE # 133
+0152 F2F410E1      MOV       R4,0E110H
+0156 76F40003      OR        R4,#0300H
+015A F6F410E1      MOV       0E110H,R4
+                                           ; SOURCE LINE # 136
+015E E004          MOV       R4,#00H
+0160 F6F4E6E0      MOV       0E0E6H,R4
+                                           ; SOURCE LINE # 137
+0164 F6F4E6E1      MOV       0E1E6H,R4
+                                           ; SOURCE LINE # 139
+0168 DB00          RETS      
+             ; FUNCTION ad_setting (END    RMASK = @0x4010)
+
+             ; FUNCTION ad_scan (BEGIN  RMASK = @0x40D0)
+                                           ; SOURCE LINE # 142
+;---- Variable 'val' assigned to Register 'R6' ----
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 8   
+
+;---- Variable 'chnum' assigned to Register 'RL7' ----
+                                           ; SOURCE LINE # 143
+                                           ; SOURCE LINE # 151
+016A F2F412E0      MOV       R4,0E012H
+016E 8AF42B00      JB        R4.0,?C0001
+0172 F2F4B0E0      MOV       R4,0E0B0H
+0176 9AF427C0      JNB       R4.12,?C0001
+                                           ; SOURCE LINE # 153
+017A F2F460E0      MOV       R4,0E060H
+017E 7CC4          SHR       R4,#0CH
+0180 F1E8          MOVB      RL7,RL4
+                                           ; SOURCE LINE # 154
+0182 F2F440E0      MOV       R4,0E040H
+0186 66F4FF0F      AND       R4,#0FFFH
+018A F064          MOV       R6,R4
+018C 7C26          SHR       R6,#02H
+                                           ; SOURCE LINE # 155
+018E C0E4          MOVBZ     R4,RL7
+0190 5C14          SHL       R4,#01H
+0192 D7400000 R    EXTP      #PAG (g_ad0),#01H
+0196 C4640000 R    MOV       [R4+#POF(g_ad0)],R6
+                                           ; SOURCE LINE # 157
+019A 258F0100 R    SUBB      ad0_idx,ONES
+019E F3F80100 R    MOVB      RL4,ad0_idx
+01A2 C084          MOVBZ     R4,RL4
+01A4 D7400000 R    EXTP      #PAG (ad0_chx),#01H
+01A8 F4840000 R    MOVB      RL4,[R4+#POF(ad0_chx)]
+01AC 47F8FF00      CMPB      RL4,#0FFH
+01B0 3D02          JMPR      cc_NZ,?C0002
+                                           ; SOURCE LINE # 158
+01B2 F78E0100 R    MOVB      ad0_idx,ZEROS
+01B6         ?C0002:
+                                           ; SOURCE LINE # 159
+01B6 C2F40100 R    MOVBZ     R4,ad0_idx
+01BA D7400000 R    EXTP      #PAG (ad0_chx),#01H
+01BE F4840000 R    MOVB      RL4,[R4+#POF(ad0_chx)]
+01C2 C084          MOVBZ     R4,RL4
+01C4 F6F4E6E0      MOV       0E0E6H,R4
+                                           ; SOURCE LINE # 160
+01C8         ?C0001:
+                                           ; SOURCE LINE # 163
+01C8 F2F412E1      MOV       R4,0E112H
+01CC 8AF42B00      JB        R4.0,?C0003
+01D0 F2F4B0E1      MOV       R4,0E1B0H
+01D4 9AF427C0      JNB       R4.12,?C0003
+                                           ; SOURCE LINE # 165
+01D8 F2F460E1      MOV       R4,0E160H
+01DC 7CC4          SHR       R4,#0CH
+01DE F1E8          MOVB      RL7,RL4
+                                           ; SOURCE LINE # 166
+01E0 F2F440E1      MOV       R4,0E140H
+01E4 66F4FF0F      AND       R4,#0FFFH
+01E8 F064          MOV       R6,R4
+01EA 7C26          SHR       R6,#02H
+                                           ; SOURCE LINE # 167
+01EC C0E4          MOVBZ     R4,RL7
+01EE 5C14          SHL       R4,#01H
+01F0 D7400000 R    EXTP      #PAG (g_ad1),#01H
+01F4 C4640000 R    MOV       [R4+#POF(g_ad1)],R6
+                                           ; SOURCE LINE # 169
+01F8 258F0000 R    SUBB      ad1_idx,ONES
+01FC F3F80000 R    MOVB      RL4,ad1_idx
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 9   
+
+0200 C084          MOVBZ     R4,RL4
+0202 D7400000 R    EXTP      #PAG (ad1_chx),#01H
+0206 F4840000 R    MOVB      RL4,[R4+#POF(ad1_chx)]
+020A 47F8FF00      CMPB      RL4,#0FFH
+020E 3D02          JMPR      cc_NZ,?C0004
+                                           ; SOURCE LINE # 170
+0210 F78E0000 R    MOVB      ad1_idx,ZEROS
+0214         ?C0004:
+                                           ; SOURCE LINE # 171
+0214 C2F40000 R    MOVBZ     R4,ad1_idx
+0218 D7400000 R    EXTP      #PAG (ad1_chx),#01H
+021C F4840000 R    MOVB      RL4,[R4+#POF(ad1_chx)]
+0220 C084          MOVBZ     R4,RL4
+0222 F6F4E6E1      MOV       0E1E6H,R4
+                                           ; SOURCE LINE # 172
+0226         ?C0003:
+0226 DB00          RETS      
+             ; FUNCTION ad_scan (END    RMASK = @0x40D0)
+
+             ; FUNCTION get_ad_value (BEGIN  RMASK = @0x4030)
+                                           ; SOURCE LINE # 175
+;---- Variable 'chan_no' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 176
+                                           ; SOURCE LINE # 177
+0228 E005          MOV       R5,#00H
+;---- Variable 'g_ad_tmp' assigned to Register 'R5' ----
+                                           ; SOURCE LINE # 179
+022A F048          MOV       R4,R8
+022C 67F8F000      ANDB      RL4,#0F0H
+0230 47F81000      CMPB      RL4,#010H
+0234 3D0A          JMPR      cc_NZ,?C0005
+                                           ; SOURCE LINE # 181
+0236 F048          MOV       R4,R8
+0238 67F80F00      ANDB      RL4,#0FH
+023C C084          MOVBZ     R4,RL4
+023E 5C14          SHL       R4,#01H
+0240 D7400000 R    EXTP      #PAG (g_ad1),#01H
+0244 D4540000 R    MOV       R5,[R4+#POF(g_ad1)]
+                                           ; SOURCE LINE # 182
+0248 0D07          JMPR      cc_UC,?C0006
+024A         ?C0005:
+                                           ; SOURCE LINE # 185
+024A F048          MOV       R4,R8
+024C C084          MOVBZ     R4,RL4
+024E 5C14          SHL       R4,#01H
+0250 D7400000 R    EXTP      #PAG (g_ad0),#01H
+0254 D4540000 R    MOV       R5,[R4+#POF(g_ad0)]
+                                           ; SOURCE LINE # 186
+0258         ?C0006:
+                                           ; SOURCE LINE # 188
+0258 F045          MOV       R4,R5
+                                           ; SOURCE LINE # 189
+025A DB00          RETS      
+             ; FUNCTION get_ad_value (END    RMASK = @0x4030)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         604     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =          32     --------
+  HUGE-CONST SIZE  =    --------     --------
+C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 10  
+
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           2     --------
+  FAR-DATA SIZE    =          64     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          88     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

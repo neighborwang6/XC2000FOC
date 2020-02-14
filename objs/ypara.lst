@@ -1,0 +1,64 @@
+C166 COMPILER V7.57.0, YPARA                                                               01/03/2020 16:20:10 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE YPARA
+OBJECT MODULE PLACED IN .\objs\ypara.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu2_prot\ypara.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\
+                    -src;.\EOL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) 
+                    -MODV2 DEBUG CODE PRINT(.\objs\ypara.lst) TABS(2) OBJECT(.\objs\ypara.obj) 
+
+ stmt lvl     source
+
+    1         #include "ypara.h"
+    2         #include "prot_imp.h"
+    3         
+    4         const YPARA g_ypara={
+    5           HEAD_MAGIC,
+    6           "L330",
+    7           "ABS",
+    8           "\x006\x042\x028",
+    9           "\x001\x000\x000\x000",
+   10           "\x002\x065\x080\x007\x013",
+   11           "1122334455",
+   12           0x9f,         // Baud Rate  : 0xae: 9600, 0x9f: 10400
+   13           ECU_ADDR_CONST,
+   14           TST_ADDR_CONST,
+   15           FKMH_R(40),
+   16           1,            // No limit to V Speed and ABS On/Off
+   17           // Scaling Table
+   18           "\x003\x091\x06B\x003\x09A\x002\x003\x097\x066\x003\x092\x045\x003\x094\x065\x003\x095\x068\x003\x09D\x00
+             -1\x0FF",
+   19           // Data Table
+   20              "E02"
+   21              "ABS"
+   22              "BBN"
+   23              "0708"
+   24              "YF_83",
+   25           TAIL_MAGIC
+   26         };
+C166 COMPILER V7.57.0, YPARA                                                               01/03/2020 16:20:10 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =    --------     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =         130     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

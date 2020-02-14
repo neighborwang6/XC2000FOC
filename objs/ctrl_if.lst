@@ -1,0 +1,844 @@
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE CTRL_IF
+OBJECT MODULE PLACED IN .\objs\ctrl_if.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl_if.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\EOL_Dia
+                    -g;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 DEBUG C
+                    -ODE PRINT(.\objs\ctrl_if.lst) TABS(2) OBJECT(.\objs\ctrl_if.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /*******************************************************************************
+    3         * 
+    4         *
+    5         *  
+    6         *      
+    7         *******************************************************************************/
+    8         ////////////////////////////////////////////////////////////////////////////////
+    9         
+   10         #include "ctrl_if.h"
+   11         #include "board.h"
+   12         #include "motor_if.h"
+   13         #include "svpwm.h"
+   14         
+   15         #define GET_BRK_PEDAL_STATE() (P2_IN_P10)
+   16         
+   17         ////////////////////////////////////////////////////////////////////////////////
+   18         // Brake command from CAN bus
+   19         u16 g_brake_pedal_pos_can_uw=0;
+   20         
+   21         ////////////////////////////////////////////////////////////////////////////////
+   22         //
+   23         ////////////////////////////////////////////////////////////////////////////////
+   24         u16 get_brake_pedal_pos0(void)
+   25         {
+   26  1        return get_ad_value(AD_BRK0);
+   27  1      }
+   28         
+   29         ////////////////////////////////////////////////////////////////////////////////
+   30         //
+   31         ////////////////////////////////////////////////////////////////////////////////
+   32         u16 get_brake_pedal_pos1(void)
+   33         {
+   34  1        return get_ad_value(AD_BRK0);
+   35  1      }
+   36         
+   37         ////////////////////////////////////////////////////////////////////////////////
+   38         //
+   39         ////////////////////////////////////////////////////////////////////////////////
+   40         u16 get_brake_pedal_pos_can(void)
+   41         {
+   42  1        return g_brake_pedal_pos_can_uw;
+   43  1      }
+   44         
+   45         ////////////////////////////////////////////////////////////////////////////////
+   46         //
+   47         ////////////////////////////////////////////////////////////////////////////////
+   48         u16 get_mc_pressure0(void)
+   49         {
+   50  1        return get_ad_value(AD_PRS0);
+   51  1      }
+   52         
+   53         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 2   
+
+   54         //
+   55         ////////////////////////////////////////////////////////////////////////////////
+   56         u16 get_mc_pressure1(void)
+   57         {
+   58  1        return get_ad_value(AD_PRS0);
+   59  1      }
+   60         
+   61         ////////////////////////////////////////////////////////////////////////////////
+   62         //
+   63         ////////////////////////////////////////////////////////////////////////////////
+   64         s16 get_steer_torque0(void)
+   65         {
+   66  1        return 0;
+   67  1      }
+   68         
+   69         ////////////////////////////////////////////////////////////////////////////////
+   70         //
+   71         ////////////////////////////////////////////////////////////////////////////////
+   72         s16 get_steer_torque1(void)
+   73         {
+   74  1        return 0;
+   75  1      }
+   76         
+   77         ////////////////////////////////////////////////////////////////////////////////
+   78         //
+   79         ////////////////////////////////////////////////////////////////////////////////
+   80         u16 get_motor_angle_m(void)
+   81         {
+   82  1        return g_angle_sensor;
+   83  1      }
+   84         
+   85         ////////////////////////////////////////////////////////////////////////////////
+   86         //
+   87         ////////////////////////////////////////////////////////////////////////////////
+   88         u16 get_motor_angle_e(void)
+   89         {
+   90  1        return g_angle_eiq;
+   91  1      }
+   92         
+   93         ////////////////////////////////////////////////////////////////////////////////
+   94         //
+   95         ////////////////////////////////////////////////////////////////////////////////
+   96         s32 get_motor_total_angle(void)
+   97         {
+   98  1        return ((g_total_angle_sl*90)>>12);
+   99  1      }
+  100         
+  101         ////////////////////////////////////////////////////////////////////////////////
+  102         //
+  103         ////////////////////////////////////////////////////////////////////////////////
+  104         s16 get_motor_speed(void)
+  105         {
+  106  1        return g_mot_speed_sw;
+  107  1      }
+  108         
+  109         ////////////////////////////////////////////////////////////////////////////////
+  110         //
+  111         ////////////////////////////////////////////////////////////////////////////////
+  112         u8 set_motor_speed(s16 speed) // reserved
+  113         {
+  114  1        UNUSED_PARA(speed);
+  115  1      
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 3   
+
+  116  1        return 1;
+  117  1      }
+  118         
+  119         ////////////////////////////////////////////////////////////////////////////////
+  120         //
+  121         ////////////////////////////////////////////////////////////////////////////////
+  122         u8 set_motor_torque(s16 torq) // reserved
+  123         {
+  124  1        UNUSED_PARA(torq);
+  125  1      
+  126  1        return 1;
+  127  1      }
+  128         
+  129         ////////////////////////////////////////////////////////////////////////////////
+  130         // volt: 0~12V: => 0~120 (0.1V/bit)
+  131         ////////////////////////////////////////////////////////////////////////////////
+  132         u8 set_motor_volt(u16 volt)
+  133         {
+  134  1        g_duty_uw=(u16)((10000UL*volt)/Udc);
+  135  1      
+  136  1        return 0;
+  137  1      }
+  138         
+  139         ////////////////////////////////////////////////////////////////////////////////
+  140         //
+  141         ////////////////////////////////////////////////////////////////////////////////
+  142         u8 set_motor_dir(u8 dir)
+  143         {
+  144  1        if(dir>1)
+  145  1          return 1;
+  146  1      
+  147  1        g_dir_ub=dir;
+  148  1      
+  149  1        return 0;
+  150  1      }
+  151         
+  152         ////////////////////////////////////////////////////////////////////////////////
+  153         // 0: disable, 1: enable level1, 2: enable_level2
+  154         ////////////////////////////////////////////////////////////////////////////////
+  155         u8 set_motor_ctrl_enable(u8 enable)
+  156         {
+  157  1        if(enable==1)
+  158  1        {
+  159  2          SET_TLE_ENA(1);
+  160  2          SET_EN_UVW(1);
+  161  2          set_phase_on(0,0);
+  162  2          set_phase_on(1,0);
+  163  2          set_phase_on(2,0);
+  164  2      
+  165  2          g_time_inh=(u16)0xFFFF;
+  166  2        }
+  167  1        else if(enable==2)
+  168  1        {
+  169  2          SET_TLE_ENA(1);
+  170  2          SET_EN_UVW(1);
+  171  2          set_phase_on(0,1);
+  172  2          set_phase_on(1,1);
+  173  2          set_phase_on(2,1);
+  174  2      
+  175  2          g_time_inh=0;
+  176  2        }
+  177  1        else if(enable==0)
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 4   
+
+  178  1        {
+  179  2          SET_TLE_ENA(0);
+  180  2          SET_EN_UVW(0);
+  181  2      
+  182  2          set_phase_on(0,0);
+  183  2          set_phase_on(1,0);
+  184  2          set_phase_on(2,0);
+  185  2          pwm_setduty(0,0);
+  186  2          pwm_setduty(1,0);
+  187  2          pwm_setduty(2,0);
+  188  2      
+  189  2          g_time_inh=(u16)0xFFFF;
+  190  2        }
+  191  1      
+  192  1        return 0;
+  193  1      }
+  194         
+  195         ////////////////////////////////////////////////////////////////////////////////
+  196         //
+  197         ////////////////////////////////////////////////////////////////////////////////
+  198         u8 save_parameters(u8 *para_buf, u8 len)
+  199         {
+  200  1        UNUSED_PARA(para_buf);
+  201  1        UNUSED_PARA(len);
+  202  1      
+  203  1        return 1;
+  204  1      }
+  205         
+  206         ////////////////////////////////////////////////////////////////////////////////
+  207         //
+  208         ////////////////////////////////////////////////////////////////////////////////
+  209         u8 read_parameters(u8 *para_buf, u8 len)
+  210         {
+  211  1        UNUSED_PARA(para_buf);
+  212  1        UNUSED_PARA(len);
+  213  1      
+  214  1        return 1;
+  215  1      }
+  216         
+  217         ////////////////////////////////////////////////////////////////////////////////
+  218         // 0.1degree/bit
+  219         ////////////////////////////////////////////////////////////////////////////////
+  220         u8 set_motor_offset(s16 offset)
+  221         {
+  222  1        if(g_motor_type_ub==MOTOR_TYPE_BLDC)
+  223  1          g_pos_offset_bldc_uw=(u16)offset;
+  224  1        else if(g_motor_type_ub==MOTOR_TYPE_PMSM)
+  225  1          g_pos_offset_pmsm_uw=(u16)offset;
+  226  1      
+  227  1        return 0;
+  228  1      }
+  229         
+  230         ////////////////////////////////////////////////////////////////////////////////
+  231         //
+  232         ////////////////////////////////////////////////////////////////////////////////
+  233         u16 get_bat_volt(void)
+  234         {
+  235  1        u16 l_tmpu16;
+  236  1      
+  237  1        l_tmpu16=get_ad_value(AD_BAT12V_MON);
+  238  1        // Resistor divider : 1M/330K
+  239  1        // 1023 => 5V, Output adjusted to 0.1V/bit
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 5   
+
+  240  1        l_tmpu16=(l_tmpu16*25)>>7; //l_tmpu16*4*5*10/1024;
+  241  1      
+  242  1        return l_tmpu16;
+  243  1      }
+  244         
+  245         ////////////////////////////////////////////////////////////////////////////////
+  246         //
+  247         ////////////////////////////////////////////////////////////////////////////////
+  248         u16 get_mc_pressure(void)
+  249         {
+  250  1        u16 l_tmpu16;
+  251  1      
+  252  1        // VRO remap to MC pressure input.
+  253  1        l_tmpu16=get_ad_value(AD_AIN3);
+  254  1      
+  255  1        return l_tmpu16;
+  256  1      }
+  257         
+  258         ////////////////////////////////////////////////////////////////////////////////
+  259         //
+  260         ////////////////////////////////////////////////////////////////////////////////
+  261         u16 get_disp_sensor0(void)
+  262         {
+  263  1        u16 l_tmpu16;
+  264  1      
+  265  1        l_tmpu16=get_ad_value(AD_BRK0);
+  266  1      
+  267  1        return l_tmpu16;
+  268  1      }
+  269         
+  270         ////////////////////////////////////////////////////////////////////////////////
+  271         //
+  272         ////////////////////////////////////////////////////////////////////////////////
+  273         u16 get_ign_volt(void)
+  274         {
+  275  1        // IGN: digital input in DIAS EPS ECU
+  276  1        if(GET_IGN())
+  277  1          return get_bat_volt();
+  278  1      else
+  279  1        return 0;
+  280  1      }
+  281         
+  282         ////////////////////////////////////////////////////////////////////////////////
+  283         // Brake pedal light switch 1:Press the pedal ; 0:Do not press the pedal.
+  284         ////////////////////////////////////////////////////////////////////////////////
+  285         u16 get_brk_pedal_state(void)
+  286         {
+  287  1        if(GET_BRK_PEDAL_STATE())
+  288  1        {
+  289  2          return 1;
+  290  2        }
+  291  1        else
+  292  1        {
+  293  2          return 0;
+  294  2          
+  295  2        }
+  296  1      }
+  297         
+  298         ////////////////////////////////////////////////////////////////////////////////
+  299         // No brake pedal switch available to eBooster
+  300         ////////////////////////////////////////////////////////////////////////////////
+  301         u16 get_brk_pedal_volt(void)
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 6   
+
+  302         {
+  303  1        return (u16)get_ad_value(AD_VO2);
+  304  1      }
+  305         
+  306         ////////////////////////////////////////////////////////////////////////////////
+  307         //
+  308         ////////////////////////////////////////////////////////////////////////////////
+  309         u16 get_current(u8 i_idx)
+  310         {
+  311  1        u16 l_tmpu16=0;
+  312  1      
+  313  1        switch(i_idx)
+  314  1        {
+  315  2        case 0:
+  316  2          l_tmpu16=get_ad_value(AD_VO1);
+  317  2          break;
+  318  2      
+  319  2        case 1:
+  320  2        case 2:
+  321  2        case 3:
+  322  2          l_tmpu16=(u16)0xFFFF;
+  323  2          break;
+  324  2        }
+  325  1      
+  326  1        return l_tmpu16;
+  327  1      }
+  328         
+  329         ////////////////////////////////////////////////////////////////////////////////
+  330         //
+  331         ////////////////////////////////////////////////////////////////////////////////
+  332         u16 get_temp_sensor_pcb(void)
+  333         {
+  334  1        return get_ad_value(AD_TEMP_SS1);
+  335  1      }
+  336         
+  337         ////////////////////////////////////////////////////////////////////////////////
+  338         // Not mount: unavailable
+  339         ////////////////////////////////////////////////////////////////////////////////
+  340         u16 get_temp_sensor_mosfet(void)
+  341         {
+  342  1        return (u16)0xFFFF;
+  343  1      }
+  344         
+  345         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 7   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION get_brake_pedal_pos0 (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 24
+                                           ; SOURCE LINE # 26
+0000 E048          MOV       R8,#04H
+0002 DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+                                           ; SOURCE LINE # 27
+0006 DB00          RETS      
+             ; FUNCTION get_brake_pedal_pos0 (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_brake_pedal_pos1 (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 32
+                                           ; SOURCE LINE # 34
+0008 E048          MOV       R8,#04H
+000A DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+                                           ; SOURCE LINE # 35
+000E DB00          RETS      
+             ; FUNCTION get_brake_pedal_pos1 (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_brake_pedal_pos_can (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 40
+                                           ; SOURCE LINE # 42
+0010 F2F40000 R    MOV       R4,g_brake_pedal_pos_can_uw
+                                           ; SOURCE LINE # 43
+0014 DB00          RETS      
+             ; FUNCTION get_brake_pedal_pos_can (END    RMASK = @0x0010)
+
+             ; FUNCTION get_mc_pressure0 (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 48
+                                           ; SOURCE LINE # 50
+0016 E038          MOV       R8,#03H
+0018 DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+                                           ; SOURCE LINE # 51
+001C DB00          RETS      
+             ; FUNCTION get_mc_pressure0 (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_mc_pressure1 (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 56
+                                           ; SOURCE LINE # 58
+001E E038          MOV       R8,#03H
+0020 DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+                                           ; SOURCE LINE # 59
+0024 DB00          RETS      
+             ; FUNCTION get_mc_pressure1 (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_steer_torque0 (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 64
+                                           ; SOURCE LINE # 66
+0026 E004          MOV       R4,#00H
+                                           ; SOURCE LINE # 67
+0028 DB00          RETS      
+             ; FUNCTION get_steer_torque0 (END    RMASK = @0x0010)
+
+             ; FUNCTION get_steer_torque1 (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 72
+                                           ; SOURCE LINE # 74
+002A E004          MOV       R4,#00H
+                                           ; SOURCE LINE # 75
+002C DB00          RETS      
+             ; FUNCTION get_steer_torque1 (END    RMASK = @0x0010)
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 8   
+
+
+             ; FUNCTION get_motor_angle_m (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 80
+                                           ; SOURCE LINE # 82
+002E F2F40000 E    MOV       R4,g_angle_sensor
+                                           ; SOURCE LINE # 83
+0032 DB00          RETS      
+             ; FUNCTION get_motor_angle_m (END    RMASK = @0x0010)
+
+             ; FUNCTION get_motor_angle_e (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 88
+                                           ; SOURCE LINE # 90
+0034 F2F40000 E    MOV       R4,g_angle_eiq
+                                           ; SOURCE LINE # 91
+0038 DB00          RETS      
+             ; FUNCTION get_motor_angle_e (END    RMASK = @0x0010)
+
+             ; FUNCTION get_motor_total_angle (BEGIN  RMASK = @0x60F0)
+                                           ; SOURCE LINE # 96
+                                           ; SOURCE LINE # 98
+003A E6F65A00      MOV       R6,#05AH
+003E E007          MOV       R7,#00H
+0040 F2F40000 E    MOV       R4,g_total_angle_sl
+0044 F2F50200 E    MOV       R5,g_total_angle_sl+02H
+0048 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
+004C F065          MOV       R6,R5
+004E 7CC4          SHR       R4,#0CH
+0050 BCC5          ASHR      R5,#0CH
+0052 5C46          SHL       R6,#04H
+0054 7046          OR        R4,R6
+                                           ; SOURCE LINE # 99
+0056 DB00          RETS      
+             ; FUNCTION get_motor_total_angle (END    RMASK = @0x60F0)
+
+             ; FUNCTION get_motor_speed (BEGIN  RMASK = @0x0010)
+                                           ; SOURCE LINE # 104
+                                           ; SOURCE LINE # 106
+0058 F2F40000 E    MOV       R4,g_mot_speed_sw
+                                           ; SOURCE LINE # 107
+005C DB00          RETS      
+             ; FUNCTION get_motor_speed (END    RMASK = @0x0010)
+
+             ; FUNCTION set_motor_speed (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 112
+;---- Variable 'speed' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 116
+005E E118          MOVB      RL4,#01H
+                                           ; SOURCE LINE # 117
+0060 DB00          RETS      
+             ; FUNCTION set_motor_speed (END    RMASK = @0x4010)
+
+             ; FUNCTION set_motor_torque (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 122
+;---- Variable 'torq' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 126
+0062 E118          MOVB      RL4,#01H
+                                           ; SOURCE LINE # 127
+0064 DB00          RETS      
+             ; FUNCTION set_motor_torque (END    RMASK = @0x4010)
+
+             ; FUNCTION set_motor_volt (BEGIN  RMASK = @0x6050)
+                                           ; SOURCE LINE # 132
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 9   
+
+;---- Variable 'volt' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 134
+0066 E6F41027      MOV       R4,#02710H
+006A 1B84          MULU      R8,R4
+006C E6F6E02E      MOV       R6,#02EE0H
+0070 7B66          DIVLU     R6
+0072 F6070000 E    MOV       g_duty_uw,MDL
+                                           ; SOURCE LINE # 136
+0076 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 137
+0078 DB00          RETS      
+             ; FUNCTION set_motor_volt (END    RMASK = @0x6050)
+
+             ; FUNCTION set_motor_dir (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 142
+;---- Variable 'dir' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 144
+007A F048          MOV       R4,R8
+007C 4981          CMPB      RL4,#01H
+007E FD02          JMPR      cc_ULE,?C0015
+                                           ; SOURCE LINE # 145
+0080 E118          MOVB      RL4,#01H
+0082 DB00          RETS      
+0084         ?C0015:
+                                           ; SOURCE LINE # 147
+0084 F048          MOV       R4,R8
+0086 F7F80000 E    MOVB      g_dir_ub,RL4
+                                           ; SOURCE LINE # 149
+008A E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 150
+008C         ?C0016:
+008C DB00          RETS      
+             ; FUNCTION set_motor_dir (END    RMASK = @0x4010)
+
+             ; FUNCTION set_motor_ctrl_enable (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 155
+008E ECFD          PUSH      R13
+0090 F0D8          MOV       R13,R8
+;---- Variable 'enable' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 157
+0092 F048          MOV       R4,R8
+0094 4981          CMPB      RL4,#01H
+0096 3D11          JMPR      cc_NZ,?C0017
+                                           ; SOURCE LINE # 159
+0098 7FD1          BSET      P0_OUT_P7
+                                           ; SOURCE LINE # 160
+009A 7FDB          BSET      P10_OUT_P7
+                                           ; SOURCE LINE # 161
+009C E009          MOV       R9,#00H
+009E E008          MOV       R8,#00H
+00A0 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 162
+00A4 E009          MOV       R9,#00H
+00A6 E018          MOV       R8,#01H
+00A8 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 163
+00AC E009          MOV       R9,#00H
+00AE E028          MOV       R8,#02H
+00B0 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 165
+00B4 F68F0000 E    MOV       g_time_inh,ONES
+                                           ; SOURCE LINE # 166
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 10  
+
+00B8 0D33          JMPR      cc_UC,?C0018
+00BA         ?C0017:
+                                           ; SOURCE LINE # 167
+00BA F04D          MOV       R4,R13
+00BC 4982          CMPB      RL4,#02H
+00BE 3D11          JMPR      cc_NZ,?C0019
+                                           ; SOURCE LINE # 169
+00C0 7FD1          BSET      P0_OUT_P7
+                                           ; SOURCE LINE # 170
+00C2 7FDB          BSET      P10_OUT_P7
+                                           ; SOURCE LINE # 171
+00C4 E019          MOV       R9,#01H
+00C6 E008          MOV       R8,#00H
+00C8 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 172
+00CC E019          MOV       R9,#01H
+00CE E018          MOV       R8,#01H
+00D0 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 173
+00D4 E019          MOV       R9,#01H
+00D6 E028          MOV       R8,#02H
+00D8 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 175
+00DC F68E0000 E    MOV       g_time_inh,ZEROS
+                                           ; SOURCE LINE # 176
+00E0 0D1F          JMPR      cc_UC,?C0018
+00E2         ?C0019:
+                                           ; SOURCE LINE # 177
+00E2 F04D          MOV       R4,R13
+00E4 4980          CMPB      RL4,#00H
+00E6 3D1C          JMPR      cc_NZ,?C0018
+                                           ; SOURCE LINE # 179
+00E8 7ED1          BCLR      P0_OUT_P7
+                                           ; SOURCE LINE # 180
+00EA 7EDB          BCLR      P10_OUT_P7
+                                           ; SOURCE LINE # 182
+00EC E009          MOV       R9,#00H
+00EE E008          MOV       R8,#00H
+00F0 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 183
+00F4 E009          MOV       R9,#00H
+00F6 E018          MOV       R8,#01H
+00F8 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 184
+00FC E009          MOV       R9,#00H
+00FE E028          MOV       R8,#02H
+0100 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
+                                           ; SOURCE LINE # 185
+0104 E009          MOV       R9,#00H
+0106 E008          MOV       R8,#00H
+0108 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 186
+010C E009          MOV       R9,#00H
+010E E018          MOV       R8,#01H
+0110 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 187
+0114 E009          MOV       R9,#00H
+0116 E028          MOV       R8,#02H
+0118 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
+                                           ; SOURCE LINE # 189
+011C F68F0000 E    MOV       g_time_inh,ONES
+                                           ; SOURCE LINE # 190
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 11  
+
+0120         ?C0018:
+                                           ; SOURCE LINE # 192
+0120 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 193
+0122 FCFD          POP       R13
+0124 DB00          RETS      
+             ; FUNCTION set_motor_ctrl_enable (END    RMASK = @0x7FFF)
+
+             ; FUNCTION save_parameters (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 198
+;---- Variable 'len' assigned to Register 'R10' ----
+;---- Variable 'para_buf' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 203
+0126 E118          MOVB      RL4,#01H
+                                           ; SOURCE LINE # 204
+0128 DB00          RETS      
+             ; FUNCTION save_parameters (END    RMASK = @0x4010)
+
+             ; FUNCTION read_parameters (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 209
+;---- Variable 'len' assigned to Register 'R10' ----
+;---- Variable 'para_buf' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 214
+012A E118          MOVB      RL4,#01H
+                                           ; SOURCE LINE # 215
+012C DB00          RETS      
+             ; FUNCTION read_parameters (END    RMASK = @0x4010)
+
+             ; FUNCTION set_motor_offset (BEGIN  RMASK = @0x4030)
+                                           ; SOURCE LINE # 220
+;---- Variable 'offset' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 222
+012E F3FA0000 E    MOVB      RL5,g_motor_type_ub
+0132 49A1          CMPB      RL5,#01H
+0134 3D03          JMPR      cc_NZ,?C0025
+                                           ; SOURCE LINE # 223
+0136 F6F80000 E    MOV       g_pos_offset_bldc_uw,R8
+013A 0D04          JMPR      cc_UC,?C0026
+013C         ?C0025:
+                                           ; SOURCE LINE # 224
+013C 49A2          CMPB      RL5,#02H
+013E 3D02          JMPR      cc_NZ,?C0026
+                                           ; SOURCE LINE # 225
+0140 F6F80000 E    MOV       g_pos_offset_pmsm_uw,R8
+0144         ?C0026:
+                                           ; SOURCE LINE # 227
+0144 E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 228
+0146 DB00          RETS      
+             ; FUNCTION set_motor_offset (END    RMASK = @0x4030)
+
+             ; FUNCTION get_bat_volt (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 233
+                                           ; SOURCE LINE # 234
+                                           ; SOURCE LINE # 237
+0148 E058          MOV       R8,#05H
+014A DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+014E F064          MOV       R6,R4
+;---- Variable 'l_tmpu16' assigned to Register 'R6' ----
+                                           ; SOURCE LINE # 240
+0150 5C24          SHL       R4,#02H
+0152 2046          SUB       R4,R6
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 12  
+
+0154 5C34          SHL       R4,#03H
+0156 0046          ADD       R4,R6
+0158 F064          MOV       R6,R4
+015A 7C76          SHR       R6,#07H
+                                           ; SOURCE LINE # 242
+015C F046          MOV       R4,R6
+                                           ; SOURCE LINE # 243
+015E DB00          RETS      
+             ; FUNCTION get_bat_volt (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_mc_pressure (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 248
+                                           ; SOURCE LINE # 249
+                                           ; SOURCE LINE # 253
+0160 E038          MOV       R8,#03H
+0162 DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+;---- Variable 'l_tmpu16' assigned to Register 'R4' ----
+                                           ; SOURCE LINE # 255
+                                           ; SOURCE LINE # 256
+0166 DB00          RETS      
+             ; FUNCTION get_mc_pressure (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_disp_sensor0 (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 261
+                                           ; SOURCE LINE # 262
+                                           ; SOURCE LINE # 265
+0168 E048          MOV       R8,#04H
+016A DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+;---- Variable 'l_tmpu16' assigned to Register 'R4' ----
+                                           ; SOURCE LINE # 267
+                                           ; SOURCE LINE # 268
+016E DB00          RETS      
+             ; FUNCTION get_disp_sensor0 (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_ign_volt (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 273
+                                           ; SOURCE LINE # 276
+0170 9AC40310      JNB       P4_IN_P1,?C0032
+                                           ; SOURCE LINE # 277
+0174 DA000000 R    CALLS     SEG (get_bat_volt),get_bat_volt
+0178 DB00          RETS      
+017A         ?C0032:
+                                           ; SOURCE LINE # 279
+017A E004          MOV       R4,#00H
+                                           ; SOURCE LINE # 280
+017C         ?C0033:
+017C DB00          RETS      
+             ; FUNCTION get_ign_volt (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_brk_pedal_state (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 285
+                                           ; SOURCE LINE # 287
+017E 9AC202A0      JNB       P2_IN_P10,?C0035
+                                           ; SOURCE LINE # 289
+0182 E014          MOV       R4,#01H
+0184 DB00          RETS      
+                                           ; SOURCE LINE # 290
+0186         ?C0035:
+                                           ; SOURCE LINE # 293
+0186 E004          MOV       R4,#00H
+                                           ; SOURCE LINE # 295
+                                           ; SOURCE LINE # 296
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 13  
+
+0188         ?C0036:
+0188 DB00          RETS      
+             ; FUNCTION get_brk_pedal_state (END    RMASK = @0x4010)
+
+             ; FUNCTION get_brk_pedal_volt (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 301
+                                           ; SOURCE LINE # 303
+018A E6F81000      MOV       R8,#010H
+018E DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+                                           ; SOURCE LINE # 304
+0192 DB00          RETS      
+             ; FUNCTION get_brk_pedal_volt (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_current (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 309
+0194 ECFD          PUSH      R13
+;---- Variable 'i_idx' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 310
+                                           ; SOURCE LINE # 311
+0196 E00D          MOV       R13,#00H
+;---- Variable 'l_tmpu16' assigned to Register 'R13' ----
+                                           ; SOURCE LINE # 313
+0198 F048          MOV       R4,R8
+019A 2981          SUBB      RL4,#01H
+019C 07F8FDFF      ADDB      RL4,#0FFFDH
+01A0 9D07          JMPR      cc_NC,?C0043
+01A2 0984          ADDB      RL4,#04H
+01A4 3D07          JMPR      cc_NZ,?C0039
+                                           ; SOURCE LINE # 315
+01A6         ?C0040:
+                                           ; SOURCE LINE # 316
+01A6 E008          MOV       R8,#00H
+01A8 DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+01AC F0D4          MOV       R13,R4
+                                           ; SOURCE LINE # 317
+01AE 0D02          JMPR      cc_UC,?C0039
+                                           ; SOURCE LINE # 319
+                                           ; SOURCE LINE # 320
+                                           ; SOURCE LINE # 321
+01B0         ?C0043:
+                                           ; SOURCE LINE # 322
+01B0 E6FDFFFF      MOV       R13,#0FFFFH
+                                           ; SOURCE LINE # 323
+                                           ; SOURCE LINE # 324
+01B4         ?C0039:
+                                           ; SOURCE LINE # 326
+01B4 F04D          MOV       R4,R13
+                                           ; SOURCE LINE # 327
+01B6 FCFD          POP       R13
+01B8 DB00          RETS      
+             ; FUNCTION get_current (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_temp_sensor_pcb (BEGIN  RMASK = @0x7FFF)
+                                           ; SOURCE LINE # 332
+                                           ; SOURCE LINE # 334
+01BA E098          MOV       R8,#09H
+01BC DA000000 E    CALLS     SEG (get_ad_value),get_ad_value
+                                           ; SOURCE LINE # 335
+01C0 DB00          RETS      
+             ; FUNCTION get_temp_sensor_pcb (END    RMASK = @0x7FFF)
+
+             ; FUNCTION get_temp_sensor_mosfet (BEGIN  RMASK = @0x0010)
+C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 14  
+
+                                           ; SOURCE LINE # 340
+                                           ; SOURCE LINE # 342
+01C2 E6F4FFFF      MOV       R4,#0FFFFH
+                                           ; SOURCE LINE # 343
+01C6 DB00          RETS      
+             ; FUNCTION get_temp_sensor_mosfet (END    RMASK = @0x0010)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         456     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           2     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =           6     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
