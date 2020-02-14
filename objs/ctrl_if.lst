@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 1   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE CTRL_IF
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl_if.c MODV2 LARGE BROW
    51  1      }
    52         
    53         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 2   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 2   
 
    54         //
    55         ////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl_if.c MODV2 LARGE BROW
   113         {
   114  1        UNUSED_PARA(speed);
   115  1      
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 3   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 3   
 
   116  1        return 1;
   117  1      }
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl_if.c MODV2 LARGE BROW
   175  2          g_time_inh=0;
   176  2        }
   177  1        else if(enable==0)
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 4   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 4   
 
   178  1        {
   179  2          SET_TLE_ENA(0);
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl_if.c MODV2 LARGE BROW
   237  1        l_tmpu16=get_ad_value(AD_BAT12V_MON);
   238  1        // Resistor divider : 1M/330K
   239  1        // 1023 => 5V, Output adjusted to 0.1V/bit
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 5   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 5   
 
   240  1        l_tmpu16=(l_tmpu16*25)>>7; //l_tmpu16*4*5*10/1024;
   241  1      
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl_if.c MODV2 LARGE BROW
   299         // No brake pedal switch available to eBooster
   300         ////////////////////////////////////////////////////////////////////////////////
   301         u16 get_brk_pedal_volt(void)
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 6   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 6   
 
   302         {
   303  1        return (u16)get_ad_value(AD_VO2);
@@ -364,7 +364,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl_if.c MODV2 LARGE BROW
   343  1      }
   344         
   345         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 7   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 7   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -428,7 +428,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 75
 002C DB00          RETS      
              ; FUNCTION get_steer_torque1 (END    RMASK = @0x0010)
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 8   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 8   
 
 
              ; FUNCTION get_motor_angle_m (BEGIN  RMASK = @0x0010)
@@ -492,7 +492,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
              ; FUNCTION set_motor_volt (BEGIN  RMASK = @0x6050)
                                            ; SOURCE LINE # 132
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 9   
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 9   
 
 ;---- Variable 'volt' assigned to Register 'R8' ----
                                            ; SOURCE LINE # 134
@@ -556,7 +556,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 165
 00B4 F68F0000 E    MOV       g_time_inh,ONES
                                            ; SOURCE LINE # 166
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 10  
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 10  
 
 00B8 0D33          JMPR      cc_UC,?C0018
 00BA         ?C0017:
@@ -620,7 +620,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 189
 011C F68F0000 E    MOV       g_time_inh,ONES
                                            ; SOURCE LINE # 190
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 11  
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 11  
 
 0120         ?C0018:
                                            ; SOURCE LINE # 192
@@ -684,7 +684,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 240
 0150 5C24          SHL       R4,#02H
 0152 2046          SUB       R4,R6
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 12  
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 12  
 
 0154 5C34          SHL       R4,#03H
 0156 0046          ADD       R4,R6
@@ -748,7 +748,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0186 E004          MOV       R4,#00H
                                            ; SOURCE LINE # 295
                                            ; SOURCE LINE # 296
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 13  
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 13  
 
 0188         ?C0036:
 0188 DB00          RETS      
@@ -812,7 +812,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION get_temp_sensor_pcb (END    RMASK = @0x7FFF)
 
              ; FUNCTION get_temp_sensor_mosfet (BEGIN  RMASK = @0x0010)
-C166 COMPILER V7.57.0, CTRL_IF                                                             01/03/2020 16:20:12 PAGE 14  
+C166 COMPILER V7.57.0, CTRL_IF                                                             02/15/2020 01:24:53 PAGE 14  
 
                                            ; SOURCE LINE # 340
                                            ; SOURCE LINE # 342

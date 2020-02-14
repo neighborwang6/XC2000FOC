@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 1   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE CTRL
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
    51         {
    52           MOTOR_FORWORD = 0,
    53           MOTOR_BACKWARD = 1,
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 2   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 2   
 
    54           MOTOR_HOLD = 2
    55         
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
                 //DoEboosterCtrl();
                 
                 // Control output...
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 3   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 3   
 
                 MotorDrive();
                 #else
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
   174         u8 can_do_obj(u32 id,u8 cfg,u8 far *buf)
   175         {
   176  1        UNUSED_PARA(cfg);
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 4   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 4   
 
   177  1        
   178  1        // Test only: Command message from master controller, e.g. VCU, ESC, etc.)
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
   236  1        //bufx[4]=(u8)(g_mot_speed_sw);
   237  1        //bufx[5]=(u8)(g_mot_speed_sw>>8);
   238  1        //bufx[6]=(u8)(g_dir_ub);
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 5   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 5   
 
   239  1        //bufx[7]=(u8)(g_resolver_pos_uw/683);
   240  1        
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
   298         {
   299  1        /*
   300  1        u8 bufx[8];
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 6   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 6   
 
   301  1        
   302  1        ////////////////////////////////////////////////////////////////////////////
@@ -376,7 +376,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
   354  1        ////////////////////////////////////////////////////////////////////////////
   355  1      }
   356         
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 7   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 7   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -440,7 +440,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 150
 0052 DB00          RETS      
              ; FUNCTION isr_10ms_hook_user (END    RMASK = @0x0010)
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 8   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 8   
 
 
              ; FUNCTION isr_1ms_hook_user (BEGIN  RMASK = @0x7FFF)
@@ -504,7 +504,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 009C E128          MOVB      RL4,#02H
 009E E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
                                            ; SOURCE LINE # 246
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 9   
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 9   
 
 00A2 E138          MOVB      RL4,#03H
 00A4 E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
@@ -568,7 +568,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 268
 0128 E118          MOVB      RL4,#01H
 012A B980          MOVB      [R0],RL4      ; bufx
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 10  
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 10  
 
                                            ; SOURCE LINE # 269
 012C E128          MOVB      RL4,#02H
@@ -632,7 +632,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 01AC DA000000 E    CALLS     SEG (can_sload),can_sload
                                            ; SOURCE LINE # 290
 01B0 E6F81300      MOV       R8,#013H
-C166 COMPILER V7.57.0, CTRL                                                                01/03/2020 16:20:11 PAGE 11  
+C166 COMPILER V7.57.0, CTRL                                                                02/15/2020 01:24:52 PAGE 11  
 
 01B4 DA000000 E    CALLS     SEG (can_stx),can_stx
                                            ; SOURCE LINE # 292

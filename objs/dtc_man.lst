@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, DTC_MAN                                                             01/03/2020 16:20:08 PAGE 1   
+C166 COMPILER V7.57.0, DTC_MAN                                                             02/15/2020 01:24:49 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE DTC_MAN
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\dtc_man.c MODV2 LARGE
    51  1        
    52  1        return 0;
    53  1      }
-C166 COMPILER V7.57.0, DTC_MAN                                                             01/03/2020 16:20:08 PAGE 2   
+C166 COMPILER V7.57.0, DTC_MAN                                                             02/15/2020 01:24:49 PAGE 2   
 
    54         ///////////////////////////////////////////////////////////////////////////////////////
    55         // Del a DTC
@@ -123,7 +123,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\dtc_man.c MODV2 LARGE
   110  1        memcpy(gee_buf+addr,buf,len);
   111  1        return 0;
   112  1      }
-C166 COMPILER V7.57.0, DTC_MAN                                                             01/03/2020 16:20:08 PAGE 3   
+C166 COMPILER V7.57.0, DTC_MAN                                                             02/15/2020 01:24:49 PAGE 3   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -187,7 +187,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
              ; FUNCTION ign_add (BEGIN  RMASK = @0x0010)
                                            ; SOURCE LINE # 95
-C166 COMPILER V7.57.0, DTC_MAN                                                             01/03/2020 16:20:08 PAGE 4   
+C166 COMPILER V7.57.0, DTC_MAN                                                             02/15/2020 01:24:49 PAGE 4   
 
                                            ; SOURCE LINE # 97
 0018 E108          MOVB      RL4,#00H

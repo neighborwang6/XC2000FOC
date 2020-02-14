@@ -1,4 +1,4 @@
-L166 LINKER/LOCATER V5.29.2.0                                                           01/03/2020  16:20:14  PAGE 1
+L166 LINKER/LOCATER V5.29.2.0                                                           02/15/2020  01:24:54  PAGE 1
 
 
 L166 LINKER/LOCATER V5.29.2.0, INVOKED BY:
@@ -59,7 +59,7 @@ INPUT MODULES INCLUDED:
   .\objs\mcu1_imp.obj (MCU1_IMP)
          COMMENT TYPE 128: C166 V7.57.0
   .\objs\task_man.obj (TASK_MAN)
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 2
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 2
 
 
          COMMENT TYPE 128: C166 V7.57.0
@@ -119,7 +119,7 @@ INPUT MODULES INCLUDED:
          COMMENT TYPE 128: C166 V7.57.0
   .\objs\MotorCtrlSet.obj (MOTORCTRLSET)
          COMMENT TYPE 128: C166 V7.57.0
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 3
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 3
 
 
   .\objs\MotorDrive.obj (MOTORDRIVE)
@@ -179,7 +179,7 @@ Class_B_trap                         10  ---
 isr_can_txrx0                        64  ---  
 isr_can_status                       65  ---  
 isr_can_error                        66  ---  
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 4
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 4
 
 
 isr_cc20                             20  ---  
@@ -239,7 +239,7 @@ C01154H   C0266DH   00151AH   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?PR?XCP
 C0266EH   C02DCDH   000760H   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?PR?XC2K_CAN
 C02DCEH   C0344DH   000680H   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?PR?SVPWM
 C0344EH   C03A25H   0005D8H   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?PR?MOTOR_BLDC
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 5
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 5
 
 
 C03A26H   C03F77H   000552H   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?PR?SCS
@@ -299,7 +299,7 @@ E0036CH   E00379H   00000EH   DATA  REL   WORD   ---    1  PUBL  NDATA0  ?ND0?FI
 E0037AH   E00385H   00000CH   DATA  REL   WORD   ---    1  PUBL  NDATA0  ?ND0?RESOLVER_AD2S
 E00386H   E00391H   00000CH   DATA  REL   WORD   ---    1  PUBL  NDATA0  ?ND0?MOTOR_PMSM
 E00392H   E0039DH   00000CH   DATA  REL   WORD   ---    1  PUBL  NDATA0  ?ND0?SVPWM
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 6
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 6
 
 
 E0039EH   E003A8H   00000BH   DATA  REL   WORD   ---    1  PUBL  NDATA0  ?ND0?HICAN
@@ -359,7 +359,7 @@ NDATA                                DATA  ---    1  NDATA       ?C_USERSTACK
                                                      NDATA0      ?ND0?EBOOSTER_CTRL
                                                      NDATA0      ?ND0?FILTERS_EBSSENSORS
 
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 7
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 7
 
 
 SDATA                                DATA  ---    2  IDATA       ?C_SYSSTACK
@@ -419,7 +419,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06BB4H     ApplXcpGetCalPage                LABEL ---  FCODE   ?PR?_XCP_APPL
       C06BEAH     ApplXcpGetPointer                LABEL ---  FCODE   ?PR?_XCP_APPL
       C06BFAH     ApplXcpGetSeed                   LABEL ---  FCODE   ?PR?_XCP_APPL
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 8
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 8
 
 
       C06BB0H     ApplXcpGetTimestamp              LABEL ---  FCODE   ?PR?_XCP_APPL
@@ -479,7 +479,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03A7AH     SCS_DelayByTimer                 LABEL ---  FCODE   ?PR?SCS
       C03F30H     SCS_DisableVcoBypass             LABEL ---  FCODE   ?PR?SCS
       C03A34H     SCS_DisconnectVcoInput           LABEL ---  FCODE   ?PR?SCS
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 9
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 9
 
 
       C03A26H     SCS_EnableOscHiPrecCrystal       LABEL ---  FCODE   ?PR?SCS
@@ -539,7 +539,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C05B8EH     ad_scan                          LABEL ---  FCODE   ?PR?ADC
       C05A24H     ad_setting                       LABEL ---  FCODE   ?PR?ADC
       C06B7CH     app_10ms_task                    LABEL ---  FCODE   ?PR?MAIN
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 10
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 10
 
 
       C06B9AH     app_5ms_task                     LABEL ---  FCODE   ?PR?MAIN
@@ -599,7 +599,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06FC6H     do_mcu2                          LABEL ---  FCODE   ?PR?MCU2_IMP
       C06C78H     do_mcu2_msg                      LABEL ---  FCODE   ?PR?MCU1_IMP
       C06FCEH     do_mcu2_task                     LABEL ---  FCODE   ?PR?TASK_MAN
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 11
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 11
 
 
       C06FD0H     do_mcu2_task_10ms_hook           LABEL ---  FCODE   ?PR?TASK_MAN
@@ -659,7 +659,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       E003F2H     g_diag_stat                      VAR   ---  NDATA0  ?ND0?DIAG_HW
       E003A6H     g_diag_tester_id                 VAR   ---  NDATA0  ?ND0?HICAN
       E002EEH     g_dir_ub                         VAR   ---  NDATA0  ?ND0?MOTOR_BLDC
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 12
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 12
 
 
       E00376H     g_disp_sense_val                 VAR   ---  NDATA0  ?ND0?FILTERS_EBSSENSORS
@@ -719,7 +719,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       E002EDH     g_timer_250us                    VAR   ---  NDATA0  ?ND0?MOTOR_BLDC
       E002E8H     g_timer_calc_speed_ub            VAR   ---  NDATA0  ?ND0?MOTOR_BLDC
       E0035BH     g_tmp                            VAR   ---  NDATA0  ?ND0?PROT_IMP
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 13
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 13
 
 
       E00352H     g_tmp0                           VAR   ---  NDATA0  ?ND0?PROT_IMP
@@ -779,7 +779,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0544EH     hican_init                       LABEL ---  FCODE   ?PR?HICAN
       C0604AH     hw_init                          LABEL ---  FCODE   ?PR?HW
       C06ED8H     ign_add                          LABEL ---  FCODE   ?PR?DTC_MAN
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 14
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 14
 
 
       C039FAH     isr_100us_timer_hook_user        LABEL ---  FCODE   ?PR?MOTOR_BLDC
@@ -839,7 +839,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C04EB4H     resolver_ad2s_rd_cfg             LABEL ---  FCODE   ?PR?RESOLVER_AD2S
       C04F54H     resolver_ad2s_read               LABEL ---  FCODE   ?PR?RESOLVER_AD2S
       C05008H     resolver_ad2s_read_pos           LABEL ---  FCODE   ?PR?RESOLVER_AD2S
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 15
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 15
 
 
       C04E06H     resolver_ad2s_wr_cfg             LABEL ---  FCODE   ?PR?RESOLVER_AD2S
@@ -899,7 +899,7 @@ PUBLIC SYMBOLS OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       E003DCH     tmpu32                           VAR   ---  NDATA0  ?ND0?CCU2_CCU6
       C06FD2H     trans_actuator_num               LABEL ---  FCODE   ?PR?TASK_MAN
       C06272H     transmit_can_data_10ms           LABEL ---  FCODE   ?PR?CTRL
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 16
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 16
 
 
       C0639CH     transmit_can_data_1ms            LABEL ---  FCODE   ?PR?CTRL
@@ -959,7 +959,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       000000H     SYMBOL    CONST     ---     ---   _HP_EMFINDISEN
       000001H     SYMBOL    CONST     ---     ---   _K1ACK
       000001H     SYMBOL    CONST     ---     ---   _K1DIV
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 17
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 17
 
 
       000001H     SYMBOL    CONST     ---     ---   _K2DIV
@@ -1019,7 +1019,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0102CH     LINE      ---       ---     ---   #1531
       C01030H     LINE      ---       ---     ---   #1532
       C01034H     LINE      ---       ---     ---   #1533
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 18
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 18
 
 
       C01038H     LINE      ---       ---     ---   #1534
@@ -1079,7 +1079,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C010C8H     LINE      ---       ---     ---   #1740
       C010CCH     LINE      ---       ---     ---   #1746
       C010D0H     LINE      ---       ---     ---   #1747
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 19
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 19
 
 
       C010D2H     LINE      ---       ---     ---   #1748
@@ -1139,7 +1139,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0114CH     SYMBOL    LABEL     ---     ---   StoreBit
       C0114AH     SYMBOL    LABEL     ---     ---   SetBit
       C01132H     SYMBOL    LABEL     ---     ---   InitBit
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 20
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 20
 
 
       C01124H     SYMBOL    LABEL     ---     ---   NoDPP3Adj
@@ -1199,7 +1199,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C05AA6H     LINE      ---       ---     ---   #71
       C05AAAH     LINE      ---       ---     ---   #74
       C05AAEH     LINE      ---       ---     ---   #75
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 21
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 21
 
 
       C05AB2H     LINE      ---       ---     ---   #76
@@ -1259,7 +1259,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C05B9EH     LINE      ---       ---     ---   #153
       C05BA6H     LINE      ---       ---     ---   #154
       C05BB2H     LINE      ---       ---     ---   #155
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 22
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 22
 
 
       C05BBEH     LINE      ---       ---     ---   #157
@@ -1319,7 +1319,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06030H     LINE      ---       ---     ---   #22
       C06030H     LINE      ---       ---     ---   #24
       C06036H     LINE      ---       ---     ---   #25
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 23
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 23
 
 
       C0603AH     LINE      ---       ---     ---   #26
@@ -1379,7 +1379,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06106H     LINE      ---       ---     ---   #86
       C0610AH     LINE      ---       ---     ---   #88
       C06110H     LINE      ---       ---     ---   #89
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 24
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 24
 
 
       C06114H     LINE      ---       ---     ---   #90
@@ -1439,7 +1439,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C061A0H     LINE      ---       ---     ---   #144
       ---         BLOCKEND  LVL=0     ---     ---   
 
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 25
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 25
 
 
       C061A2H     BLOCK     LVL=0     0016H   ---   delay_msx
@@ -1499,7 +1499,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06E62H     LINE      ---       ---     ---   #30
       C06E68H     LINE      ---       ---     ---   #32
       C06E6AH     LINE      ---       ---     ---   #33
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 26
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 26
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -1559,7 +1559,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03A3CH     LINE      ---       ---     ---   #402
       C03A42H     LINE      ---       ---     ---   #404
       ---         BLOCKEND  LVL=0     ---     ---   
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 27
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 27
 
 
 
@@ -1619,7 +1619,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03ACEH     LINE      ---       ---     ---   #614
       C03ACEH     LINE      ---       ---     ---   #618
       C03AD4H     LINE      ---       ---     ---   #621
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 28
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 28
 
 
       C03ADCH     LINE      ---       ---     ---   #622
@@ -1679,7 +1679,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03B76H     LINE      ---       ---     ---   #363
       C03B7CH     LINE      ---       ---     ---   #745
       C03B84H     LINE      ---       ---     ---   #748
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 29
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 29
 
 
       C03B8AH     LINE      ---       ---     ---   #749
@@ -1739,7 +1739,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03C6EH     LINE      ---       ---     ---   #972
       C03C76H     LINE      ---       ---     ---   #981
       C03C82H     LINE      ---       ---     ---   #985
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 30
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 30
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -1799,7 +1799,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03D42H     LINE      ---       ---     ---   #1133
       C03D44H     LINE      ---       ---     ---   #1134
       C03D48H     LINE      ---       ---     ---   #1138
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 31
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 31
 
 
       C03D4AH     LINE      ---       ---     ---   #1140
@@ -1859,7 +1859,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03E72H     LINE      ---       ---     ---   #1376
       C03E72H     LINE      ---       ---     ---   #1379
       C03E74H     LINE      ---       ---     ---   #1381
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 32
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 32
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -1919,7 +1919,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03F30H     BLOCK     LVL=0     0024H   ---   SCS_DisableVcoBypass
       C03F30H     LINE      ---       ---     ---   #1641
       C03F30H     LINE      ---       ---     ---   #1645
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 33
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 33
 
 
       C03F34H     LINE      ---       ---     ---   #1648
@@ -1979,7 +1979,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0656CH     LINE      ---       ---     ---   #101
       C06578H     LINE      ---       ---     ---   #102
       C06584H     LINE      ---       ---     ---   #103
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 34
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 34
 
 
       C0658EH     LINE      ---       ---     ---   #106
@@ -2039,7 +2039,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       C06A24H     BLOCK     LVL=0     006EH   ---   isr_systick_timer
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 35
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 35
 
 
       C06A4AH     BLOCK     LVL=1     0024H   ---   
@@ -2099,7 +2099,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06F34H     LINE      ---       ---     ---   #19
       ---         BLOCKEND  LVL=0     ---     ---   
 
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 36
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 36
 
 
       C06F36H     BLOCK     LVL=0     0002H   ---   STKUF_trap
@@ -2159,7 +2159,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0268AH     LINE      ---       ---     ---   #80
       C02690H     LINE      ---       ---     ---   #82
       C0269CH     LINE      ---       ---     ---   #85
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 37
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 37
 
 
       C026A8H     LINE      ---       ---     ---   #86
@@ -2219,7 +2219,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C02852H     LINE      ---       ---     ---   #170
       C0285AH     LINE      ---       ---     ---   #171
       C0285CH     LINE      ---       ---     ---   #174
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 38
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 38
 
 
       C02864H     LINE      ---       ---     ---   #175
@@ -2279,7 +2279,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       000000H     SYMBOL    AUTO      ---     ---   cfg
       000002H     SYMBOL    AUTO      ---     ---   buf
       C029F8H     BLOCK     LVL=1     00B0H   ---   
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 39
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 39
 
 
       000008H     SYMBOL    REG       ---     ---   tmpu16
@@ -2339,7 +2339,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C02B1AH     LINE      ---       ---     ---   #348
       ---         BLOCKEND  LVL=0     ---     ---   
 
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 40
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 40
 
 
       C02B1CH     BLOCK     LVL=0     001AH   ---   can_busy
@@ -2399,7 +2399,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C02CBEH     LINE      ---       ---     ---   #420
       C02CC6H     LINE      ---       ---     ---   #421
       C02CDAH     LINE      ---       ---     ---   #422
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 41
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 41
 
 
       C02CE8H     LINE      ---       ---     ---   #423
@@ -2459,7 +2459,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C02D82H     LINE      ---       ---     ---   #544
       C02D82H     LINE      ---       ---     ---   #545
       C02D8EH     LINE      ---       ---     ---   #546
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 42
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 42
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -2519,7 +2519,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C049D8H     LINE      ---       ---     ---   #50
       C049DAH     LINE      ---       ---     ---   #51
       C049DAH     LINE      ---       ---     ---   #60
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 43
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 43
 
 
       C049DEH     LINE      ---       ---     ---   #63
@@ -2579,7 +2579,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C04C38H     BLOCK     LVL=0     00D6H   ---   isr_cc22
       C04C38H     LINE      ---       ---     ---   #300
       C04C5EH     LINE      ---       ---     ---   #303
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 44
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 44
 
 
       C04C62H     LINE      ---       ---     ---   #305
@@ -2639,7 +2639,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06E8CH     LINE      ---       ---     ---   #42
       C06E8EH     LINE      ---       ---     ---   #43
       ---         BLOCKEND  LVL=0     ---     ---   
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 45
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 45
 
 
 
@@ -2699,7 +2699,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
 
       C06F1CH     BLOCK     LVL=0     0012H   ---   diag_main_loop_hook
       C06F1CH     LINE      ---       ---     ---   #49
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 46
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 46
 
 
       C06F1CH     LINE      ---       ---     ---   #53
@@ -2759,7 +2759,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
 
       C06EC8H     BLOCK     LVL=0     0004H   ---   dtc_del
       000048H     SYMBOL    REG       ---     ---   id
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 47
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 47
 
 
       000049H     SYMBOL    REG       ---     ---   flag
@@ -2819,7 +2819,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06C76H     PUBLIC    LABEL     ---     ---   do_mcu1
       C06CA6H     PUBLIC    LABEL     ---     ---   system_quick_diag
       E003F6H     PUBLIC    VAR       ---     ---   g_sys_dtc_uw
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 48
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 48
 
 
       E003F9H     PUBLIC    VAR       ---     ---   mcu2_status
@@ -2879,7 +2879,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06CD8H     LINE      ---       ---     ---   #119
       C06CE4H     LINE      ---       ---     ---   #120
       C06CECH     LINE      ---       ---     ---   #122
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 49
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 49
 
 
       C06CF4H     LINE      ---       ---     ---   #126
@@ -2939,7 +2939,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06FD2H     BLOCK     LVL=0     0004H   ---   trans_actuator_num
       000048H     SYMBOL    REG       ---     ---   act_num
       000049H     SYMBOL    REG       ---     ---   act_on_off
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 50
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 50
 
 
       C06FD2H     LINE      ---       ---     ---   #77
@@ -2999,7 +2999,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0517EH     LINE      ---       ---     ---   #69
       C05190H     LINE      ---       ---     ---   #71
       C0519EH     LINE      ---       ---     ---   #72
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 51
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 51
 
 
       C051B4H     LINE      ---       ---     ---   #73
@@ -3059,7 +3059,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0529CH     LINE      ---       ---     ---   #144
       ---         BLOCKEND  LVL=0     ---     ---   
 
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 52
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 52
 
 
       C0529EH     BLOCK     LVL=0     0032H   ---   cmd_rdsr
@@ -3119,7 +3119,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C053A2H     LINE      ---       ---     ---   #204
       C053A8H     LINE      ---       ---     ---   #206
       C053B8H     LINE      ---       ---     ---   #208
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 53
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 53
 
 
       C053C6H     LINE      ---       ---     ---   #209
@@ -3179,7 +3179,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06FC8H     LINE      ---       ---     ---   #48
       C06FC8H     LINE      ---       ---     ---   #50
       ---         BLOCKEND  LVL=0     ---     ---   
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 54
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 54
 
 
 
@@ -3239,7 +3239,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06F68H     LINE      ---       ---     ---   #105
       C06F6AH     LINE      ---       ---     ---   #106
       ---         BLOCKEND  LVL=0     ---     ---   
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 55
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 55
 
 
 
@@ -3299,7 +3299,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C05558H     LINE      ---       ---     ---   #64
       C0557AH     LINE      ---       ---     ---   #65
       C0559CH     LINE      ---       ---     ---   #66
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 56
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 56
 
 
       C055BEH     LINE      ---       ---     ---   #69
@@ -3359,7 +3359,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C056D0H     LINE      ---       ---     ---   #162
       C056D2H     LINE      ---       ---     ---   #163
       C056D2H     LINE      ---       ---     ---   #165
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 57
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 57
 
 
       C056E0H     LINE      ---       ---     ---   #167
@@ -3419,7 +3419,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06BBAH     LINE      ---       ---     ---   #206
       C06BBAH     LINE      ---       ---     ---   #208
       C06BC0H     LINE      ---       ---     ---   #210
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 58
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 58
 
 
       C06BC6H     LINE      ---       ---     ---   #211
@@ -3479,7 +3479,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C01154H     PUBLIC    LABEL     ---     ---   XcpMemSet
       C01C30H     PUBLIC    LABEL     ---     ---   XcpCommand
       C01198H     PUBLIC    LABEL     ---     ---   XcpGetActiveTl
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 59
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 59
 
 
       C0128EH     PUBLIC    LABEL     ---     ---   XcpSendDto
@@ -3539,7 +3539,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C01174H     LINE      ---       ---     ---   #542
       C01174H     LINE      ---       ---     ---   #544
       C01176H     LINE      ---       ---     ---   #547
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 60
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 60
 
 
       C0117EH     LINE      ---       ---     ---   #548
@@ -3599,7 +3599,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0128EH     BLOCK     LVL=0     0014H   ---   XcpSendDto
       000006H     SYMBOL    REG       ---     ---   dto
       C0128EH     LINE      ---       ---     ---   #696
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 61
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 61
 
 
       C01290H     LINE      ---       ---     ---   #698
@@ -3659,7 +3659,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C013A0H     LINE      ---       ---     ---   #849
       C013A2H     LINE      ---       ---     ---   #852
       ---         BLOCKEND  LVL=0     ---     ---   
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 62
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 62
 
 
 
@@ -3719,7 +3719,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0155CH     LINE      ---       ---     ---   #1080
       C0156AH     LINE      ---       ---     ---   #1081
       C0157AH     LINE      ---       ---     ---   #1083
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 63
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 63
 
 
       C0157EH     LINE      ---       ---     ---   #1085
@@ -3779,7 +3779,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C016B2H     LINE      ---       ---     ---   #1184
       C016B6H     LINE      ---       ---     ---   #1186
       C016CCH     LINE      ---       ---     ---   #1188
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 64
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 64
 
 
       C016CCH     LINE      ---       ---     ---   #1189
@@ -3839,7 +3839,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C01798H     LINE      ---       ---     ---   #1287
       C0179EH     LINE      ---       ---     ---   #1289
       C017AAH     LINE      ---       ---     ---   #1291
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 65
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 65
 
 
       C017B0H     LINE      ---       ---     ---   #1292
@@ -3899,7 +3899,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C01AD0H     LINE      ---       ---     ---   #1492
       C01ADEH     LINE      ---       ---     ---   #1494
       C01AF0H     LINE      ---       ---     ---   #1495
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 66
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 66
 
 
       C01AF2H     LINE      ---       ---     ---   #1498
@@ -3959,7 +3959,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       C01C30H     BLOCK     LVL=0     08F2H   ---   XcpCommand
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 67
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 67
 
 
       000008H     SYMBOL    REG       ---     ---   pCommand
@@ -4019,7 +4019,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       ---         BLOCKEND  LVL=2     ---     ---   
       ---         BLOCKEND  LVL=1     ---     ---   
       C01C30H     LINE      ---       ---     ---   #1783
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 68
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 68
 
 
       C01C36H     LINE      ---       ---     ---   #1784
@@ -4079,7 +4079,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C01E6CH     LINE      ---       ---     ---   #1978
       C01E70H     LINE      ---       ---     ---   #1987
       C01E70H     LINE      ---       ---     ---   #1997
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 69
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 69
 
 
       C01E70H     LINE      ---       ---     ---   #2001
@@ -4139,7 +4139,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C01FEAH     LINE      ---       ---     ---   #2429
       C01FF2H     LINE      ---       ---     ---   #2430
       C01FF2H     LINE      ---       ---     ---   #2432
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 70
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 70
 
 
       C02000H     LINE      ---       ---     ---   #2433
@@ -4199,7 +4199,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C02138H     LINE      ---       ---     ---   #2616
       C02144H     LINE      ---       ---     ---   #2617
       C02148H     LINE      ---       ---     ---   #2618
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 71
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 71
 
 
       C02152H     LINE      ---       ---     ---   #2620
@@ -4259,7 +4259,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C022C0H     LINE      ---       ---     ---   #2948
       C022C0H     LINE      ---       ---     ---   #2949
       C022C8H     LINE      ---       ---     ---   #2951
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 72
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 72
 
 
       C022CEH     LINE      ---       ---     ---   #2953
@@ -4319,7 +4319,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C024D2H     LINE      ---       ---     ---   #3163
       C024D2H     LINE      ---       ---     ---   #3171
       C024D4H     LINE      ---       ---     ---   #3174
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 73
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 73
 
 
       C024D4H     LINE      ---       ---     ---   #3176
@@ -4379,7 +4379,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C025CAH     BLOCK     LVL=0     0002H   ---   XcpExit
       C025CAH     LINE      ---       ---     ---   #3416
       C025CAH     LINE      ---       ---     ---   #3423
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 74
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 74
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -4439,7 +4439,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C001A8H     LINE      ---       ---     ---   #19
       C001AEH     LINE      ---       ---     ---   #21
       C001B2H     LINE      ---       ---     ---   #22
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 75
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 75
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -4499,7 +4499,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06B32H     LINE      ---       ---     ---   #101
       C06B36H     LINE      ---       ---     ---   #104
       C06B3AH     LINE      ---       ---     ---   #108
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 76
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 76
 
 
       C06B3EH     LINE      ---       ---     ---   #112
@@ -4559,7 +4559,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C061F4H     LINE      ---       ---     ---   #119
       C061F4H     LINE      ---       ---     ---   #120
       C061F4H     LINE      ---       ---     ---   #122
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 77
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 77
 
 
       C061F4H     LINE      ---       ---     ---   #124
@@ -4619,7 +4619,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       ---         BLOCKEND  LVL=1     ---     ---   
       C06272H     LINE      ---       ---     ---   #191
       C06276H     LINE      ---       ---     ---   #192
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 78
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 78
 
 
       C06276H     LINE      ---       ---     ---   #244
@@ -4679,7 +4679,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06F96H     LINE      ---       ---     ---   #20
       C06F98H     LINE      ---       ---     ---   #21
       C06F9CH     LINE      ---       ---     ---   #22
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 79
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 79
 
 
       C06F9EH     LINE      ---       ---     ---   #23
@@ -4739,7 +4739,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C04EBAH     LINE      ---       ---     ---   #57
       C04EBAH     LINE      ---       ---     ---   #58
       C04EBCH     LINE      ---       ---     ---   #60
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 80
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 80
 
 
       C04EC4H     LINE      ---       ---     ---   #61
@@ -4799,7 +4799,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0500EH     LINE      ---       ---     ---   #123
       C05016H     LINE      ---       ---     ---   #124
       C0501EH     LINE      ---       ---     ---   #127
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 81
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 81
 
 
       C05026H     LINE      ---       ---     ---   #128
@@ -4859,7 +4859,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C068B2H     LINE      ---       ---     ---   #53
       ---         BLOCKEND  LVL=0     ---     ---   
 
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 82
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 82
 
 
       C068B4H     BLOCK     LVL=0     0070H   ---   set_phase_on
@@ -4919,7 +4919,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       ---         BLOCKEND  LVL=1     ---     ---   
       C0344EH     LINE      ---       ---     ---   #65
       C03458H     LINE      ---       ---     ---   #66
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 83
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 83
 
 
       C03458H     LINE      ---       ---     ---   #72
@@ -4979,7 +4979,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03616H     LINE      ---       ---     ---   #140
       C03620H     LINE      ---       ---     ---   #141
       C03624H     LINE      ---       ---     ---   #142
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 84
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 84
 
 
       C03626H     LINE      ---       ---     ---   #144
@@ -5039,7 +5039,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C036F4H     LINE      ---       ---     ---   #240
       C036F8H     LINE      ---       ---     ---   #241
       C036FCH     LINE      ---       ---     ---   #243
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 85
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 85
 
 
       C03710H     LINE      ---       ---     ---   #244
@@ -5099,7 +5099,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03860H     LINE      ---       ---     ---   #317
       C03860H     LINE      ---       ---     ---   #319
       C03868H     LINE      ---       ---     ---   #320
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 86
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 86
 
 
       C0386AH     LINE      ---       ---     ---   #322
@@ -5159,7 +5159,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C0395AH     LINE      ---       ---     ---   #405
       C0395EH     LINE      ---       ---     ---   #406
       C03960H     LINE      ---       ---     ---   #409
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 87
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 87
 
 
       C03966H     LINE      ---       ---     ---   #410
@@ -5219,7 +5219,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       E0038EH     PUBLIC    VAR       ---     ---   g_sum_vqs_sl
       00A93AH     PUBLIC    VAR       ---     ---   V
       00A97AH     PUBLIC    VAR       ---     ---   I
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 88
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 88
 
 
 
@@ -5279,7 +5279,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       C0680AH     BLOCK     LVL=0     0004H   ---   vqs_cmd_filter
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 89
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 89
 
 
       000008H     SYMBOL    REG       ---     ---   vqs
@@ -5339,7 +5339,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C02F36H     LINE      ---       ---     ---   #76
       C02F56H     LINE      ---       ---     ---   #77
       C02F9CH     LINE      ---       ---     ---   #78
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 90
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 90
 
 
       C02FBEH     LINE      ---       ---     ---   #79
@@ -5399,7 +5399,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C031F0H     LINE      ---       ---     ---   #141
       C031F8H     LINE      ---       ---     ---   #142
       C031FAH     LINE      ---       ---     ---   #143
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 91
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 91
 
 
       C031FAH     LINE      ---       ---     ---   #144
@@ -5459,7 +5459,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C033FEH     LINE      ---       ---     ---   #216
       C03406H     LINE      ---       ---     ---   #217
       C0340EH     LINE      ---       ---     ---   #218
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 92
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 92
 
 
       C03410H     LINE      ---       ---     ---   #219
@@ -5519,7 +5519,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C05CCEH     BLOCK     LVL=0     004EH   ---   filter_s_sense
       000008H     SYMBOL    REG       ---     ---   s_sense_get
       C05CCEH     BLOCK     LVL=1     004CH   ---   
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 93
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 93
 
 
       000008H     SYMBOL    REG       ---     ---   sum_temp
@@ -5579,7 +5579,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C05D90H     LINE      ---       ---     ---   #104
       C05D96H     LINE      ---       ---     ---   #105
       C05DB0H     LINE      ---       ---     ---   #106
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 94
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 94
 
 
       C05DB6H     LINE      ---       ---     ---   #108
@@ -5639,7 +5639,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C05E54H     PUBLIC    LABEL     ---     ---   get_brake_pedal_pos0
       C05FDEH     PUBLIC    LABEL     ---     ---   get_brk_pedal_volt
       C0600EH     PUBLIC    LABEL     ---     ---   get_temp_sensor_pcb
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 95
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 95
 
 
       C05EB6H     PUBLIC    LABEL     ---     ---   set_motor_torque
@@ -5699,7 +5699,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
 
       C05E7AH     BLOCK     LVL=0     0004H   ---   get_steer_torque0
       C05E7AH     LINE      ---       ---     ---   #64
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 96
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 96
 
 
       C05E7AH     LINE      ---       ---     ---   #66
@@ -5759,7 +5759,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       C05ECEH     BLOCK     LVL=0     0014H   ---   set_motor_dir
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 97
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 97
 
 
       000048H     SYMBOL    REG       ---     ---   dir
@@ -5819,7 +5819,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C05F7EH     LINE      ---       ---     ---   #209
       C05F7EH     LINE      ---       ---     ---   #214
       C05F80H     LINE      ---       ---     ---   #215
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 98
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 98
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -5879,7 +5879,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
 
       C05FD2H     BLOCK     LVL=0     000CH   ---   get_brk_pedal_state
       C05FD2H     LINE      ---       ---     ---   #285
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 99
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 99
 
 
       C05FD2H     LINE      ---       ---     ---   #287
@@ -5939,7 +5939,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
 
       C05760H     BLOCK     LVL=0     02C4H   ---   sent_decode
       000008H     SYMBOL    REG       ---     ---   timer
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 100
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 100
 
 
       00004AH     SYMBOL    REG       ---     ---   option
@@ -5999,7 +5999,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C059BEH     LINE      ---       ---     ---   #144
       C059C6H     LINE      ---       ---     ---   #145
       C059D0H     LINE      ---       ---     ---   #146
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 101
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 101
 
 
       C059D6H     LINE      ---       ---     ---   #147
@@ -6059,7 +6059,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C064CAH     LINE      ---       ---     ---   #83
       C064D4H     LINE      ---       ---     ---   #84
       C064DCH     LINE      ---       ---     ---   #85
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 102
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 102
 
 
       C064E6H     LINE      ---       ---     ---   #86
@@ -6119,7 +6119,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C06950H     LINE      ---       ---     ---   #33
       C06950H     LINE      ---       ---     ---   #35
       C06960H     LINE      ---       ---     ---   #37
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 103
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 103
 
 
       C06960H     LINE      ---       ---     ---   #38
@@ -6179,7 +6179,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       E0026CH     PUBLIC    VAR       ---     ---   stop_state
       E0026EH     PUBLIC    VAR       ---     ---   DataTimer20ms
       E00270H     PUBLIC    VAR       ---     ---   test
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 104
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 104
 
 
       E00274H     PUBLIC    VAR       ---     ---   star_state
@@ -6239,7 +6239,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C04152H     LINE      ---       ---     ---   #135
       C0416AH     LINE      ---       ---     ---   #137
       C04192H     LINE      ---       ---     ---   #139
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 105
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 105
 
 
       C041A8H     LINE      ---       ---     ---   #140
@@ -6299,7 +6299,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C04504H     LINE      ---       ---     ---   #226
       C0450AH     LINE      ---       ---     ---   #227
       C0450AH     LINE      ---       ---     ---   #232
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 106
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 106
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -6359,7 +6359,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       C03FE6H     LINE      ---       ---     ---   #73
       C03FE6H     LINE      ---       ---     ---   #75
       C03FE6H     LINE      ---       ---     ---   #76
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 107
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 107
 
 
       C03FE6H     LINE      ---       ---     ---   #79
@@ -6419,7 +6419,7 @@ SYMBOL TABLE OF MODULE:  .\objs\Mcu2K_Test (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       C048E4H     BLOCK     LVL=0     0006H   ---   ?C_FPZERRSL
-L166 LINKER/LOCATER V5.29.2.0                                                         01/03/2020  16:20:14  PAGE 108
+L166 LINKER/LOCATER V5.29.2.0                                                         02/15/2020  01:24:54  PAGE 108
 
 
       ---         BLOCKEND  LVL=0     ---     ---   

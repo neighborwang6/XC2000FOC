@@ -1,4 +1,4 @@
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     1
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     1
 
 
 MACRO ASSEMBLER A166 V5.38.2.0
@@ -65,7 +65,7 @@ LOC      OBJ             LINE     SOURCE
                            55     ; <o> UST1SZ: User Stack Size for local register bank 1 <0x0-0x4000:0x2>
                            56     ; <i> Defines the user stack space available for the interrupt functions that are
                            57     ; <i> assigned to the local register bank 1.  Since the compiler cannot copy the R0
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     2
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     2
 
                            58     ; <i> value to local register banks, the user stack must be assign separately.
                            59     ; <i> If you have no interrupt functions assigned to local register bank 1, you may
@@ -133,7 +133,7 @@ LOC      OBJ             LINE     SOURCE
                           121     $ELSE
  0000                     122     _SGTDIS  EQU    0       ; enable segmented mode (Reset Value)
                           123     $ENDIF
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     3
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     3
 
                           124     ;
                           125     ; <o> WDTCTL: Watchdog Timer Control (CPUCON1.4):
@@ -201,7 +201,7 @@ LOC      OBJ             LINE     SOURCE
                           187                             ; 2 = FIFO filled with up to 2 instructions per cycle
                           188                             ; 3 = FIFO filled with up to 3 instructions per cycle
                           189     ;
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     4
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     4
 
                           190     ;<o> FIFODEPTH: FIFO Depth Configuration (CPUCON2.12 .. CPUCON2.15) <0-8>
  0008                     191     _FIFODEPTH EQU  8       ; 0 = No FIFO entries (No FIFO)
@@ -269,7 +269,7 @@ LOC      OBJ             LINE     SOURCE
                           252     ; <h> Oscillator Control
                           253     ; ======================
                           254     ;
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     5
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     5
 
                           255     ; <e> Definitions for Wake-up Clock Register WUOSCCON
                           256     ; ===================================================
@@ -337,7 +337,7 @@ LOC      OBJ             LINE     SOURCE
                           314                             ; 1 = The shaper is bypassed
                           315     ;
                           316     ; <q> EMCLKEN: OSCWDT Emergency System Clock Source Select Enable (HPOSCCON.9)
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     6
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     6
 
                           317     ; <i> Clock selection in case of an OSCWDT emergency
  0000                     318     _HP_EMCLKEN EQU  0      ; 0 = MCM controlled by SYSCON0.CLKSEL
@@ -405,7 +405,7 @@ LOC      OBJ             LINE     SOURCE
                           380     ; ===============================================
                           381     ;
                           382     ; <q> PLLPWD: Power Saving Mode (PLLCON1.0)
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     7
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     7
 
                           383     ; <i> disables PLL in power saving mode
  0000                     384     _PLLPWD   EQU    0      ; 0 = Normal Mode
@@ -473,7 +473,7 @@ LOC      OBJ             LINE     SOURCE
                           445     ; --- Set INIT_SYSCON0 = 1 to initilize the SYSCON0 register
                           446     $SET (INIT_SYSCON0 = 0)
                           447     ;
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     8
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     8
 
                           448     ; <o> CLKSEL: System Clock Select (SYSCON0.0 .. SYSCON0.1)
                           449     ; <0=> WUT clock output <1=> OSC_HP output
@@ -541,7 +541,7 @@ LOC      OBJ             LINE     SOURCE
                           510                             ; 1 = One (A16) segment address pin enabled
                           511                             ; : = :        
                           512                             ; 8 = Eight (A16 .. A23) address pins enabled
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE     9
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE     9
 
                           513                             ; 9 - 15 = reserved
                           514     ;
@@ -609,7 +609,7 @@ LOC      OBJ             LINE     SOURCE
  0000                     576     _ALPDIS    EQU    0     ; 0 = Address bus pin 7-0 generally enabled
                           577                             ; 1 = Address bus pin 7-0 of PORT1 disabled
                           578     ;
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    10
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    10
 
                           579     ; <q> DHPDIS: Data High Port Pins Disable (EBCMOD1.6)
  0000                     580     _DHPDIS    EQU    0     ; 0 = Data bus pins 15-8 of PORT0 enabled
@@ -677,7 +677,7 @@ LOC      OBJ             LINE     SOURCE
  0008                     642     _PHE0       EQU    8    ; 0 = 1 clock cycle
                           643                             ; : = :
                           644                             ; 31 = 32 clock cycles
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    11
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    11
 
                           645     ;
                           646     ; <o> RDPHF0: Phase F read clock cycles (TCONCS0.11 .. TCONCS0.12) <0-3>
@@ -745,7 +745,7 @@ LOC      OBJ             LINE     SOURCE
  0002                     708     _BTYP1     EQU    2     ; 0 = 8 bit Demultiplexed bus
                           709                             ; 1 = 8 bit Multiplexed bus
                           710                             ; 2 = 16 bit Demultiplexed bus
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    12
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    12
 
                           711                             ; 3 = 16 bit Multiplexed bus
                           712     ;</h>
@@ -813,7 +813,7 @@ LOC      OBJ             LINE     SOURCE
                           774                                  ;  256*KB            (gives RGSZ2 = 6)
                           775                                  ;  512*KB            (gives RGSZ2 = 7)
                           776                                  ; 1024*KB  or  1*MB  (gives RGSZ2 = 8)
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    13
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    13
 
                           777                                  ; 2048*KB  or  2*MB  (gives RGSZ2 = 9)
                           778                                  ; 4096*KB  or  4*MB  (gives RGSZ2 = 10)
@@ -881,7 +881,7 @@ LOC      OBJ             LINE     SOURCE
  0003                     840     _WRPHF2     EQU    3    ; 0 = 0 clock cycles
                           841                             ; : = :
                           842                             ; 3 = 3 clock cycles
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    14
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    14
 
                           843     ;</h> </e>
                           844     ;
@@ -949,7 +949,7 @@ LOC      OBJ             LINE     SOURCE
  0000                     906     _PHA3       EQU    0    ; 0 = 0 clock cycles
                           907                             ; : = : 
                           908                             ; 3 = 3 clock cycles
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    15
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    15
 
                           909     ;
                           910     ; <o>PHB3: Phase B clock cycle (TCONCS2.2) <1-2> <#-1>
@@ -1017,7 +1017,7 @@ LOC      OBJ             LINE     SOURCE
                           972     ; =======================================================
                           973     ;
                           974     ; <q> ENCS4: Enable Chip Select (FCONCS4.0)
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    16
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    16
 
  0001                     975     _ENCS4     EQU    1     ; 0 = Chip Select 0 disabled
                           976                             ; 1 = Chip Select 0 enabled
@@ -1085,7 +1085,7 @@ LOC      OBJ             LINE     SOURCE
                          1038     ;
                          1039     ; <h>Definitions for Address Select register ADDRSEL7
                          1040     ; ===================================================
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    17
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    17
 
                          1041     ; <o> CS7 Start Address   <0x0-0xFFFFFF:0x1000>
  00700000                1042     _ADDR7      EQU 0x700000     ; Set CS7# Start Address (default 100000H)
@@ -1153,7 +1153,7 @@ LOC      OBJ             LINE     SOURCE
                          1104                             ; : = :
                          1105                             ; 3 = 3 clock cycles
                          1106     ;
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    18
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    18
 
                          1107     ; <o>PHD27 Phase D clock cycle (TCONCS2.5) <0-1>
  0000                    1108     _PHD7       EQU    0    ; 0 = 0 clock cycles
@@ -1221,7 +1221,7 @@ LOC      OBJ             LINE     SOURCE
                          1170     ENDIF
                          1171     
                          1172     IF UST2SZ > 0                           ; Define User Stack 2 area
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    19
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    19
 
 --------                 1173     ?C_USERSTACK2   SECTION DATA PUBLIC 'NDATA'
                          1174     ?C_USRSTKBOT2:
@@ -1289,7 +1289,7 @@ LOC      OBJ             LINE     SOURCE
  F1E0                    1236     RSTCON    EQU    0F1E0H
  FE12                    1237     SP        DEFR   0FE12H
  FF0C                    1238     SPSEG     DEFR   0FF0CH
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    20
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    20
 
  FE14                    1239     STKOV     DEFR   0FE14H
  FE16                    1240     STKUN     DEFR   0FE16H
@@ -1357,7 +1357,7 @@ LOC      OBJ             LINE     SOURCE
                                                   EXTR    #1
                                                   MOV     WDTCS,#_WDTCS   ; Set WDTCON register
                                                   SRVWDT                  ; Enable watchdog
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    21
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    21
 
                          1305     $ENDIF
                          1306     
@@ -1425,7 +1425,7 @@ LOC      OBJ             LINE     SOURCE
                                                                           ; Set TCONCS1 register
                                   _TCS1           SET     (_PHD1<<5) OR (_PHC1<<3) OR (_PHB1<<2) OR (_PHA1)
                                   _TCS1           SET     _TCS1 OR (_WRPHF1<<13) OR (_RDPHF1<<11) OR (_PHE1<<6)
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    22
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    22
 
                                                   MOV     R0,#_TCS1
                                                   MOV     TCONCS1,R0
@@ -1493,7 +1493,7 @@ LOC      OBJ             LINE     SOURCE
                          1433     
                                   $IF (CONFIG_CS7)  
                                                                           ; Set TCONCS7 register
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    23
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    23
 
                                   _TCS7           SET     (_PHD7<<5) OR (_PHC7<<3) OR (_PHB7<<2) OR (_PHA7)
                                   _TCS7           SET     _TCS7 OR (_WRPHF7<<13) OR (_RDPHF7<<11) OR (_PHE7<<6)
@@ -1561,7 +1561,7 @@ LOC      OBJ             LINE     SOURCE
                          1498     ; keep VCO bypass, set VCOSEL, set NDIV and enable N acknowledge  
  9305                    1499     _PLLCON0        SET     (1<<15) OR (_NDIV<<8) OR (_VCOSEL<<2) OR (_VCOPWD<<1) OR (1)
 00000030 D180            1500                     EXTR    #01H            ; Extended SFR access
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    24
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    24
 
 00000032 E6DC0593        1501                     MOV     PLLCON0,#_PLLCON0
                          1502     
@@ -1629,7 +1629,7 @@ LOC      OBJ             LINE     SOURCE
                          1564     
                          1565     IF (UST1SZ > 0) OR (UST2SZ > 0)
 0000008C 1A880003        1566                     BFLDH   PSW,#03H,#00H           ; select global bank
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    25
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    25
 
                          1567     ENDIF
                          1568     
@@ -1697,7 +1697,7 @@ LOC      OBJ             LINE     SOURCE
                          1630     $ENDIF
 000000A2 E005            1631                     MOV     R5,#0
 000000A4 DC09            1632                     EXTS    R9,#1
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    26
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    26
 
 000000A6 9828            1633                     MOV     R2,[R8+]    ; Count
 000000A8 2D25            1634                     JMPR    cc_Z,EndClear
@@ -1765,7 +1765,7 @@ LOC      OBJ             LINE     SOURCE
                                                   MOV     R8,#?C_INITSECSTART
                                   RepeatInit:     
                                   $IF (WATCHDOG = 1)
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    27
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    27
 
                                                   SRVWDT                          ; SERVICE WATCHDOG
                                   $ENDIF
@@ -1833,7 +1833,7 @@ LOC      OBJ             LINE     SOURCE
 00000122 A838            1762                     MOV     R3,[R8]
 00000124 0882            1763                     ADD     R8,#2
 00000126 1890            1764                     ADDC    R9,#0
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    28
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    28
 
 00000128 8AF406E0        1765                     JB      R4.14,CopyInitVal
 0000012C F6F306FE        1766                     MOV     DPP3,R3
@@ -1901,7 +1901,7 @@ LOC      OBJ             LINE     SOURCE
                                                   ADDC    R9,#0
                                                   JB      R4.14,CopyNearVal
                                                   MOV     R6,R3
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    29
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    29
 
                                                   EXTS    R9,#1
                                                   MOV     R3,[R8]
@@ -1969,7 +1969,7 @@ LOC      OBJ             LINE     SOURCE
                          1894     $ENDIF
                          1895     
                          1896     ?C_RESET        ENDP
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    30
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    30
 
 --------                 1897     ?C_STARTUP_CODE ENDS
                          1898     
@@ -1981,7 +1981,7 @@ LOC      OBJ             LINE     SOURCE
                          1904     
                          1905     
                          1906     
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    31
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    31
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -2049,7 +2049,7 @@ KB . . . . . . . .  DATA16 400H              A
 LenLoad. . . . . .  NEAR   120H              R  SEC=?C_STARTUP_CODE
 MB . . . . . . . .  DATA32 100000H           A  
 Model. . . . . . .  LIT    "FAR"                
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    32
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    32
 
 NDATA. . . . . . .  ----   ----                 GROUP
 NoDPP3Adj. . . . .  NEAR   154H              R  SEC=?C_STARTUP_CODE
@@ -2117,7 +2117,7 @@ _DAID. . . . . . .  DATA3  1H                A
 _DCF . . . . . . .  DATA3  1H                A  
 _DDF . . . . . . .  DATA3  1H                A  
 _DHPDIS. . . . . .  DATA3  0H                A  
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    33
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    33
 
 _DIS . . . . . . .  DATA3  0H                A  
 _DLCPF . . . . . .  DATA3  1H                A  
@@ -2185,7 +2185,7 @@ _PLLCON1 . . . . .  DATA16 8000H             A
 _PLLCON2 . . . . .  DATA16 8001H             A  
 _PLLCON3 . . . . .  DATA16 8001H             A  
 _PLLPWD. . . . . .  DATA3  0H                A  
-A166 MACRO ASSEMBLER  START_V3                                                            01/03/2020 16:20:05 PAGE    34
+A166 MACRO ASSEMBLER  START_V3                                                            02/15/2020 01:24:47 PAGE    34
 
 _PLL_EMCLKEN . . .  DATA3  0H                A  
 _PLL_EMFINDISEN. .  DATA3  0H                A  

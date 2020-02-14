@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 1   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE HICAN
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
    51  1        //can_rx(12,0,0|0x800,0x80);
    52  1        
    53  1        // Message Box 0/1: Accept the IDs specified
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 2   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 2   
 
    54  1        can_rx(0,g_cto_id,        0x7FF|0x800,0x80);
    55  1        can_rx(1,g_diag_tester_id,0x7FF|0x800,0x80);
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
   113  1        {
   114  2          l_timer_boff++;
   115  2          // Node Initialization retry: 500ms after Bus off
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 3   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 3   
 
   116  2          if(l_timer_boff>=50) // 500ms
   117  2          {
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
   175  2          wgy = 1;
   176  2        }
   177  1        if(id == 0x0CF00403)
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 4   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 4   
 
   178  1        {
   179  2          wgy = 1;
@@ -203,7 +203,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
   186  1        can_do_obj(id,len,buf);
   187  1      }
   188         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 5   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -267,7 +267,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0094 0802          ADD       R0,#02H
                                            ; SOURCE LINE # 48
 0096 E6F40000 R    MOV       R4,#POF (SC?7?0)
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 6   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 6   
 
 009A E6F50000 R    MOV       R5,#PAG (SC?7?0)
 009E 8850          MOV       [-R0],R5
@@ -331,7 +331,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0144 E6F81200      MOV       R8,#012H
 0148 DA000000 E    CALLS     SEG (can_load),can_load
 014C 0802          ADD       R0,#02H
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 7   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 7   
 
                                            ; SOURCE LINE # 66
 014E E6F40000 R    MOV       R4,#POF (SC?7?0)
@@ -395,7 +395,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 95
 01F4 DB00          RETS      
              ; FUNCTION hican_10ms_hook (END    RMASK = @0x8000)
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 8   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 8   
 
 
              ; FUNCTION hican_1ms_hook (BEGIN  RMASK = @0x8000)
@@ -459,7 +459,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0242 A9C4          MOVB      RL6,[R4]
 0244 F040          MOV       R4,R0
 0246 0048          ADD       R4,R8
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 9   
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 9   
 
 0248 B9C4          MOVB      [R4],RL6
                                            ; SOURCE LINE # 143
@@ -523,7 +523,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 173
 02B2 F04E          MOV       R4,R14
 02B4 F05F          MOV       R5,R15
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 10  
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 10  
 
 02B6 26F40204      SUB       R4,#0402H
 02BA 36F5F00C      SUBC      R5,#0CF0H
@@ -587,7 +587,7 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   SDATA-DATA SIZE  =    --------     --------
   BDATA-DATA SIZE  =    --------     --------
   HUGE-DATA SIZE   =    --------     --------
-C166 COMPILER V7.57.0, HICAN                                                               01/03/2020 16:20:10 PAGE 11  
+C166 COMPILER V7.57.0, HICAN                                                               02/15/2020 01:24:51 PAGE 11  
 
   BIT SIZE         =    --------     --------
   INIT'L SIZE      =          36     --------

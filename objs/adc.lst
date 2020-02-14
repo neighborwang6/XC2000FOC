@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 1   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE ADC
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\adc.c MODV2 LARGE BR
    51  1        ADC0_INPCR1    =  0x0000;
    52  1        
    53  1        // Configuration of Result Control Registers:
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 2   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 2   
 
    54  1        // the data reduction filter is disabled
    55  1        // the event interrupt is disabled
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\adc.c MODV2 LARGE BR
   113  1        ADC1_RCR2      =  0x0000;
   114  1        ADC1_RCR3      =  0x0000;
   115  1        ADC1_RCR4      =  0x0000;
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 3   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 3   
 
   116  1        ADC1_RCR5      =  0x0000;
   117  1        ADC1_RCR6      =  0x0000;
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\adc.c MODV2 LARGE BR
   175         u16 get_ad_value(u8 chan_no)
   176         {
   177  1         u16 g_ad_tmp=0;
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 4   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 4   
 
   178  1      
   179  1         if((chan_no&0xf0)==0x10) // ADC1
@@ -205,7 +205,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\adc.c MODV2 LARGE BR
   188  1         return g_ad_tmp;
   189  1      }
   190         /////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 5   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -269,7 +269,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 006A F6F4BAE0      MOV       0E0BAH,R4
                                            ; SOURCE LINE # 64
 006E F6F4BCE0      MOV       0E0BCH,R4
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 6   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 6   
 
                                            ; SOURCE LINE # 65
 0072 F6F4BEE0      MOV       0E0BEH,R4
@@ -333,7 +333,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 106
 00EC F6F42CE1      MOV       0E12CH,R4
                                            ; SOURCE LINE # 108
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 7   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 7   
 
 00F0 E004          MOV       R4,#00H
 00F2 F6F4C0E1      MOV       0E1C0H,R4
@@ -397,7 +397,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION ad_scan (BEGIN  RMASK = @0x40D0)
                                            ; SOURCE LINE # 142
 ;---- Variable 'val' assigned to Register 'R6' ----
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 8   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 8   
 
 ;---- Variable 'chnum' assigned to Register 'RL7' ----
                                            ; SOURCE LINE # 143
@@ -461,7 +461,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 169
 01F8 258F0000 R    SUBB      ad1_idx,ONES
 01FC F3F80000 R    MOVB      RL4,ad1_idx
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 9   
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 9   
 
 0200 C084          MOVBZ     R4,RL4
 0202 D7400000 R    EXTP      #PAG (ad1_chx),#01H
@@ -525,7 +525,7 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   NEAR-CONST SIZE  =    --------     --------
   FAR-CONST SIZE   =          32     --------
   HUGE-CONST SIZE  =    --------     --------
-C166 COMPILER V7.57.0, ADC                                                                 01/03/2020 16:20:05 PAGE 10  
+C166 COMPILER V7.57.0, ADC                                                                 02/15/2020 01:24:47 PAGE 10  
 
   XHUGE-CONST SIZE =    --------     --------
   NEAR-DATA SIZE   =           2     --------

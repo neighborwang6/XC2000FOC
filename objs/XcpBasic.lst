@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 1   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE XCPBASIC
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
    50         |     - DAQ does not support address extensions
    51         |     - DAQ-list and event channel prioritization is not supported
    52         |     - Event channels contain one DAQ-list
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 2   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 2   
 
    53         |     - ODT optimization not supported
    54         |     - Interleaved communication mode is not supported
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   112         | 2003-10-30  1.0.03    Ds     Rename xcp20.c to xcpProf.c 
   113         | 2003-11-20  1.01.00   Tri    Updated to PSC standard
   114         |                              MISRA rules applied.
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 3   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 3   
 
   115         |                              Minor changes.
   116         | 2004-02-11  1.01.01   Ds,Tri Updated and adaption for CANape
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   163         |                              ESCAN00012617: Add service to retrieve XCP state
   164         | 2006-01-03  1.08.00   Tri    ESCAN00013899: Data acquisition not possible during cold start
   165         |                              ESCAN00009196: PROGRAM_FORMAT is not implemented as specified
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 4   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 4   
 
   166         |                              ESCAN00009199: Negative Response to command PROGRAM_PREPARE is not correct
   167         |                              ESCAN00009202: Programming Info not implemented correctly
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   220         | 2008-10-10  1.23.02   Bwr    ESCAN00030037: Support for more than 255 ODT entries
   221         | 2008-12-01  1.24.00   Hr     ESCAN00031342: Version information of implementation inconsistent to releas
              -e version information
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 5   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 5   
 
   222         |                              ESCAN00031726: Add support for XcpOnTcpIpAsr
   223         |                              ESCAN00031948: Event gets lost, if a Response is still pending
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   269         |                              ESCAN00096039: Compiler error: out of bounds array access optimized away
   270         |                              ESCAN00096161: Compiler warning: Unused variable qs
   271         |                              ESCAN00096627: Improve plausibility check of DAQ allocation
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 6   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 6   
 
   272         |***************************************************************************/
   273         
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
              -pointers. 
               The DPP register information gets lost if these pointers are converted to integers.
               The following options disables casts from pointers to integer. */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 7   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 7   
 
               #define XCP_ENABLE_NO_P2INT_CAST
               #endif
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   383         
   384         /* PRQA S 3458 7 */ /* MD_MSR_19.4 */
   385         #define XcpPlCheckControlState( )
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 8   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 8   
 
   386         #define XcpPlCheckControlStateRet( ret_value )
   387         
@@ -510,7 +510,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   445         static void XcpSendEv( void );
   446         #endif
   447         
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 9   
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 9   
 
   448         #if defined ( XCP_ENABLE_SEND_QUEUE )
   449         static vuint8 XcpSendDtoFromQueue( void );
@@ -574,7 +574,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   507         | INPUT PARAMETERS: p : pointer to start address.
   508         |                   n : number of data bytes.
   509         | RETURN VALUES:    none 
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 10  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 10  
 
   510         | DESCRIPTION:      Initialize n bytes starting from address p 0.
   511         ******************************************************************************/
@@ -638,7 +638,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   569  1        xcp.Daq.ActiveTl  = ActiveTl;
   570  1      }
   571         
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 11  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 11  
 
   572         /*****************************************************************************
   573         | NAME:             XcpGetActiveTl
@@ -702,7 +702,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                 
               #endif
   633  1        
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 12  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 12  
 
   634  1        ApplXcpSendFlush();
   635  1        /* PRQA S 2006 1 */ /* MD_MSR_14.7 */
@@ -766,7 +766,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   693         #if defined ( XcpSendDto )
               /* XcpSendDto is redefined */
               #else
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 13  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 13  
 
   696         void XcpSendDto( const tXcpDto *dto )
   697         {
@@ -830,7 +830,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   755  1      }
   756         
   757         #endif /* XCP_ENABLE_SEND_QUEUE */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 14  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 14  
 
   758         
   759         
@@ -894,7 +894,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   817         | DESCRIPTION:      Read n bytes.
   818         |                   Copying of size bytes from data to xcp.Mta
   819         ******************************************************************************/
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 15  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 15  
 
   820         static vuint8 XcpReadMta( vuint8 size, BYTEPTR data )
   821         {
@@ -958,7 +958,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   879  1        xcp.pOdtEntryAddr = 0;
   880  1        xcp.pOdtEntrySize = 0;
   881  1        
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 16  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 16  
 
   882  1        XcpMemClr((BYTEPTR)&xcp.Daq.u.b[0], (vuint16)kXcpDaqMemSize);  /* Deviation of MISRA rule 44. */
   883  1      #if defined ( kXcpMaxEvent ) && ! defined ( XCP_ENABLE_DAQ_PRESCALER )
@@ -1022,7 +1022,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   939  1        /* Align to dwords */
   940  1        xcp.pOdt = (tXcpOdt*)((((vuint32)(&xcp.Daq.u.DaqList[xcp.Daq.DaqCount])) + (vuint32)3u) & (vuint32)0xFFFF
              -FFFCu ); /* PRQA S 0306 */ /* MD_Xcp_0306 */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 17  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 17  
 
   941  1      #endif
   942  1      #endif
@@ -1086,7 +1086,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
   996  2          return (vuint8)CRC_MEMORY_OVERFLOW;
   997  2        }
   998  1      #endif
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 18  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 18  
 
   999  1      #endif /* XCP_ENABLE_SEND_QUEUE */
  1000  1        
@@ -1150,7 +1150,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                 {
                   return (vuint8)CRC_SEQUENCE;
                 }
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 19  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 19  
 
                 if( odtCount == 0 )
                 {
@@ -1214,7 +1214,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  1119  1        xcp.pOdt[xcpFirstOdt+odt].firstOdtEntry = xcp.Daq.OdtEntryCount;
  1120  1        xcp.Daq.OdtEntryCount += (vuint16)odtEntryCount;
  1121  1        xcp.pOdt[xcpFirstOdt+odt].lastOdtEntry = (vuint16)(xcp.Daq.OdtEntryCount-1);
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 20  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 20  
 
  1122  1        
  1123  1        return XcpAllocMemory();
@@ -1278,7 +1278,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  1181  1        DaqListFlags(daq) &= (vuint8)(DAQ_FLAG_DIRECTION|DAQ_FLAG_TIMESTAMP|DAQ_FLAG_NO_PID);
  1182  1        
  1183  1        /* Check if all DAQ lists are stopped */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 21  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 21  
 
  1184  1        for (i=0;i<xcp.Daq.DaqCount;i++)
  1185  1        {
@@ -1342,7 +1342,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  1243  1      #endif
  1244  1      }
  1245         
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 22  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 22  
 
  1246         
  1247         /****************************************************************************/
@@ -1406,7 +1406,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                   
                   BEGIN_PROFILE(4); /* Timingtest */
                   daq = xcp.Daq.EventDaq[event];
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 23  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 23  
 
                   if ( ((daq<xcp.Daq.DaqCount) && ( (DaqListFlags(daq) & (vuint8)DAQ_FLAG_RUNNING) != 0 )) != 0 )
                   {
@@ -1470,7 +1470,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               #endif /* XCP_ENABLE_SEND_QUEUE */
  1368  4                  
  1369  4      #if defined ( XCP_ENABLE_DAQ_HDR_ODT_DAQ )
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 24  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 24  
 
                           
                           /* ODT,DAQ */
@@ -1534,7 +1534,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               #else
  1430  6                      dtop->b[i+0u] = (vuint8)t;
  1431  6      #if( kXcpDaqTimestampSize > DAQ_TIMESTAMP_BYTE )
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 25  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 25  
 
  1432  6                      dtop->b[i+1u] = (vuint8)(t>>8);
  1433  6      #endif
@@ -1598,7 +1598,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               #else
  1492  4                  if ( (xcp.SendStatus & (vuint8)XCP_SEND_PENDING) != 0 )
  1493  4                  {
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 26  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 26  
 
  1494  5                    xcp.QueueLen++;
  1495  5                  }
@@ -1662,7 +1662,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                   0xBDCB,0xAC42,0x9ED9,0x8F50,0xFBEF,0xEA66,0xD8FD,0xC974,
                   0x4204,0x538D,0x6116,0x709F,0x0420,0x15A9,0x2732,0x36BB,
                   0xCE4C,0xDFC5,0xED5E,0xFCD7,0x8868,0x99E1,0xAB7A,0xBAF3,
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 27  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 27  
 
                   0x5285,0x430C,0x7197,0x601E,0x14A1,0x0528,0x37B3,0x263A,
                   0xDECD,0xCF44,0xFDDF,0xEC56,0x98E9,0x8960,0xBBFB,0xAA72,
@@ -1726,7 +1726,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               
               #endif /* ( kXcpChecksumMethod == XCP_CHECKSUM_TYPE_CRC16CCITT ) */
  1617         
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 28  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 28  
 
  1618         
  1619         #if !defined ( kXcpChecksumBlockSize )
@@ -1790,7 +1790,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  1677  3              
  1678  3      #if ( kXcpChecksumMethod == XCP_CHECKSUM_TYPE_CRC16CCITT )
                       
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 29  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 29  
 
               #if defined ( XCP_ENABLE_CRC16CCITT_REFLECTED )
                       /* CRC16 CCITT Reflected: Refin = true and refout = true. */
@@ -1854,7 +1854,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  1737  1          /* PRQA S 6010 1 */ /* MD_MSR_STPTH */
  1738  1      }
  1739         
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 30  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 30  
 
  1740         
  1741         /****************************************************************************/
@@ -1918,7 +1918,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  1799  1        /* CONNECT */
  1800  1        if (CRO_CMD==CC_CONNECT)
  1801  1        {
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 31  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 31  
 
  1802  2          
  1803  2          /* Prepare the default response */
@@ -1982,7 +1982,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                   CRM_CONNECT_COMM_BASIC |= (vuint8)PI_MOTOROLA;
               #endif
  1863  2          
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 32  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 32  
 
  1864  2          XCP_PRINT(("<- 0xFF version=%02Xh/%02Xh, maxcro=%02Xh, maxdto=%02Xh, resource=%02X, mode=%02X\n",
  1870  2            CRM_CONNECT_PROTOCOL_VERSION,
@@ -2046,7 +2046,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  1923  4      #if defined ( XCP_ENABLE_COMM_MODE_INFO )
  1924  4            case CC_GET_COMM_MODE_INFO:
  1925  4              {
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 33  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 33  
 
  1926  5                xcp.CrmLen = CRM_GET_COMM_MODE_INFO_LEN;
  1927  5                /* Transmit the version of the XCP Protocol Layer implementation.    */
@@ -2110,7 +2110,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                           CRM_GET_ID_LENGTH_WRITE(ApplXcpGetIdData(&pData, CRO_GET_ID_TYPE)); /* PRQA S 3109 */ /* MD_MSR_14.3
              - */
                           XcpSetMta(ApplXcpGetPointer(0x00, (vuint32)pData), 0xFF); /* PRQA S 0306 */ /* MD_Xcp_0306 */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 34  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 34  
 
               #endif
  1987  6                }
@@ -2174,7 +2174,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                           case RM_CAL_PAG: 
                             break;
                           case RM_PGM:
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 35  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 35  
 
                             break;
                           case RM_DAQ:
@@ -2238,7 +2238,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  2104  6                  resource = ApplXcpUnlock(CRO_UNLOCK_KEY, CRO_UNLOCK_LENGTH);
  2105  6                  if ( resource == (vuint8)0x00u )
  2106  6                  {
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 36  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 36  
 
  2107  7                    /* Key wrong ! */
  2108  7                    /* Send ERR_ACCESS_LOCKED and go to disconnected state. */
@@ -2302,7 +2302,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
              -;
                         }
               #endif
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 37  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 37  
 
  2166  5                
  2167  5                xcp.CrmLen = CRM_GET_CAL_PAGE_LEN;
@@ -2366,7 +2366,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                         }
                         
                         xcp.CrmLen = CRM_GET_SEGMENT_INFO_LEN;
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 38  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 38  
 
                         /* Get standard info for a segment.
                         SEGMENT_INFO and MAPPING_INDEX are don't care
@@ -2430,7 +2430,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                         if ( gDebugLevel != 0)
                         {
                           ApplXcpPrint("<- 0xFF properties=%u\n",CRM_GET_PAGE_INFO_PROPERTIES);
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 39  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 39  
 
                         }
               #endif
@@ -2494,7 +2494,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                           ApplXcpPrint("<- 0xFF mode=%u\n",CRM_GET_SEGMENT_MODE_MODE);
                         }
               #endif
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 40  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 40  
 
                       }
                       break;
@@ -2558,7 +2558,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  2406  4            case CC_DOWNLOAD: /* PRQA S 2003 */ /* MD_Xcp_2003 */
  2407  4              {
  2408  5      #if defined ( XCP_ENABLE_CALIBRATION )
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 41  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 41  
 
  2409  5                vuint8 size;
  2410  5                
@@ -2622,7 +2622,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                           for (i=0;i<CRO_DOWNLOAD_MAX_MAX_SIZE;i++)
                           {
                             ApplXcpPrint("%02X ",CRO_DOWNLOAD_MAX_DATA[i]);
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 42  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 42  
 
                           }
                           ApplXcpPrint("\n");
@@ -2686,7 +2686,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  2530  6                }
  2531  5                
  2532  5      #if defined ( XCP_ENABLE_TESTMODE )
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 43  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 43  
 
                         if ( gDebugLevel != 0)
                         {
@@ -2750,7 +2750,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  2591  4              
  2592  4            case CC_BUILD_CHECKSUM: /* Build Checksum */
  2593  4              {
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 44  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 44  
 
  2594  5                vuint32 s;
  2595  5                
@@ -2814,7 +2814,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               #else
  2653  7                    xcp.CheckSumSize = (vuint16)s;
  2654  7                    /* Checksum calculation will be performed by XcpBackground() */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 45  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 45  
 
  2655  7                    goto no_response; /* PRQA S 2001 */ /* MD_Xcp_2001 */
  2656  7      #endif
@@ -2878,7 +2878,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               #endif
  2714  5              }
  2715  4              break;
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 46  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 46  
 
  2716  4              
  2717  4      #endif /* XCP_ENABLE_DAQ_PROCESSOR_INFO */
@@ -2942,7 +2942,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                         } 
               #endif
                         
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 47  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 47  
 
                         xcp.CrmLen = CRM_GET_DAQ_EVENT_INFO_LEN;
                         CRM_GET_DAQ_EVENT_INFO_PROPERTIES = kXcpEventDirection[event];
@@ -3006,7 +3006,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  2833  5                check_error( XcpAllocDaq(count) ) /* PRQA S 2001 */ /* MD_Xcp_2001 */
  2834  5                  
  2835  5      #if defined ( XCP_ENABLE_TESTMODE )
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 48  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 48  
 
                           if ( gDebugLevel != 0)
                           {
@@ -3070,7 +3070,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  2895  5                  
  2896  5      #if defined ( XCP_ENABLE_TESTMODE )
                           if ( gDebugLevel != 0)
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 49  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 49  
 
                           {
                             ApplXcpPrint("<- 0xFF\n");
@@ -3134,7 +3134,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  2953  5                vuint8 event = (vuint8)(CRO_SET_DAQ_LIST_MODE_EVENTCHANNEL&0xFFu);
  2954  5                
  2955  5      #if defined ( XCP_ENABLE_TESTMODE )
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 50  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 50  
 
                         if ( gDebugLevel != 0)
                         {
@@ -3198,7 +3198,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3015  5                vuint8 idx = CRO_SET_DAQ_PTR_IDX;
  3016  5                tXcpOdtIdx odt0 = (tXcpOdtIdx)(DaqListFirstOdt(daq)+odt); /* Absolute odt number */
  3017  5                
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 51  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 51  
 
  3018  5      #if defined ( XCP_ENABLE_TESTMODE )
                         if ( gDebugLevel != 0)
@@ -3262,7 +3262,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                           if ( gDebugLevel != 0)
                           {
                             ApplXcpPrint("<- 0xFF\n");
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 52  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 52  
 
                           }
               #endif
@@ -3326,7 +3326,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                         {
                           ApplXcpPrint("-> CC_START_STOP_SYNCH mode=%02Xh\n",CRO_START_STOP_MODE);
                         }
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 53  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 53  
 
               #endif
  3140  5                
@@ -3390,7 +3390,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3198  4              
  3199  4              /* Flash Programming  */
  3200  4              
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 54  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 54  
 
  3201  4              
  3202  4      #if defined ( XCP_ENABLE_USER_COMMAND ) 
@@ -3454,7 +3454,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3260  2          else
  3261  2          {
  3262  3          goto no_response; /* PRQA S 2001 */ /* MD_Xcp_2001 */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 55  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 55  
 
  3263  3          }
  3264  2        } /* CC_CONNECT */
@@ -3518,7 +3518,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3322  1        /* Now check if there is another transmit request */
  3323  1        
  3324  1        /* Send a RES or ERR (CRM) message */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 56  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 56  
 
  3325  1        if ( (xcp.SendStatus & (vuint8)XCP_CRM_REQUEST) != 0 )
  3326  1        {
@@ -3582,7 +3582,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3384  1        /* Application specific initialization function. */
  3385  1        ApplXcpInit();
  3386  1        
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 57  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 57  
 
  3387  1        /* Initialize all XCP variables to zero */
  3388  1        XcpMemClr((BYTEPTR)&xcp,(vuint16)sizeof(xcp)); /* PRQA S 0310 */ /* MD_Xcp_0310_ByteCopy */
@@ -3646,7 +3646,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
                   
                   /* Check for stall condition */         
               #if defined ( XCP_ENABLE_SEND_QUEUE )
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 58  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 58  
 
                   
                   while ( (xcp.SendStatus & (vuint8)XCP_EVT_REQUEST) != 0 )
@@ -3710,7 +3710,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               | NAME:             XcpPrintf
               | CALLED BY:        application
               | PRECONDITIONS:    none
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 59  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 59  
 
               | INPUT PARAMETERS: *str : pointer to a string
               |                   ...  : varaibale number of parameters (see printf)
@@ -3774,7 +3774,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3570  2            {
  3571  3              return; /* Abort */
  3572  3            }
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 60  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 60  
 
  3573  2          }
  3574  1      #endif
@@ -3838,7 +3838,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               | NAME:             XcpGetSessionStatus
               | CALLED BY:        -
               | PRECONDITIONS:    none
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 61  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 61  
 
               | INPUT PARAMETERS: none
               | RETURN VALUES:    Xcp session state
@@ -3902,7 +3902,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3694         /****************************************************************************/
  3695         /* Test                                                                     */
  3696         /* Some screen output functions for test and diagnostics                    */
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 62  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 62  
 
  3697         /****************************************************************************/
  3698         
@@ -3966,7 +3966,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
               #endif /* XCP_ENABLE_TESTMODE */
  3757         
  3758         
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 63  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 63  
 
  3759         
  3760           /*******************************************************************************
@@ -4030,7 +4030,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3817         MD_Xcp_0310:    Rule 11.4
  3818         Reason:     Alignment is given by calling function.
  3819         Risk:       Maintainability reduced due to optimization.
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 64  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 64  
 
  3820         Prevention: Covered by code review.
  3821         MD_Xcp_0310_ByteCopy: Rule 11.4
@@ -4086,7 +4086,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE xcp\XcpBasic.c MODV2 LARGE BRO
  3868         *  END OF FILE: XcpProf.c
  3869         **********************************************************************************************************
              -***********/
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 65  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 65  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -4150,7 +4150,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 002E 28C1          SUB       R12,#01H
 0030         ?C0008:
 0030 F04C          MOV       R4,R12
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 66  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 66  
 
 0032 4980          CMPB      RL4,#00H
 0034 EDF6          JMPR      cc_UGT,?C0009
@@ -4214,7 +4214,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 622
 0092 D7400000 R    EXTP      #PAG (xcp),#01H
 0096 F3F83E08 R    MOVB      RL4,POF (xcp+083EH)
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 67  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 67  
 
 009A 77F81000      ORB       RL4,#010H
 009E D7400000 R    EXTP      #PAG (xcp),#01H
@@ -4278,7 +4278,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 666
 012C D7400000 R    EXTP      #PAG (xcp),#01H
 0130 F78E1200 R    MOVB      POF (xcp+012H),ZEROS
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 68  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 68  
 
                                            ; SOURCE LINE # 667
 0134         ?C0017:
@@ -4342,7 +4342,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 01B0 4045          CMP       R4,R5
 01B2 8D04          JMPR      cc_ULT,?C0019
                                            ; SOURCE LINE # 724
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 69  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 69  
 
 01B4 D7400000 R    EXTP      #PAG (xcp),#01H
 01B8 F68E3C08 R    MOV       POF (xcp+083CH),ZEROS
@@ -4406,7 +4406,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 020E 2881          SUB       R8,#01H
                                            ; SOURCE LINE # 804
 0210         ?C0021:
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 70  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 70  
 
 0210 F048          MOV       R4,R8
 0212 4980          CMPB      RL4,#00H
@@ -4470,7 +4470,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 876
 026C F68E2600 R    MOV       POF (xcp+026H),ZEROS
                                            ; SOURCE LINE # 878
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 71  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 71  
 
 0270 E004          MOV       R4,#00H
 0272 D7700000 R    EXTP      #PAG (xcp),#04H
@@ -4534,7 +4534,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 02FA 0046          ADD       R4,R6
 02FC 4AF5F40E      BMOV      R4.14,R5.0
 0300 4AF5F41F      BMOV      R4.15,R5.1
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 72  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 72  
 
 0304 7C25          SHR       R5,#02H
 0306 0843          ADD       R4,#03H
@@ -4598,7 +4598,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 03A2 5B44          DIVU      R4
 03A4 F2F40EFE      MOV       R4,MDL
 03A8 D7500000 R    EXTP      #PAG (xcp),#02H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 73  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 73  
 
 03AC F6F43808 R    MOV       POF (xcp+0838H),R4
                                            ; SOURCE LINE # 994
@@ -4662,7 +4662,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0408 F3F82400 R    MOVB      RL4,POF (xcp+024H)
 040C 0049          ADD       R4,R9
 040E D7500000 R    EXTP      #PAG (xcp),#02H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 74  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 74  
 
 0412 F7F82400 R    MOVB      POF (xcp+024H),RL4
                                            ; SOURCE LINE # 1081
@@ -4726,7 +4726,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 047C D7400000 R    EXTP      #PAG (xcp),#01H
 0480 F2F42600 R    MOV       R4,POF (xcp+026H)
 0484 0045          ADD       R4,R5
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 75  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 75  
 
 0486 D7400000 R    EXTP      #PAG (xcp),#01H
 048A F6F42600 R    MOV       POF (xcp+026H),R4
@@ -4790,7 +4790,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 1161
 04F4 C025          MOVBZ     R5,RL1
 04F6 F045          MOV       R4,R5
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 76  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 76  
 
 04F8 5C24          SHL       R4,#02H
 04FA 2045          SUB       R4,R5
@@ -4854,7 +4854,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 056A 5C14          SHL       R4,#01H
 056C D7400000 R    EXTP      #PAG (xcp),#01H
 0570 F4842A00 R    MOVB      RL4,[R4+#POF(xcp+02AH)]
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 77  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 77  
 
 0574 8AF41360      JB        R4.6,?C0051
                                            ; SOURCE LINE # 1188
@@ -4918,7 +4918,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 05E4 F3FA2300 R    MOVB      RL5,POF (xcp+023H)
 05E8 41AE          CMPB      RL5,RL7
 05EA EDDC          JMPR      cc_UGT,?C0055
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 78  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 78  
 
 05EC         ?C0053:
                                            ; SOURCE LINE # 1220
@@ -4982,7 +4982,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0652 8AF40360      JB        R4.6,?C0069
                                            ; SOURCE LINE # 1291
 0656 E108          MOVB      RL4,#00H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 79  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 79  
 
 0658 EA00F409 R    JMPA      cc_UC,?C0064
                                            ; SOURCE LINE # 1292
@@ -5046,7 +5046,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 1331
 06D0 F04E          MOV       R4,R14
 06D2 C085          MOVBZ     R5,RL4
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 80  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 80  
 
 06D4 F045          MOV       R4,R5
 06D6 5C24          SHL       R4,#02H
@@ -5110,7 +5110,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 075E         ?C0078:
                                            ; SOURCE LINE # 1355
 075E D7500000 R    EXTP      #PAG (xcp),#02H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 81  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 81  
 
 0762 F2F53A08 R    MOV       R5,POF (xcp+083AH)
 0766 F2F43C08 R    MOV       R4,POF (xcp+083CH)
@@ -5174,7 +5174,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 07EC 2054          SUB       R5,R4
 07EE 5C15          SHL       R5,#01H
 07F0 D7400000 R    EXTP      #PAG (xcp),#01H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 82  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 82  
 
 07F4 F4852A00 R    MOVB      RL4,[R5+#POF(xcp+02AH)]
 07F8 67F8F700      ANDB      RL4,#0F7H
@@ -5238,7 +5238,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 087E 0046          ADD       R4,R6
 0880 DC45          EXTP      R5,#01H
 0882 A844          MOV       R4,[R4]
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 83  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 83  
 
 0884 C4400A00      MOV       [R0+#0AH],R4  ; e
                                            ; SOURCE LINE # 1456
@@ -5302,7 +5302,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0912 DC55          EXTP      R5,#02H
 0914 D4B40200      MOV       R11,[R4+#POF(02H)]
 0918 A8A4          MOV       R10,[R4]
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 84  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 84  
 
 091A D4900600      MOV       R9,[R0+#06H]  ; d+2
 091E D4800400      MOV       R8,[R0+#04H]  ; d
@@ -5366,7 +5366,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 09AE F7F83E08 R    MOVB      POF (xcp+083EH),RL4
                                            ; SOURCE LINE # 1499
 09B2 D4900200      MOV       R9,[R0+#02H]  ; dtop+2
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 85  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 85  
 
 09B6 A880          MOV       R8,[R0]       ; dtop
 09B8 DA000000 R    CALLS     SEG (XcpSendDto),XcpSendDto
@@ -5430,7 +5430,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0A18 F68E1C00 R    MOV       POF (xcp+01CH),ZEROS
                                            ; SOURCE LINE # 1665
 0A1C 0D08          JMPR      cc_UC,?C0095
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 86  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 86  
 
 0A1E         ?C0093:
                                            ; SOURCE LINE # 1668
@@ -5494,7 +5494,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0A9A F6F50600 R    MOV       POF (xcp+06H),R5
                                            ; SOURCE LINE # 1716
 0A9E E188          MOVB      RL4,#08H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 87  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 87  
 
 0AA0 D7400000 R    EXTP      #PAG (xcp),#01H
 0AA4 F7F80800 R    MOVB      POF (xcp+08H),RL4
@@ -5558,7 +5558,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0B02 F2F41400 R    MOV       R4,POF (xcp+014H)
 0B06 8AF40670      JB        R4.7,?C0102
                                            ; SOURCE LINE # 1823
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 88  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 88  
 
 0B0A DA000000 R    CALLS     SEG (XcpFreeDaq),XcpFreeDaq
                                            ; SOURCE LINE # 1825
@@ -5622,7 +5622,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0B9C F3F83E08 R    MOVB      RL4,POF (xcp+083EH)
 0BA0 67F81100      ANDB      RL4,#011H
 0BA4 2D07          JMPR      cc_Z,?C0106
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 89  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 89  
 
                                            ; SOURCE LINE # 1885
 0BA6 4FF5          BSET      R5.4
@@ -5686,7 +5686,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0C4C 2D38          JMPR      cc_Z,?C0133
 0C4E 2981          SUBB      RL4,#01H
 0C50 2D16          JMPR      cc_Z,?C0134
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 90  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 90  
 
 0C52 2982          SUBB      RL4,#02H
 0C54 2D63          JMPR      cc_Z,?C0136
@@ -5750,7 +5750,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 1971
 0CCC F68E0400 R    MOV       POF (xcp+04H),ZEROS
 0CD0 F68E0600 R    MOV       POF (xcp+06H),ZEROS
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 91  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 91  
 
                                            ; SOURCE LINE # 1974
 0CD4 DC4F          EXTP      R15,#01H
@@ -5814,7 +5814,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0D5A D7400000 R    EXTP      #PAG (xcp),#01H
 0D5E F3F81A00 R    MOVB      RL4,POF (xcp+01AH)
 0D62 618C          ANDB      RL4,RL6
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 92  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 92  
 
 0D64 2D13          JMPR      cc_Z,?C0143
                                            ; SOURCE LINE # 2058
@@ -5878,7 +5878,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0DCA 49E0          CMPB      RL7,#00H
 0DCC 3D06          JMPR      cc_NZ,?C0148
                                            ; SOURCE LINE # 2109
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 93  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 93  
 
 0DCE DA000000 R    CALLS     SEG (XcpDisconnect),XcpDisconnect
                                            ; SOURCE LINE # 2110
@@ -5942,7 +5942,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 2177
 0E50 EA00C213 R    JMPA      cc_UC,positive_response
                                            ; SOURCE LINE # 2385
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 94  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 94  
 
 0E54         ?C0130:
                                            ; SOURCE LINE # 2393
@@ -6006,7 +6006,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0EC2 4983          CMPB      RL4,#03H
 0EC4 EA30C213 R    JMPA      cc_NZ,positive_response
                                            ; SOURCE LINE # 2443
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 95  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 95  
 
 0EC8 E6FD2100      MOV       R13,#021H
 0ECC EA00A213 R    JMPA      cc_UC,negative_response
@@ -6070,7 +6070,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 2521
 0F28 E6F90100 R    MOV       R9,#POF (xcp+01H)
 0F2C E6FA0000 R    MOV       R10,#PAG (xcp)
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 96  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 96  
 
 0F30 C0E8          MOVBZ     R8,RL7
 0F32 DA000000 R    CALLS     SEG (XcpReadMta),XcpReadMta
@@ -6134,7 +6134,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0FB4         ?C0164:
                                            ; SOURCE LINE # 2569
 0FB4 F04D          MOV       R4,R13
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 97  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 97  
 
 0FB6 4980          CMPB      RL4,#00H
 0FB8 EA30C213 R    JMPA      cc_NZ,positive_response
@@ -6198,7 +6198,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 2694
 102C F78E0700 R    MOVB      POF (xcp+07H),ZEROS
                                            ; SOURCE LINE # 2706
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 98  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 98  
 
 1030 E7F85300      MOVB      RL4,#053H
 1034 D7400000 R    EXTP      #PAG (xcp),#01H
@@ -6262,7 +6262,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 10B0 DA000000 R    CALLS     SEG (XcpAllocDaq),XcpAllocDaq
 10B4 F0D4          MOV       R13,R4
 10B6 4980          CMPB      RL4,#00H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 99  
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 99  
 
 10B8 EA30A213 R    JMPA      cc_NZ,negative_response
 10BC         ?C0170:
@@ -6326,7 +6326,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 ;---- Variable 'daq' assigned to Register 'RL6' ----
                                            ; SOURCE LINE # 2923
 1112 E188          MOVB      RL4,#08H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 100 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 100 
 
 1114 D7400000 R    EXTP      #PAG (xcp),#01H
 1118 F7F80800 R    MOVB      POF (xcp+08H),RL4
@@ -6390,7 +6390,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 2991
 118A C025          MOVBZ     R5,RL1
 118C F045          MOV       R4,R5
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 101 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 101 
 
 118E 5C24          SHL       R4,#02H
 1190 2045          SUB       R4,R5
@@ -6454,7 +6454,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 1204 5C26          SHL       R6,#02H
 1206 D7500000 R    EXTP      #PAG (xcp),#02H
 120A F2F52A08 R    MOV       R5,POF (xcp+082AH)
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 102 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 102 
 
 120E F2F42808 R    MOV       R4,POF (xcp+0828H)
 1212 0046          ADD       R4,R6
@@ -6518,7 +6518,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 3080
 12A4 EA00C213 R    JMPA      cc_UC,positive_response
                                            ; SOURCE LINE # 3082
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 103 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 103 
 
 12A8         ?C0118:
                                            ; SOURCE LINE # 3083
@@ -6582,7 +6582,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 1322         ?C0176:
                                            ; SOURCE LINE # 3114
 1322 C028          MOVBZ     R8,RL1
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 104 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 104 
 
 1324 DA000000 R    CALLS     SEG (XcpStopDaq),XcpStopDaq
                                            ; SOURCE LINE # 3121
@@ -6646,7 +6646,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 3178
 138A DA000000 E    CALLS     SEG (ApplXcpGetTimestamp),ApplXcpGetTimestamp
 138E E005          MOV       R5,#00H
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 105 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 105 
 
 1390 D7500000 R    EXTP      #PAG (xcp),#02H
 1394 F6F40400 R    MOV       POF (xcp+04H),R4
@@ -6710,7 +6710,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 13F2 67F8FE00      ANDB      RL4,#0FEH
 13F6 D7400000 R    EXTP      #PAG (xcp),#01H
 13FA F7F83E08 R    MOVB      POF (xcp+083EH),RL4
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 106 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 106 
 
                                            ; SOURCE LINE # 3328
 13FE DA000000 R    CALLS     SEG (XcpSendCrm),XcpSendCrm
@@ -6774,7 +6774,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 1468 D7500000 R    EXTP      #PAG (xcp),#02H
 146C F68E1400 R    MOV       POF (xcp+014H),ZEROS
                                            ; SOURCE LINE # 3400
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 107 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 107 
 
 1470 F78E3E08 R    MOVB      POF (xcp+083EH),ZEROS
                                            ; SOURCE LINE # 3406
@@ -6838,7 +6838,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 14C8 E10E          MOVB      RL7,#00H
 ;---- Variable 'i' assigned to Register 'RL7' ----
 14CA 0D13          JMPR      cc_UC,?C0203
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 108 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 108 
 
 14CC         ?C0204:
                                            ; SOURCE LINE # 3586
@@ -6902,7 +6902,7 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   HUGE-DATA SIZE   =    --------     --------
   BIT SIZE         =    --------     --------
   INIT'L SIZE      =    --------     --------
-C166 COMPILER V7.57.0, XCPBASIC                                                            01/03/2020 16:20:10 PAGE 109 
+C166 COMPILER V7.57.0, XCPBASIC                                                            02/15/2020 01:24:51 PAGE 109 
 
 END OF MODULE INFORMATION.
 
