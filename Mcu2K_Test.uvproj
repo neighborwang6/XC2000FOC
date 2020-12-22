@@ -356,6 +356,11 @@
               <FileType>1</FileType>
               <FilePath>.\Hw_Driver\ccu2_ccu6.c</FilePath>
             </File>
+            <File>
+              <FileName>tle9180d_31qk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\tle9180d_31qk.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

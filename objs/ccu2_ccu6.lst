@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 1   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE CCU2_CCU6
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ccu2_ccu6.c MODV2 LA
    50         void cc2_setting(void)
    51         {
    52  1        volatile unsigned int uwTemp;
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 2   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 2   
 
    53  1      
    54  1        ///  -----------------------------------------------------------------------
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ccu2_ccu6.c MODV2 LA
   112  1        ///  - channel 17 is disabled
   113  1      
   114  1        ///  -----------------------------------------------------------------------
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 3   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 3   
 
   115  1        ///  Configuration of the used CAPCOM2 Channel 18:
   116  1        ///  -----------------------------------------------------------------------
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ccu2_ccu6.c MODV2 LA
   174  1        ///  -----------------------------------------------------------------------
   175  1        ///  - channel 29 is disabled
   176  1      
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 4   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 4   
 
   177  1        ///  -----------------------------------------------------------------------
   178  1        ///  Configuration of the used CAPCOM2 Channel 30:
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ccu2_ccu6.c MODV2 LA
   235  1        CCU61_TCTR4    =  0x4242;
   236  1        
   237  1        // Done in gpio_setting() 
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 5   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 5   
 
   238  1        // P0_IOCR00      =  0x00B0;  // IH1
   239  1        // P0_IOCR01      =  0x00B0;  // IH2
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ccu2_ccu6.c MODV2 LA
   297         u32 tmpu32;
   298         extern u16 g_disp_value_sent;
   299         
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 6   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 6   
 
   300         void isr_cc22(void) interrupt CC2_CC22INT
   301         {
@@ -359,7 +359,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ccu2_ccu6.c MODV2 LA
   336  1      }
   337         
   338         ///////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 7   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 7   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -423,7 +423,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 225
 0060 E004          MOV       R4,#00H
 0062 F6F4A0EA      MOV       0EAA0H,R4
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 8   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 8   
 
                                            ; SOURCE LINE # 226
 0066 F6F4A2EA      MOV       0EAA2H,R4
@@ -487,7 +487,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 00F0 FD33          JMPR      cc_ULE,?C0004
 00F2 F0A8          MOV       R10,R8
 00F4 E00B          MOV       R11,#00H
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 9   
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 9   
 
 ;---- Variable 'tmpu32' assigned to Register 'R10/R11' ----
 00F6 E6F61027      MOV       R6,#02710H
@@ -551,7 +551,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION isr_cc20 (END    RMASK = @0x7DFE)
 
              ; FUNCTION isr_cc21 (BEGIN  RMASK = @0x7DFE)
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 10  
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 10  
 
                                            ; SOURCE LINE # 290
 0184 C6030300      SCXT      DPP3,#03H
@@ -615,7 +615,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0218 0056          ADD       R5,R6
 021A 4058          CMP       R5,R8
 021C FD07          JMPR      cc_ULE,?C0010
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 11  
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 11  
 
 021E 2076          SUB       R7,R6
 0220 4078          CMP       R7,R8
@@ -679,7 +679,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0296 F2F80600 R    MOV       R8,timer7_val
 029A E009          MOV       R9,#00H
 029C DA000000 E    CALLS     SEG (sent_decode),sent_decode
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 12  
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 12  
 
 02A0 4980          CMPB      RL4,#00H
 02A2 3D37          JMPR      cc_NZ,?C0011
@@ -743,7 +743,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 032C FC06          POP       MDH
 032E FC87          POP       MDC
 0330 FC00          POP       DPP0
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 13  
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 13  
 
 0332 FC03          POP       DPP3
 0334 FB88          RETI      
@@ -807,7 +807,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 03BC D7400000 R    EXTP      #PAG (G_PWM_EX_PERIOD_STD),#01H
 03C0 F2F70600 R    MOV       R7,POF (G_PWM_EX_PERIOD_STD+06H)
 03C4 F067          MOV       R6,R7
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 14  
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 14  
 
 03C6 7C26          SHR       R6,#02H
 03C8 F057          MOV       R5,R7
@@ -871,7 +871,7 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   IDATA-DATA SIZE  =    --------     --------
   SDATA-DATA SIZE  =    --------     --------
   BDATA-DATA SIZE  =    --------     --------
-C166 COMPILER V7.57.0, CCU2_CCU6                                                           02/15/2020 01:24:49 PAGE 15  
+C166 COMPILER V7.57.0, CCU2_CCU6                                                           12/14/2020 10:56:37 PAGE 15  
 
   HUGE-DATA SIZE   =    --------     --------
   BIT SIZE         =    --------     --------

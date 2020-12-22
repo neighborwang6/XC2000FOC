@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 1   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE XC2K_CAN
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
    51         #define CAN0_BRP   7
    52         // 500KHz: CAN Node 1
    53         #define CAN1_TSEG1   6
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 2   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 2   
 
    54         #define CAN1_TSEG2   1
    55         #define CAN1_SJW     1
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   113  1      }
   114         
   115         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 3   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 3   
 
   116         /*******************************************************************************
   117         cfg:  Bit  7  6  5  4  3  2  1   0
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   175  1          CAN_HWOBJ[no].MOFCRL = 0x0000;
   176  1      }
   177         
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 4   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 4   
 
   178         ////////////////////////////////////////////////////////////////////////////////
   179         //
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   237  2          // Function Control
   238  2          CAN_HWOBJ[no].MOFCRH = 0x0801;
   239  2          CAN_HWOBJ[no].MOFCRL = 0x0000;
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 5   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 5   
 
   240  2      
   241  2        }
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   299  1        if(CAN_NCR0 & 0x01)
   300  1          return;
   301  1      
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 6   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 6   
 
   302  1        CAN_HWOBJ[no].MOCTRH = 0x0720;  // set TXRQ,TXEN0,TXEN1,MSGVAL
   303  1      #else
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   361         void can_sload(u8 no,u8 *buf)
   362         {
   363  1        CAN_HWOBJ[no].MOCTRH = 0x0008;       // set NEWDAT
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 7   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 7   
 
   364  1        fmemcpy((u8 *)CAN_HWOBJ[no].DATA,buf,8);
   365  1        CAN_HWOBJ[no].MOCTRH = 0x0020;       // set MSGVAL
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   422  2        }
   423  1      }
   424         
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 8   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 8   
 
   425         ////////////////////////////////////////////////////////////////////////////////
   426         //
@@ -510,7 +510,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   484  1        if (!(nodeinfo & 0x0007))               // if LEC
   485  1          return;
   486  1          
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 9   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 9   
 
   487  1        switch (nodeinfo & 0x0007)       // LEC0 (Last Error Code0)
   488  1        {
@@ -574,7 +574,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   546  1      }
   547         
   548         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 10  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 10  
 
   549         //
   550         ////////////////////////////////////////////////////////////////////////////////
@@ -619,7 +619,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   589  1        return 1;
   590  1      }
   591         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 11  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 11  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -683,7 +683,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0080 F6F41A02      MOV       021AH,R4
                                            ; SOURCE LINE # 97
 0084 F6F41802      MOV       0218H,R4
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 12  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 12  
 
                                            ; SOURCE LINE # 102
 0088 E005          MOV       R5,#00H
@@ -747,7 +747,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 134
 00EE         ?C0014:
 00EE D7002000      EXTS      #020H,#01H
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 13  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 13  
 
 00F2 F2F4C401      MOV       R4,01C4H
 00F6 8AF4FA80      JB        R4.8,?C0014
@@ -811,7 +811,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 154
 017A         ?C0023:
                                            ; SOURCE LINE # 157
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 14  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 14  
 
 017A E08C          MOV       R12,#08H
 017C D4B00200      MOV       R11,[R0+#02H] ; buf+2
@@ -875,7 +875,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0204 FCFE          POP       R14
 0206 FCFD          POP       R13
 0208 DB00          RETS      
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 15  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 15  
 
              ; FUNCTION can_tx (END    RMASK = @0x7FFF)
 
@@ -939,7 +939,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 026C F048          MOV       R4,R8
 026E C084          MOVBZ     R4,RL4
 0270 5C54          SHL       R4,#05H
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 16  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 16  
 
 0272 D7408000      EXTP      #080H,#01H
 0276 C4141A10      MOV       [R4+#POF(0101AH)],R1
@@ -1003,7 +1003,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 02EE 5C54          SHL       R4,#05H
 02F0 D7408000      EXTP      #080H,#01H
 02F4 C4540A10      MOV       [R4+#POF(0100AH)],R5
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 17  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 17  
 
                                            ; SOURCE LINE # 230
 02F8 F048          MOV       R4,R8
@@ -1067,7 +1067,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0374 C4540010      MOV       [R4+#POF(01000H)],R5
                                            ; SOURCE LINE # 248
 0378         ?C0035:
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 18  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 18  
 
                                            ; SOURCE LINE # 250
 0378 DB00          RETS      
@@ -1131,7 +1131,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 271
 03F4 D7508000      EXTP      #080H,#02H
 03F8 C48B1A10      MOV       [R11+#POF(0101AH)],R8
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 19  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 19  
 
                                            ; SOURCE LINE # 272
 03FC C4EB1810      MOV       [R11+#POF(01018H)],R14
@@ -1195,7 +1195,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0464 5C54          SHL       R4,#05H
 0466 D7408000      EXTP      #080H,#01H
 046A C4541E10      MOV       [R4+#POF(0101EH)],R5
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 20  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 20  
 
                                            ; SOURCE LINE # 326
 046E         ?C0039:
@@ -1259,7 +1259,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 04B8 D4441C10      MOV       R4,[R4+#POF(0101CH)]
 04BC 9AF40280      JNB       R4.8,?C0044
 04C0 E118          MOVB      RL4,#01H
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 21  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 21  
 
 04C2 0D01          JMPR      cc_UC,?C0045
 04C4         ?C0044:
@@ -1323,7 +1323,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 052E ECF6          PUSH      R6
 0530 ECF7          PUSH      R7
 0532 ECF8          PUSH      R8
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 22  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 22  
 
 0534 ECF9          PUSH      R9
 0536 ECFA          PUSH      R10
@@ -1387,7 +1387,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 407
 05AA F04D          MOV       R4,R13
 05AC C084          MOVBZ     R4,RL4
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 23  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 23  
 
 05AE 5C54          SHL       R4,#05H
 05B0 D7408000      EXTP      #080H,#01H
@@ -1451,7 +1451,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 062E 5C54          SHL       R4,#05H
 0630 D7408000      EXTP      #080H,#01H
 0634 C4541C10      MOV       [R4+#POF(0101CH)],R5
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 24  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 24  
 
                                            ; SOURCE LINE # 417
 0638         ?C0052:
@@ -1515,7 +1515,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 06A6 ECF5          PUSH      R5
                                            ; SOURCE LINE # 429
                                            ; SOURCE LINE # 432
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 25  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 25  
 
 06A8 D7002000      EXTS      #020H,#01H
 06AC F2F50402      MOV       R5,0204H
@@ -1579,7 +1579,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 070E 6867          AND       R6,#07H
 0710 2D07          JMPR      cc_Z,?C0065
                                            ; SOURCE LINE # 485
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 26  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 26  
 
 0712         ?C0064:
                                            ; SOURCE LINE # 487
@@ -1643,7 +1643,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 567
 0754 E108          MOVB      RL4,#00H
                                            ; SOURCE LINE # 568
-C166 COMPILER V7.57.0, XC2K_CAN                                                            02/15/2020 01:24:48 PAGE 27  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 27  
 
 0756         ?C0077:
 0756 DB00          RETS      

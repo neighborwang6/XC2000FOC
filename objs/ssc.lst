@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, SSC                                                                 02/15/2020 01:24:48 PAGE 1   
+C166 COMPILER V7.57.0, SSC                                                                 12/14/2020 10:56:36 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE SSC
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ssc.c MODV2 LARGE BR
                 
                 U0C0_CCR       =  0xC001;
               
-C166 COMPILER V7.57.0, SSC                                                                 02/15/2020 01:24:48 PAGE 2   
+C166 COMPILER V7.57.0, SSC                                                                 12/14/2020 10:56:36 PAGE 2   
 
               #endif
    55  1      }
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ssc.c MODV2 LARGE BR
   113  1        U0C1_SCTRL     =  0x0103;
   114  1        // Frame & Word Length
   115  1        U0C1_SCTRH     =  0x0707;
-C166 COMPILER V7.57.0, SSC                                                                 02/15/2020 01:24:48 PAGE 3   
+C166 COMPILER V7.57.0, SSC                                                                 12/14/2020 10:56:36 PAGE 3   
 
   116  1      
   117  1        // Transmission Control 
@@ -168,7 +168,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\ssc.c MODV2 LARGE BR
   153         /////////////////////////////////////////////////////////
   154         
   155         
-C166 COMPILER V7.57.0, SSC                                                                 02/15/2020 01:24:48 PAGE 4   
+C166 COMPILER V7.57.0, SSC                                                                 12/14/2020 10:56:36 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -232,7 +232,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0048 E6F40880      MOV       R4,#08008H
 004C D7002000      EXTS      #020H,#01H
 0050 F6F41E42      MOV       0421EH,R4
-C166 COMPILER V7.57.0, SSC                                                                 02/15/2020 01:24:48 PAGE 5   
+C166 COMPILER V7.57.0, SSC                                                                 12/14/2020 10:56:36 PAGE 5   
 
                                            ; SOURCE LINE # 103
 0054 E004          MOV       R4,#00H
@@ -296,7 +296,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 138
 00F4 DB00          RETS      
              ; FUNCTION spi_eeprom_setting (END    RMASK = @0x4010)
-C166 COMPILER V7.57.0, SSC                                                                 02/15/2020 01:24:48 PAGE 6   
+C166 COMPILER V7.57.0, SSC                                                                 12/14/2020 10:56:36 PAGE 6   
 
 
              ; FUNCTION spi_eeprom_trans (BEGIN  RMASK = @0x40D0)
@@ -360,7 +360,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 152
 0174 DB00          RETS      
              ; FUNCTION spi_eeprom_trans (END    RMASK = @0x40D0)
-C166 COMPILER V7.57.0, SSC                                                                 02/15/2020 01:24:48 PAGE 7   
+C166 COMPILER V7.57.0, SSC                                                                 12/14/2020 10:56:36 PAGE 7   
 
 
 

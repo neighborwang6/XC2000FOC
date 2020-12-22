@@ -9,6 +9,7 @@
 ".\objs\Lib_Hw_Driver_Version.obj",
 ".\objs\xc2k_can.obj",
 ".\objs\ccu2_ccu6.obj",
+".\objs\tle9180d_31qk.obj",
 ".\objs\can_test.obj",
 ".\objs\Lib_EOL_Diag_Version.obj",
 ".\objs\diag_hw.obj",

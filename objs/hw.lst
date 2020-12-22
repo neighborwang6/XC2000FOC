@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 1   
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE HW
@@ -17,522 +17,527 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\hw.c MODV2 LARGE BRO
     6         #include "xc2k_can.h"
     7         #include "adc.h"
     8         #include "ccu2_ccu6.h"
-    9         
-   10         /////////////////////////////////////////////////////////
-   11         
-   12         u8 volatile g_overflow_5ms_ub=0;
-   13         u8 volatile g_overflow_10ms_ub=0;
-   14         
-   15         void mcu_unlock(void)
-   16         {
-   17  1          SCU_SLC = 0xAAAA;                   // command 0
-   18  1          SCU_SLC = 0x5554;                   // command 1
-   19  1          SCU_SLC = 0x96FF;                   // command 2
-   20  1          SCU_SLC = 0x0000;                   // command 3
-   21  1      }
-   22         void mcu_lock(void)
-   23         {
-   24  1          SCU_SLC = 0xAAAA;                   // command 0
-   25  1          SCU_SLC = 0x5554;                   // command 1
-   26  1          SCU_SLC = 0x96FF;                   // command 2
-   27  1          SCU_SLC = 0x1800;                   // command 3;
-   28  1          SCU_SLC = 0x8EFF;                   // command 4
-   29  1      }
-   30         /////////////////////////////////////////////////////////
-   31         u16 hw_init(void)
-   32         {
-   33  1        u16 ret=0;
-   34  1      
-   35  1        PSW_IEN=0;
-   36  1        mcu_unlock();
-   37  1        
-   38  1        SCS_InitTimer();
-   39  1        SCS_GoFromBaseToNormalMode();
-   40  1        SCS_RestoreTimer();
-   41  1      
-   42  1        gpio_setting();
-   43  1        pll_setting();
-   44  1        ad_setting();
-   45  1        spi_setting();
-   46  1        capcom_setting();
-   47  1        rtc_setting();
-   48  1        timer_setting();
-   49  1        can_setting();
-   50  1        ad_setting();  //Why we need init the AD module twice?
-   51  1        cc2_setting();
-   52  1        cc6_setting();
-   53  1        
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 2   
+    9         #include "tle9180d_31qk.h"
+   10         
+   11         /////////////////////////////////////////////////////////
+   12         
+   13         u8 volatile g_overflow_5ms_ub=0;
+   14         u8 volatile g_overflow_10ms_ub=0;
+   15         
+   16         void mcu_unlock(void)
+   17         {
+   18  1          SCU_SLC = 0xAAAA;                   // command 0
+   19  1          SCU_SLC = 0x5554;                   // command 1
+   20  1          SCU_SLC = 0x96FF;                   // command 2
+   21  1          SCU_SLC = 0x0000;                   // command 3
+   22  1      }
+   23         void mcu_lock(void)
+   24         {
+   25  1          SCU_SLC = 0xAAAA;                   // command 0
+   26  1          SCU_SLC = 0x5554;                   // command 1
+   27  1          SCU_SLC = 0x96FF;                   // command 2
+   28  1          SCU_SLC = 0x1800;                   // command 3;
+   29  1          SCU_SLC = 0x8EFF;                   // command 4
+   30  1      }
+   31         /////////////////////////////////////////////////////////
+   32         u16 hw_init(void)
+   33         {
+   34  1        u16 ret=0;
+   35  1      
+   36  1        PSW_IEN=0;
+   37  1        mcu_unlock();
+   38  1        
+   39  1        SCS_InitTimer();
+   40  1        SCS_GoFromBaseToNormalMode();
+   41  1        SCS_RestoreTimer();
+   42  1      
+   43  1        gpio_setting();
+   44  1        pll_setting();
+   45  1        ad_setting();
+   46  1        spi_setting();
+   47  1        capcom_setting();
+   48  1        rtc_setting();
+   49  1        timer_setting();
+   50  1        can_setting();
+   51  1        ad_setting();  //Why we need init the AD module twice?
+   52  1        cc2_setting();
+   53  1        cc6_setting();
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 2   
 
-   54  1        mcu_lock();
-   55  1        PSW_IEN=1;
-   56  1        
-   57  1        CAPCOM_ON();
-   58  1      
-   59  1        return ret;
-   60  1      }
-   61         
-   62         /////////////////////////////////////////////////////////
-   63         void gpio_setting(void)
-   64         {
-   65  1        P7_IOCR02      =  0x0080;  // VCC5B_ENAX
-   66  1        P7_IOCR00      =  0x0080;  // VCC5_HOLDX
-   67  1        P7_IOCR03      =  0x0080;  // AD2S_RESET
-   68  1        P7_IOCR01      =  0x0002;  // ERR1 (pull up)
-   69  1        P7_IOCR04      =  0x0080;  // U1_EN
-   70  1        P6_IOCR00      =  0x0000;  // ISN1X1
-   71  1        P6_IOCR01      =  0x0000;  // ISP1X1
-   72  1        P6_IOCR02      =  0x0080;  // AD2S_DIR
-   73  1        P2_IOCR12      =  0x0080;  // AD2S_WR
-   74  1        P2_IOCR11      =  0x0080;  // AD2S_RD
-   75  1        
-   76  1        P2_IOCR01      =  0x0090;  // TXCAN0
-   77  1        P2_IOCR00      =  0x0000;  // RXCAN0
-   78  1        P2_IOCR02      =  0x0080;  // SCDL_DIS
-   79  1        P4_IOCR00      =  0x0080;  // AD2S_A0A1
-   80  1        
-   81  1        P0_IOCR00      =  0x00B0;  // IH1
-   82  1        P0_IOCR01      =  0x00B0;  // IH2
-   83  1        P0_IOCR02      =  0x00B0;  // IH3
-   84  1        P0_IOCR03      =  0x00B0;  // IL1
-   85  1        P0_IOCR04      =  0x00B0;  // IL2
-   86  1        P0_IOCR05      =  0x00B0;  // IL3
-   87  1      
-   88  1        P2_IOCR07      =  0x0000;  // CC2_CC20
-   89  1        P2_IOCR08      =  0x0000;  // CC2_CC21
-   90  1        P2_IOCR09      =  0x0000;  // CC2_CC22
-   91  1        //P2_IOCR10      =  0x0000;  // CC2_CC23
-   92  1        P2_IOCR10      =  0x0010; //  ///  P2.10 is used as general input - pull-down device is assigned
-   93  1      
-   94  1        P4_IOCR02      =  0x0000;  // CC2_CC26
-   95  1        P4_IOCR03      =  0x0000;  // CC2_CC27
+   54  1        
+   55  1        tle9180d_31qk_init();
+   56  1      
+   57  1        mcu_lock();
+   58  1        PSW_IEN=1;
+   59  1        
+   60  1        CAPCOM_ON();
+   61  1      
+   62  1        return ret;
+   63  1      }
+   64         
+   65         /////////////////////////////////////////////////////////
+   66         void gpio_setting(void)
+   67         {
+   68  1        P7_IOCR02      =  0x0080;  // VCC5B_ENAX
+   69  1        P7_IOCR00      =  0x0080;  // VCC5_HOLDX
+   70  1        P7_IOCR03      =  0x0080;  // AD2S_RESET
+   71  1        P7_IOCR01      =  0x0002;  // ERR1 (pull up)
+   72  1        P7_IOCR04      =  0x0080;  // U1_EN
+   73  1        P6_IOCR00      =  0x0000;  // ISN1X1
+   74  1        P6_IOCR01      =  0x0000;  // ISP1X1
+   75  1        P6_IOCR02      =  0x0080;  // AD2S_DIR
+   76  1        P2_IOCR12      =  0x0080;  // AD2S_WR
+   77  1        P2_IOCR11      =  0x0080;  // AD2S_RD
+   78  1        
+   79  1        P2_IOCR01      =  0x0090;  // TXCAN0
+   80  1        P2_IOCR00      =  0x0000;  // RXCAN0
+   81  1        P2_IOCR02      =  0x0080;  // SCDL_DIS
+   82  1        P4_IOCR00      =  0x0080;  // AD2S_A0A1
+   83  1        
+   84  1        P0_IOCR00      =  0x00B0;  // IH1
+   85  1        P0_IOCR01      =  0x00B0;  // IH2
+   86  1        P0_IOCR02      =  0x00B0;  // IH3
+   87  1        P0_IOCR03      =  0x00B0;  // IL1
+   88  1        P0_IOCR04      =  0x00B0;  // IL2
+   89  1        P0_IOCR05      =  0x00B0;  // IL3
+   90  1      
+   91  1        P2_IOCR07      =  0x0000;  // CC2_CC20
+   92  1        P2_IOCR08      =  0x0000;  // CC2_CC21
+   93  1        P2_IOCR09      =  0x0000;  // CC2_CC22
+   94  1        //P2_IOCR10      =  0x0000;  // CC2_CC23
+   95  1        P2_IOCR10      =  0x0010; //  ///  P2.10 is used as general input - pull-down device is assigned
    96  1      
-   97  1        P2_IOCR13      =  0x0080;  // AD2S_CS
-   98  1        
-   99  1        P10_IOCR04     =  0x0080;  // Q1_G_CTRLX
-  100  1      
-  101  1        P10_IOCR05     =  0x0080;  // EE_SCK
-  102  1        P10_IOCR08     =  0x0080;  // EE_CS
-  103  1        P10_IOCR14     =  0x0000;  // EE_SDO
-  104  1        P10_IOCR15     =  0x0080;  // EE_SDI
-  105  1      
-  106  1        P10_IOCR07     =  0x0080;  // EN_UVWX
-  107  1        P10_IOCR06     =  0x0000;  // DIS_UVW_X (Monitor the control of MCU2)
-  108  1        P0_IOCR06      =  0x0080;  // AD2S_SAMPLE
-  109  1        P0_IOCR07      =  0x0080;  // ENA
-  110  1        
-  111  1        P5_DIDIS       =  0xFFFF;
-  112  1        P15_DIDIS      =  0xCF;  // P15.5: ERR2 (digital input enable)
+   97  1        P4_IOCR02      =  0x0000;  // CC2_CC26
+   98  1        P4_IOCR03      =  0x0000;  // CC2_CC27
+   99  1      
+  100  1        P2_IOCR13      =  0x0080;  // AD2S_CS
+  101  1        
+  102  1        P10_IOCR04     =  0x0080;  // Q1_G_CTRLX
+  103  1      
+  104  1        P10_IOCR05     =  0x0080;  // EE_SCK
+  105  1        P10_IOCR08     =  0x0080;  // EE_CS
+  106  1        P10_IOCR14     =  0x0000;  // EE_SDO
+  107  1        P10_IOCR15     =  0x0080;  // EE_SDI
+  108  1      
+  109  1        P10_IOCR07     =  0x0080;  // EN_UVWX
+  110  1        P10_IOCR06     =  0x0000;  // DIS_UVW_X (Monitor the control of MCU2)
+  111  1        P0_IOCR06      =  0x0080;  // AD2S_SAMPLE
+  112  1        P0_IOCR07      =  0x0080;  // ENA
   113  1        
-  114  1        P2_IOCR03      =  0x0080;  // Debug only  
-  115  1      }
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 3   
+  114  1        P5_DIDIS       =  0xFFFF;
+  115  1        P15_DIDIS      =  0xCF;  // P15.5: ERR2 (digital input enable)
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 3   
 
-  116         
-  117         /////////////////////////////////////////////////////////
-  118         void pll_setting(void)
-  119         {
-  120  1        SCU_EXTCON     =  0;  // External Clock Control Register
-  121  1      }
-  122         
-  123         /////////////////////////////////////////////////////////
-  124         void capcom_setting(void)
-  125         {
-  126  1      }
-  127         
-  128         /////////////////////////////////////////////////////////
-  129         // Use instrument to get an acceptable 1us tick
-  130         void delay_us(u16 tm)
-  131         {
-  132  1        u16 idx,i;
-  133  1        for(idx=0;idx<tm;idx++)
-  134  1          for(i=0;i<37;i++);   // 80MHz,Large Memory Mode, XC2000 core
-  135  1      }
-  136         
-  137         /////////////////////////////////////////////////////////
-  138         // Not Accurate Delay
-  139         void delay_ns(u8 tm)
-  140         {
-  141  1        u16 idx,i;
-  142  1        for(idx=0;idx<tm;idx++)
-  143  1          for(i=0;i<2;i++);   // 80MHz,Large Memory Mode, XC2000 core
-  144  1      }
-  145         /////////////////////////////////////////////////////////
-  146         // Not Accurate Delay
-  147         void delay_msx(u16 tm)
-  148         {
-  149  1         u16 idx;
-  150  1      
-  151  1         for(idx=0;idx<tm;idx++)
-  152  1            delay_us(1000);
-  153  1      }
-  154         
-  155         /////////////////////////////////////////////////////////
-  156         void delay_ms(u16 tm)
-  157         {
-  158  1         WAIT_EVENT_READY((0),tm);
-  159  1      /*
-  160  1         u16 tm0,tm1;
-  161  1      
-  162  1         tm0=g_ms_uw;
-  163  1         while(1)
-  164  1         {
-  165  1            tm1=g_ms_uw-tm0;
-  166  1            _srvwdt_(); 
-  167  1            if(tm1>=tm)
-  168  1             break;
-  169  1         }
-  170  1      */
-  171  1      }
-  172         /////////////////////////////////////////////////////////
-  173         void keep_alive(u8 on_off)
-  174         {
-  175  1        if(on_off)
-  176  1        {
-  177  2          SET_VCC5_HOLD(0);
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 4   
+  116  1        
+  117  1        P2_IOCR03      =  0x0080;  // Debug only  
+  118  1      }
+  119         
+  120         /////////////////////////////////////////////////////////
+  121         void pll_setting(void)
+  122         {
+  123  1        SCU_EXTCON     =  0;  // External Clock Control Register
+  124  1      }
+  125         
+  126         /////////////////////////////////////////////////////////
+  127         void capcom_setting(void)
+  128         {
+  129  1      }
+  130         
+  131         /////////////////////////////////////////////////////////
+  132         // Use instrument to get an acceptable 1us tick
+  133         void delay_us(u16 tm)
+  134         {
+  135  1        u16 idx,i;
+  136  1        for(idx=0;idx<tm;idx++)
+  137  1          for(i=0;i<37;i++);   // 80MHz,Large Memory Mode, XC2000 core
+  138  1      }
+  139         
+  140         /////////////////////////////////////////////////////////
+  141         // Not Accurate Delay
+  142         void delay_ns(u8 tm)
+  143         {
+  144  1        u16 idx,i;
+  145  1        for(idx=0;idx<tm;idx++)
+  146  1          for(i=0;i<2;i++);   // 80MHz,Large Memory Mode, XC2000 core
+  147  1      }
+  148         /////////////////////////////////////////////////////////
+  149         // Not Accurate Delay
+  150         void delay_msx(u16 tm)
+  151         {
+  152  1         u16 idx;
+  153  1      
+  154  1         for(idx=0;idx<tm;idx++)
+  155  1            delay_us(1000);
+  156  1      }
+  157         
+  158         /////////////////////////////////////////////////////////
+  159         void delay_ms(u16 tm)
+  160         {
+  161  1         WAIT_EVENT_READY((0),tm);
+  162  1      /*
+  163  1         u16 tm0,tm1;
+  164  1      
+  165  1         tm0=g_ms_uw;
+  166  1         while(1)
+  167  1         {
+  168  1            tm1=g_ms_uw-tm0;
+  169  1            _srvwdt_(); 
+  170  1            if(tm1>=tm)
+  171  1             break;
+  172  1         }
+  173  1      */
+  174  1      }
+  175         /////////////////////////////////////////////////////////
+  176         void keep_alive(u8 on_off)
+  177         {
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 4   
 
-  178  2        }
-  179  1        else
-  180  1        {
-  181  2          SET_VCC5_HOLD(1);
-  182  2        }
-  183  1      }
-  184         /////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 5   
+  178  1        if(on_off)
+  179  1        {
+  180  2          SET_VCC5_HOLD(0);
+  181  2        }
+  182  1        else
+  183  1        {
+  184  2          SET_VCC5_HOLD(1);
+  185  2        }
+  186  1      }
+  187         /////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
 
              ; FUNCTION mcu_unlock (BEGIN  RMASK = @0x8000)
-                                           ; SOURCE LINE # 15
-                                           ; SOURCE LINE # 17
+                                           ; SOURCE LINE # 16
+                                           ; SOURCE LINE # 18
 0000 D1B0          EXTR      #04H
 0002 E660AAAA      MOV       SCU_SLC,#0AAAAH
-                                           ; SOURCE LINE # 18
-0006 E6605455      MOV       SCU_SLC,#05554H
                                            ; SOURCE LINE # 19
-000A E660FF96      MOV       SCU_SLC,#096FFH
+0006 E6605455      MOV       SCU_SLC,#05554H
                                            ; SOURCE LINE # 20
-000E E6600000      MOV       SCU_SLC,#00H
+000A E660FF96      MOV       SCU_SLC,#096FFH
                                            ; SOURCE LINE # 21
+000E E6600000      MOV       SCU_SLC,#00H
+                                           ; SOURCE LINE # 22
 0012 DB00          RETS      
              ; FUNCTION mcu_unlock (END    RMASK = @0x8000)
 
              ; FUNCTION mcu_lock (BEGIN  RMASK = @0x8000)
-                                           ; SOURCE LINE # 22
-                                           ; SOURCE LINE # 24
+                                           ; SOURCE LINE # 23
+                                           ; SOURCE LINE # 25
 0014 D1B0          EXTR      #04H
 0016 E660AAAA      MOV       SCU_SLC,#0AAAAH
-                                           ; SOURCE LINE # 25
-001A E6605455      MOV       SCU_SLC,#05554H
                                            ; SOURCE LINE # 26
-001E E660FF96      MOV       SCU_SLC,#096FFH
+001A E6605455      MOV       SCU_SLC,#05554H
                                            ; SOURCE LINE # 27
-0022 E6600018      MOV       SCU_SLC,#01800H
+001E E660FF96      MOV       SCU_SLC,#096FFH
                                            ; SOURCE LINE # 28
+0022 E6600018      MOV       SCU_SLC,#01800H
+                                           ; SOURCE LINE # 29
 0026 D180          EXTR      #01H
 0028 E660FF8E      MOV       SCU_SLC,#08EFFH
-                                           ; SOURCE LINE # 29
+                                           ; SOURCE LINE # 30
 002C DB00          RETS      
              ; FUNCTION mcu_lock (END    RMASK = @0x8000)
 
              ; FUNCTION hw_init (BEGIN  RMASK = @0x7FFF)
-                                           ; SOURCE LINE # 31
                                            ; SOURCE LINE # 32
                                            ; SOURCE LINE # 33
-                                           ; SOURCE LINE # 35
-002E BE88          BCLR      PSW_IEN
+                                           ; SOURCE LINE # 34
                                            ; SOURCE LINE # 36
+002E BE88          BCLR      PSW_IEN
+                                           ; SOURCE LINE # 37
 0030 DA000000 R    CALLS     SEG (mcu_unlock),mcu_unlock
-                                           ; SOURCE LINE # 38
-0034 DA000000 E    CALLS     SEG (SCS_InitTimer),SCS_InitTimer
                                            ; SOURCE LINE # 39
-0038 DA000000 E    CALLS     SEG (SCS_GoFromBaseToNormalMode),SCS_GoFromBaseToNormalMode
+0034 DA000000 E    CALLS     SEG (SCS_InitTimer),SCS_InitTimer
                                            ; SOURCE LINE # 40
+0038 DA000000 E    CALLS     SEG (SCS_GoFromBaseToNormalMode),SCS_GoFromBaseToNormalMode
+                                           ; SOURCE LINE # 41
 003C DA000000 E    CALLS     SEG (SCS_RestoreTimer),SCS_RestoreTimer
-                                           ; SOURCE LINE # 42
-0040 DA000000 R    CALLS     SEG (gpio_setting),gpio_setting
                                            ; SOURCE LINE # 43
-0044 DA000000 R    CALLS     SEG (pll_setting),pll_setting
+0040 DA000000 R    CALLS     SEG (gpio_setting),gpio_setting
                                            ; SOURCE LINE # 44
-0048 DA000000 E    CALLS     SEG (ad_setting),ad_setting
+0044 DA000000 R    CALLS     SEG (pll_setting),pll_setting
                                            ; SOURCE LINE # 45
-004C DA000000 E    CALLS     SEG (spi_setting),spi_setting
+0048 DA000000 E    CALLS     SEG (ad_setting),ad_setting
                                            ; SOURCE LINE # 46
-0050 DA000000 R    CALLS     SEG (capcom_setting),capcom_setting
+004C DA000000 E    CALLS     SEG (spi_setting),spi_setting
                                            ; SOURCE LINE # 47
-0054 DA000000 E    CALLS     SEG (rtc_setting),rtc_setting
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 6   
-
+0050 DA000000 R    CALLS     SEG (capcom_setting),capcom_setting
                                            ; SOURCE LINE # 48
-0058 DA000000 E    CALLS     SEG (timer_setting),timer_setting
+0054 DA000000 E    CALLS     SEG (rtc_setting),rtc_setting
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 6   
+
                                            ; SOURCE LINE # 49
-005C DA000000 E    CALLS     SEG (can_setting),can_setting
+0058 DA000000 E    CALLS     SEG (timer_setting),timer_setting
                                            ; SOURCE LINE # 50
-0060 DA000000 E    CALLS     SEG (ad_setting),ad_setting
+005C DA000000 E    CALLS     SEG (can_setting),can_setting
                                            ; SOURCE LINE # 51
-0064 DA000000 E    CALLS     SEG (cc2_setting),cc2_setting
+0060 DA000000 E    CALLS     SEG (ad_setting),ad_setting
                                            ; SOURCE LINE # 52
+0064 DA000000 E    CALLS     SEG (cc2_setting),cc2_setting
+                                           ; SOURCE LINE # 53
 0068 DA000000 E    CALLS     SEG (cc6_setting),cc6_setting
-                                           ; SOURCE LINE # 54
-006C DA000000 R    CALLS     SEG (mcu_lock),mcu_lock
                                            ; SOURCE LINE # 55
-0070 BF88          BSET      PSW_IEN
+006C DA000000 E    CALLS     SEG (tle9180d_31qk_init),tle9180d_31qk_init
                                            ; SOURCE LINE # 57
-0072 D1B0          EXTR      #04H
-0074 6FE0          BSET      CC2_CC16IC_IE
-0076 6FE1          BSET      CC2_CC17IC_IE
-0078 6FE2          BSET      CC2_CC18IC_IE
-007A 6FE3          BSET      CC2_CC19IC_IE
-                                           ; SOURCE LINE # 59
-007C E004          MOV       R4,#00H
+0070 DA000000 R    CALLS     SEG (mcu_lock),mcu_lock
+                                           ; SOURCE LINE # 58
+0074 BF88          BSET      PSW_IEN
                                            ; SOURCE LINE # 60
-007E DB00          RETS      
+0076 D1B0          EXTR      #04H
+0078 6FE0          BSET      CC2_CC16IC_IE
+007A 6FE1          BSET      CC2_CC17IC_IE
+007C 6FE2          BSET      CC2_CC18IC_IE
+007E 6FE3          BSET      CC2_CC19IC_IE
+                                           ; SOURCE LINE # 62
+0080 E004          MOV       R4,#00H
+                                           ; SOURCE LINE # 63
+0082 DB00          RETS      
              ; FUNCTION hw_init (END    RMASK = @0x7FFF)
 
              ; FUNCTION gpio_setting (BEGIN  RMASK = @0x4010)
-                                           ; SOURCE LINE # 63
-                                           ; SOURCE LINE # 65
-0080 E6F48000      MOV       R4,#080H
-0084 F6F4E4E8      MOV       0E8E4H,R4
                                            ; SOURCE LINE # 66
-0088 F6F4E0E8      MOV       0E8E0H,R4
-                                           ; SOURCE LINE # 67
-008C F6F4E6E8      MOV       0E8E6H,R4
                                            ; SOURCE LINE # 68
-0090 E024          MOV       R4,#02H
-0092 F6F4E2E8      MOV       0E8E2H,R4
+0084 E6F48000      MOV       R4,#080H
+0088 F6F4E4E8      MOV       0E8E4H,R4
                                            ; SOURCE LINE # 69
-0096 E6F48000      MOV       R4,#080H
-009A F6F4E8E8      MOV       0E8E8H,R4
+008C F6F4E0E8      MOV       0E8E0H,R4
                                            ; SOURCE LINE # 70
-009E E004          MOV       R4,#00H
-00A0 F6F4C0E8      MOV       0E8C0H,R4
+0090 F6F4E6E8      MOV       0E8E6H,R4
                                            ; SOURCE LINE # 71
-00A4 F6F4C2E8      MOV       0E8C2H,R4
+0094 E024          MOV       R4,#02H
+0096 F6F4E2E8      MOV       0E8E2H,R4
                                            ; SOURCE LINE # 72
-00A8 E6F48000      MOV       R4,#080H
-00AC F6F4C4E8      MOV       0E8C4H,R4
+009A E6F48000      MOV       R4,#080H
+009E F6F4E8E8      MOV       0E8E8H,R4
                                            ; SOURCE LINE # 73
-00B0 F6F458E8      MOV       0E858H,R4
+00A2 E004          MOV       R4,#00H
+00A4 F6F4C0E8      MOV       0E8C0H,R4
                                            ; SOURCE LINE # 74
-00B4 F6F456E8      MOV       0E856H,R4
+00A8 F6F4C2E8      MOV       0E8C2H,R4
+                                           ; SOURCE LINE # 75
+00AC E6F48000      MOV       R4,#080H
+00B0 F6F4C4E8      MOV       0E8C4H,R4
                                            ; SOURCE LINE # 76
-00B8 E6F49000      MOV       R4,#090H
-00BC F6F442E8      MOV       0E842H,R4
+00B4 F6F458E8      MOV       0E858H,R4
                                            ; SOURCE LINE # 77
-00C0 E004          MOV       R4,#00H
-00C2 F6F440E8      MOV       0E840H,R4
-                                           ; SOURCE LINE # 78
-00C6 E6F48000      MOV       R4,#080H
-00CA F6F444E8      MOV       0E844H,R4
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 7   
-
+00B8 F6F456E8      MOV       0E856H,R4
                                            ; SOURCE LINE # 79
-00CE F6F480E8      MOV       0E880H,R4
+00BC E6F49000      MOV       R4,#090H
+00C0 F6F442E8      MOV       0E842H,R4
+                                           ; SOURCE LINE # 80
+00C4 E004          MOV       R4,#00H
+00C6 F6F440E8      MOV       0E840H,R4
                                            ; SOURCE LINE # 81
-00D2 E6F4B000      MOV       R4,#0B0H
-00D6 F6F400E8      MOV       0E800H,R4
-                                           ; SOURCE LINE # 82
-00DA F6F402E8      MOV       0E802H,R4
-                                           ; SOURCE LINE # 83
-00DE F6F404E8      MOV       0E804H,R4
-                                           ; SOURCE LINE # 84
-00E2 F6F406E8      MOV       0E806H,R4
-                                           ; SOURCE LINE # 85
-00E6 F6F408E8      MOV       0E808H,R4
-                                           ; SOURCE LINE # 86
-00EA F6F40AE8      MOV       0E80AH,R4
-                                           ; SOURCE LINE # 88
-00EE E004          MOV       R4,#00H
-00F0 F6F44EE8      MOV       0E84EH,R4
-                                           ; SOURCE LINE # 89
-00F4 F6F450E8      MOV       0E850H,R4
-                                           ; SOURCE LINE # 90
-00F8 F6F452E8      MOV       0E852H,R4
-                                           ; SOURCE LINE # 92
-00FC E6F41000      MOV       R4,#010H
-0100 F6F454E8      MOV       0E854H,R4
-                                           ; SOURCE LINE # 94
-0104 E004          MOV       R4,#00H
-0106 F6F484E8      MOV       0E884H,R4
-                                           ; SOURCE LINE # 95
-010A F6F486E8      MOV       0E886H,R4
-                                           ; SOURCE LINE # 97
-010E E6F48000      MOV       R4,#080H
-0112 F6F45AE8      MOV       0E85AH,R4
-                                           ; SOURCE LINE # 99
-0116 F6F448E9      MOV       0E948H,R4
-                                           ; SOURCE LINE # 101
-011A F6F44AE9      MOV       0E94AH,R4
-                                           ; SOURCE LINE # 102
-011E F6F450E9      MOV       0E950H,R4
-                                           ; SOURCE LINE # 103
-0122 E004          MOV       R4,#00H
-0124 F6F45CE9      MOV       0E95CH,R4
-                                           ; SOURCE LINE # 104
-0128 E6F48000      MOV       R4,#080H
-012C F6F45EE9      MOV       0E95EH,R4
-                                           ; SOURCE LINE # 106
-0130 F6F44EE9      MOV       0E94EH,R4
-                                           ; SOURCE LINE # 107
-0134 E004          MOV       R4,#00H
-0136 F6F44CE9      MOV       0E94CH,R4
-                                           ; SOURCE LINE # 108
-013A E6F48000      MOV       R4,#080H
-013E F6F40CE8      MOV       0E80CH,R4
-                                           ; SOURCE LINE # 109
-0142 F6F40EE8      MOV       0E80EH,R4
-                                           ; SOURCE LINE # 111
-0146 E645FFFF      MOV       P5_DIDIS,#0FFFFH
-                                           ; SOURCE LINE # 112
-014A E64FCF00      MOV       P15_DIDIS,#0CFH
-                                           ; SOURCE LINE # 114
-014E F6F446E8      MOV       0E846H,R4
-                                           ; SOURCE LINE # 115
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 8   
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 7   
 
-0152 DB00          RETS      
+00CA E6F48000      MOV       R4,#080H
+00CE F6F444E8      MOV       0E844H,R4
+                                           ; SOURCE LINE # 82
+00D2 F6F480E8      MOV       0E880H,R4
+                                           ; SOURCE LINE # 84
+00D6 E6F4B000      MOV       R4,#0B0H
+00DA F6F400E8      MOV       0E800H,R4
+                                           ; SOURCE LINE # 85
+00DE F6F402E8      MOV       0E802H,R4
+                                           ; SOURCE LINE # 86
+00E2 F6F404E8      MOV       0E804H,R4
+                                           ; SOURCE LINE # 87
+00E6 F6F406E8      MOV       0E806H,R4
+                                           ; SOURCE LINE # 88
+00EA F6F408E8      MOV       0E808H,R4
+                                           ; SOURCE LINE # 89
+00EE F6F40AE8      MOV       0E80AH,R4
+                                           ; SOURCE LINE # 91
+00F2 E004          MOV       R4,#00H
+00F4 F6F44EE8      MOV       0E84EH,R4
+                                           ; SOURCE LINE # 92
+00F8 F6F450E8      MOV       0E850H,R4
+                                           ; SOURCE LINE # 93
+00FC F6F452E8      MOV       0E852H,R4
+                                           ; SOURCE LINE # 95
+0100 E6F41000      MOV       R4,#010H
+0104 F6F454E8      MOV       0E854H,R4
+                                           ; SOURCE LINE # 97
+0108 E004          MOV       R4,#00H
+010A F6F484E8      MOV       0E884H,R4
+                                           ; SOURCE LINE # 98
+010E F6F486E8      MOV       0E886H,R4
+                                           ; SOURCE LINE # 100
+0112 E6F48000      MOV       R4,#080H
+0116 F6F45AE8      MOV       0E85AH,R4
+                                           ; SOURCE LINE # 102
+011A F6F448E9      MOV       0E948H,R4
+                                           ; SOURCE LINE # 104
+011E F6F44AE9      MOV       0E94AH,R4
+                                           ; SOURCE LINE # 105
+0122 F6F450E9      MOV       0E950H,R4
+                                           ; SOURCE LINE # 106
+0126 E004          MOV       R4,#00H
+0128 F6F45CE9      MOV       0E95CH,R4
+                                           ; SOURCE LINE # 107
+012C E6F48000      MOV       R4,#080H
+0130 F6F45EE9      MOV       0E95EH,R4
+                                           ; SOURCE LINE # 109
+0134 F6F44EE9      MOV       0E94EH,R4
+                                           ; SOURCE LINE # 110
+0138 E004          MOV       R4,#00H
+013A F6F44CE9      MOV       0E94CH,R4
+                                           ; SOURCE LINE # 111
+013E E6F48000      MOV       R4,#080H
+0142 F6F40CE8      MOV       0E80CH,R4
+                                           ; SOURCE LINE # 112
+0146 F6F40EE8      MOV       0E80EH,R4
+                                           ; SOURCE LINE # 114
+014A E645FFFF      MOV       P5_DIDIS,#0FFFFH
+                                           ; SOURCE LINE # 115
+014E E64FCF00      MOV       P15_DIDIS,#0CFH
+                                           ; SOURCE LINE # 117
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 8   
+
+0152 F6F446E8      MOV       0E846H,R4
+                                           ; SOURCE LINE # 118
+0156 DB00          RETS      
              ; FUNCTION gpio_setting (END    RMASK = @0x4010)
 
              ; FUNCTION pll_setting (BEGIN  RMASK = @0x8000)
-                                           ; SOURCE LINE # 118
-                                           ; SOURCE LINE # 120
-0154 E6AF0000      MOV       SCU_EXTCON,#00H
                                            ; SOURCE LINE # 121
-0158 DB00          RETS      
+                                           ; SOURCE LINE # 123
+0158 E6AF0000      MOV       SCU_EXTCON,#00H
+                                           ; SOURCE LINE # 124
+015C DB00          RETS      
              ; FUNCTION pll_setting (END    RMASK = @0x8000)
 
              ; FUNCTION capcom_setting (BEGIN  RMASK = @0x8000)
-                                           ; SOURCE LINE # 124
-                                           ; SOURCE LINE # 126
-015A DB00          RETS      
+                                           ; SOURCE LINE # 127
+                                           ; SOURCE LINE # 129
+015E DB00          RETS      
              ; FUNCTION capcom_setting (END    RMASK = @0x8000)
 
              ; FUNCTION delay_us (BEGIN  RMASK = @0x4060)
-                                           ; SOURCE LINE # 130
-;---- Variable 'tm' assigned to Register 'R8' ----
-                                           ; SOURCE LINE # 131
                                            ; SOURCE LINE # 133
-015C E006          MOV       R6,#00H
-;---- Variable 'idx' assigned to Register 'R6' ----
-015E 0D05          JMPR      cc_UC,?C0004
+;---- Variable 'tm' assigned to Register 'R8' ----
                                            ; SOURCE LINE # 134
-0160         ?C0011:
-0160 E005          MOV       R5,#00H
+                                           ; SOURCE LINE # 136
+0160 E006          MOV       R6,#00H
+;---- Variable 'idx' assigned to Register 'R6' ----
+0162 0D05          JMPR      cc_UC,?C0004
+                                           ; SOURCE LINE # 137
+0164         ?C0011:
+0164 E005          MOV       R5,#00H
 ;---- Variable 'i' assigned to Register 'R5' ----
-0162         ?C0007:
-0162 86F52400      CMPI1     R5,#024H
-0166 8DFD          JMPR      cc_ULT,?C0007
-0168         ?C0008:
-0168 0861          ADD       R6,#01H
-016A         ?C0004:
-016A 4068          CMP       R6,R8
-016C 8DF9          JMPR      cc_ULT,?C0011
-016E         ?C0003:
-                                           ; SOURCE LINE # 135
-016E DB00          RETS      
+0166         ?C0007:
+0166 86F52400      CMPI1     R5,#024H
+016A 8DFD          JMPR      cc_ULT,?C0007
+016C         ?C0008:
+016C 0861          ADD       R6,#01H
+016E         ?C0004:
+016E 4068          CMP       R6,R8
+0170 8DF9          JMPR      cc_ULT,?C0011
+0172         ?C0003:
+                                           ; SOURCE LINE # 138
+0172 DB00          RETS      
              ; FUNCTION delay_us (END    RMASK = @0x4060)
 
              ; FUNCTION delay_ns (BEGIN  RMASK = @0x4070)
-                                           ; SOURCE LINE # 139
-;---- Variable 'tm' assigned to Register 'R8' ----
-                                           ; SOURCE LINE # 140
                                            ; SOURCE LINE # 142
-0170 E006          MOV       R6,#00H
-;---- Variable 'idx' assigned to Register 'R6' ----
-0172 0D04          JMPR      cc_UC,?C0014
+;---- Variable 'tm' assigned to Register 'R8' ----
                                            ; SOURCE LINE # 143
-0174         ?C0021:
-0174 E005          MOV       R5,#00H
+                                           ; SOURCE LINE # 145
+0174 E006          MOV       R6,#00H
+;---- Variable 'idx' assigned to Register 'R6' ----
+0176 0D04          JMPR      cc_UC,?C0014
+                                           ; SOURCE LINE # 146
+0178         ?C0021:
+0178 E005          MOV       R5,#00H
 ;---- Variable 'i' assigned to Register 'R5' ----
-0176         ?C0017:
-0176 8015          CMPI1     R5,#01H
-0178 8DFE          JMPR      cc_ULT,?C0017
-017A         ?C0018:
-017A 0861          ADD       R6,#01H
-017C         ?C0014:
-017C F048          MOV       R4,R8
-017E C085          MOVBZ     R5,RL4
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 9   
+017A         ?C0017:
+017A 8015          CMPI1     R5,#01H
+017C 8DFE          JMPR      cc_ULT,?C0017
+017E         ?C0018:
+017E 0861          ADD       R6,#01H
+0180         ?C0014:
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 9   
 
-0180 4056          CMP       R5,R6
-0182 EDF8          JMPR      cc_UGT,?C0021
-0184         ?C0013:
-                                           ; SOURCE LINE # 144
-0184 DB00          RETS      
+0180 F048          MOV       R4,R8
+0182 C085          MOVBZ     R5,RL4
+0184 4056          CMP       R5,R6
+0186 EDF8          JMPR      cc_UGT,?C0021
+0188         ?C0013:
+                                           ; SOURCE LINE # 147
+0188 DB00          RETS      
              ; FUNCTION delay_ns (END    RMASK = @0x4070)
 
              ; FUNCTION delay_msx (BEGIN  RMASK = @0x43E0)
-                                           ; SOURCE LINE # 147
-0186 F078          MOV       R7,R8
+                                           ; SOURCE LINE # 150
+018A F078          MOV       R7,R8
 ;---- Variable 'tm' assigned to Register 'R7' ----
-                                           ; SOURCE LINE # 148
                                            ; SOURCE LINE # 151
-0188 E009          MOV       R9,#00H
+                                           ; SOURCE LINE # 154
+018C E009          MOV       R9,#00H
 ;---- Variable 'idx' assigned to Register 'R9' ----
-018A 0D05          JMPR      cc_UC,?C0024
-018C         ?C0025:
-                                           ; SOURCE LINE # 152
-018C E6F8E803      MOV       R8,#03E8H
-0190 DA000000 R    CALLS     SEG (delay_us),delay_us
-0194 0891          ADD       R9,#01H
-0196         ?C0024:
-0196 4097          CMP       R9,R7
-0198 8DF9          JMPR      cc_ULT,?C0025
-019A         ?C0023:
-                                           ; SOURCE LINE # 153
-019A DB00          RETS      
+018E 0D05          JMPR      cc_UC,?C0024
+0190         ?C0025:
+                                           ; SOURCE LINE # 155
+0190 E6F8E803      MOV       R8,#03E8H
+0194 DA000000 R    CALLS     SEG (delay_us),delay_us
+0198 0891          ADD       R9,#01H
+019A         ?C0024:
+019A 4097          CMP       R9,R7
+019C 8DF9          JMPR      cc_ULT,?C0025
+019E         ?C0023:
+                                           ; SOURCE LINE # 156
+019E DB00          RETS      
              ; FUNCTION delay_msx (END    RMASK = @0x43E0)
 
              ; FUNCTION delay_ms (BEGIN  RMASK = @0x4050)
-                                           ; SOURCE LINE # 156
+                                           ; SOURCE LINE # 159
 ;---- Variable 'tm' assigned to Register 'R8' ----
-                                           ; SOURCE LINE # 158
-019C F2F60000 E    MOV       R6,g_ms_uw
+                                           ; SOURCE LINE # 161
+01A0 F2F60000 E    MOV       R6,g_ms_uw
 ;---- Variable 'tm1' assigned to Register 'R6' ----
-01A0 F046          MOV       R4,R6
+01A4 F046          MOV       R4,R6
 ;---- Variable 'tm0' assigned to Register 'R4' ----
-01A2         ?C0029:
-01A2 F2F60000 E    MOV       R6,g_ms_uw
-01A6 2064          SUB       R6,R4
-01A8 4068          CMP       R6,R8
-01AA ED03          JMPR      cc_UGT,?C0028
-01AC         ?C0031:
-01AC A758A7A7      SRVWDT    
-01B0 0DF8          JMPR      cc_UC,?C0029
-01B2         ?C0028:
-                                           ; SOURCE LINE # 171
-01B2 DB00          RETS      
+01A6         ?C0029:
+01A6 F2F60000 E    MOV       R6,g_ms_uw
+01AA 2064          SUB       R6,R4
+01AC 4068          CMP       R6,R8
+01AE ED03          JMPR      cc_UGT,?C0028
+01B0         ?C0031:
+01B0 A758A7A7      SRVWDT    
+01B4 0DF8          JMPR      cc_UC,?C0029
+01B6         ?C0028:
+                                           ; SOURCE LINE # 174
+01B6 DB00          RETS      
              ; FUNCTION delay_ms (END    RMASK = @0x4050)
 
              ; FUNCTION keep_alive (BEGIN  RMASK = @0x4010)
-                                           ; SOURCE LINE # 173
+                                           ; SOURCE LINE # 176
 ;---- Variable 'on_off' assigned to Register 'R8' ----
-                                           ; SOURCE LINE # 175
-01B4 F048          MOV       R4,R8
-01B6 4980          CMPB      RL4,#00H
-01B8 2D02          JMPR      cc_Z,?C0032
-                                           ; SOURCE LINE # 177
-01BA 0ED8          BCLR      P7_OUT_P0
                                            ; SOURCE LINE # 178
-01BC DB00          RETS      
-01BE         ?C0032:
-C166 COMPILER V7.57.0, HW                                                                  02/15/2020 01:24:47 PAGE 10  
-
+01B8 F048          MOV       R4,R8
+01BA 4980          CMPB      RL4,#00H
+01BC 2D02          JMPR      cc_Z,?C0032
+                                           ; SOURCE LINE # 180
+01BE 0ED8          BCLR      P7_OUT_P0
                                            ; SOURCE LINE # 181
-01BE 0FD8          BSET      P7_OUT_P0
-                                           ; SOURCE LINE # 182
-01C0         ?C0033:
-                                           ; SOURCE LINE # 183
+C166 COMPILER V7.57.0, HW                                                                  12/14/2020 10:56:36 PAGE 10  
+
 01C0 DB00          RETS      
+01C2         ?C0032:
+                                           ; SOURCE LINE # 184
+01C2 0FD8          BSET      P7_OUT_P0
+                                           ; SOURCE LINE # 185
+01C4         ?C0033:
+                                           ; SOURCE LINE # 186
+01C4 DB00          RETS      
              ; FUNCTION keep_alive (END    RMASK = @0x4010)
 
 
 
 MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
-  CODE SIZE        =         450     --------
+  CODE SIZE        =         454     --------
   NEAR-CONST SIZE  =    --------     --------
   FAR-CONST SIZE   =    --------     --------
   HUGE-CONST SIZE  =    --------     --------

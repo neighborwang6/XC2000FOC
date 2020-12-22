@@ -26,9 +26,9 @@ u8 g_diag_stat=0;
 //
 void diag_hw_init(void)
 {
-   mcu1_imp_init();
+   mcu1_imp_init();  //Do not used.
 
-   dtc_man_init();
+   dtc_man_init();//Do not used.
    can_test_init();
 
    hican_init();

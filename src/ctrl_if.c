@@ -14,6 +14,9 @@
 
 #define GET_BRK_PEDAL_STATE() (P2_IN_P10)
 
+#define TLE9180D_31QK
+//#define TLE7189F
+
 ////////////////////////////////////////////////////////////////////////////////
 // Brake command from CAN bus
 u16 g_brake_pedal_pos_can_uw=0;

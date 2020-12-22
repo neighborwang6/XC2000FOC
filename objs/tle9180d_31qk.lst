@@ -1,0 +1,544 @@
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 1   
+
+
+C166 COMPILER V7.57.0, COMPILATION OF MODULE TLE9180D_31QK
+OBJECT MODULE PLACED IN .\objs\tle9180d_31qk.obj
+COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\tle9180d_31qk.c MODV2 LARGE BROWSE INCDIR(.\src\hardware;.\src;.\E
+                    -OL_Diag;.\DTC_Diag;.\Hw_Driver;.\CalTool;.\DTC_Diag\mcu2_prot;./CAN_Driver;.\xcp;.\src\include;.\EBS_Ctrl_Logic) MODV2 D
+                    -EBUG CODE PRINT(.\objs\tle9180d_31qk.lst) TABS(2) OBJECT(.\objs\tle9180d_31qk.obj) 
+
+ stmt lvl     source
+
+    1         ////////////////////////////////////////////////////////////////////////////////
+    2         /**************************************************
+    3         *    File Name    : tle9180d-31qk
+    4         *    Copyright    : QingChen
+    5         *    Module Name  : 
+    6              *
+    7         *    CPU          : XC2000
+    8         *    RTOS         : No RTOS
+    9         *
+   10         *    Create Date  : 
+   11         *    Author/Cororation: Perfersor YLY
+   12         *    Abstract Description:
+   13         *
+   14         *--------------- Revision History --------------
+   15         *    No Version Date      Revisied By  Item    Description
+   16         *    1  V0.0    19.11.26  WGY                  eBooster
+   17         **************************************************/
+   18         
+   19         
+   20         /**************************************************
+   21         *    Debug switch Section
+   22         **************************************************/
+   23         //#define xxxx
+   24         /**************************************************
+   25         *    Include File Section
+   26         **************************************************/
+   27         #include "tle9180d_31qk.h"
+   28         #include "rtc.h"
+   29         
+   30         /**************************************************
+   31         *    MacroDefine Section
+   32         **************************************************/
+   33         
+   34         #define TLE9180D_INH
+   35         #define LE9180D_SOFF
+   36         #define LE9180D_ENA
+   37         
+   38         #define Conf_Sig    00H
+   39         #define Conf_Gen_1  01H
+   40         #define Conf_Gen_2  02H
+   41         #define Conf_Gen_3  03H
+   42         #define Conf_wwd    04H
+   43         #define Tl_vs       05H
+   44         #define Tl_vdh      06H
+   45         #define Tl_cbvcc    07H
+   46         #define Fm_1        08H
+   47         #define Fm_2        09H
+   48         #define Fm_3        0AH
+   49         #define Fm_4        0BH
+   50         #define Fm_5        0CH
+   51         #define Dt_hs       0DH
+   52         #define Dt_ls       0EH
+   53         #define Ft_1        0FH
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 2   
+
+   54         #define Ft_2        10H
+   55         #define Ft_3        11H
+   56         #define Ft_4        12H
+   57         #define Fm_6        13H
+   58         
+   59         
+   60         #define Op_gain_1_addr        20H
+   61         #define Op_gain_2_addr        21H
+   62         #define Op_gain_3_addr        22H
+   63         #define Op_0cl_addr           23H
+   64         #define op_con_addr           24H
+   65         #define Sc_ls_1_addr          25H
+   66         #define Sc_ls_2_addr          26H
+   67         #define Sc_ls_3_addr          27H
+   68         #define Sc_hs_1_addr          28H
+   69         #define Sc_hs_2_addr          29H
+   70         #define Sc_hs_3_addr          2AH
+   71         #define Li_ctr_addr           2BH
+   72         #define Misc_ctr_addr         2CH
+   73         #define art_tlp_addr          2DH
+   74         #define art_tla_addr          2EH
+   75         #define art_fi_addr           2FH
+   76         #define art_acc_addr          30H
+   77         #define art_entry_addr        31H
+   78         #define nop_addr              32H
+   79         #define Drev_mark_addr        33H
+   80         #define Ds_mark_addr          34H
+   81         #define Sel_st_1_addr         35H
+   82         #define Sel_st_2_addr         36H
+   83         #define En_st_addr            37H
+   84         #define Om_over_addr          40H
+   85         #define Err_over_addr         41H
+   86         #define Ser_addr              42H
+   87         #define Err_i_1_addr          43H
+   88         #define Err_i_2_addr          44H
+   89         #define Err_e_addr            45H
+   90         #define Err_sd_addr           46H
+   91         #define Err_scd_addr          47H
+   92         #define Err_indiag_addr       48H
+   93         #define Err_osf_addr          49H
+   94         #define Err_spiconf_addr      4AH
+   95         #define Err_op_12_addr        4BH
+   96         #define Err_op_3_addr         4CH
+   97         #define Err_outp_addr         4DH
+   98         #define dsm_ls1_addr          4EH
+   99         #define dsm_ls2_addr          4FH
+  100         #define dsm_ls3_addr          50H
+  101         #define dsm_hs1_addr          51H
+  102         #define dsm_hs2_addr          52H
+  103         #define dsm_hs3_addr          53H
+  104         #define Rdm_ls1_addr          54H
+  105         #define Rdm_ls2_addr          55H
+  106         #define Rdm_ls3_addr          56H
+  107         #define Rdm_hs1_addr          57H
+  108         #define Rdm_hs2_addr          58H
+  109         #define Rdm_hs3_addr          59H
+  110         #define temp_ls1_addr         5AH
+  111         #define temp_ls2_addr         5BH
+  112         #define temp_ls3_addr         5CH  
+  113         #define temp_hs1_addr         5DH
+  114         #define temp_hs2_addr         5EH
+  115         #define temp_hs3_addr         5FH
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 3   
+
+  116         #define wwlc_addr             60H
+  117         #define res_cc1_addr          61H
+  118         #define res_cc2_addr          62H
+  119         #define res_cc3_addr          63H
+  120         #define res_vcc_addr          64H
+  121         #define res_cb_addr           65H
+  122         #define res_vs_addr           66H
+  123         #define res_vdh_addr          67H
+  124         
+  125         //00 80 03 1C 56 07 a0 95 30 70 10 20 60 0e 0e 85 50 0e 02 00
+  126         
+  127         u8 TLE9180D_Conf_Reg[20]={0x00, 0x80, 0x03, 0x1C, 0x56, 0x07, 0xa0, 0x95, 0x30, 0x70, 
+  128                                   0x10, 0x20, 0x60, 0x0e, 0x0e, 0x85, 0x50, 0x0e, 0x02, 0x00};
+  129         
+  130         /**************************************************
+  131         *    StructDefine Section
+  132         **************************************************/
+  133         
+  134         /**************************************************
+  135         *    Prototype Declare Section
+  136         **************************************************/
+  137         
+  138         /**************************************************
+  139         *    Global Variable Declare Section
+  140         **************************************************/
+  141         
+  142         /**************************************************
+  143         *    File Static Variable Define Section
+  144         **************************************************/
+  145         
+  146         /**************************************************
+  147         *    Function Define Section
+  148         **************************************************/
+  149         
+  150         void tle9180d_31qk_init(void)
+  151         {
+  152  1          volatile unsigned int uwTemp;
+  153  1      
+  154  1        //   -----------------------------------------------------------------------
+  155  1        //   Initialization of USIC Peripherals:
+  156  1        //   -----------------------------------------------------------------------
+  157  1      
+  158  1        ///  - USIC0 module clock = 80.00 MHz
+  159  1      
+  160  1        ///  -----------------------------------------------------------------------
+  161  1        ///  Configuration of the U0C0 Kernel State Configuration:
+  162  1        ///  -----------------------------------------------------------------------
+  163  1      
+  164  1        U0C0_KSCFG     =  0x0003;      // load U0C0 kernel state configuration 
+  165  1                                       // register
+  166  1      
+  167  1        uwTemp         =  U0C0_KSCFG;  // dummy read to avoid pipeline effects  
+  168  1        
+  169  1        //->>>>  Channel config
+  170  1        
+  171  1        ///  -----------------------------------------------------------------------
+  172  1        ///  Configuration of the U0C0 Channel Control Register (Mode & Interrupts):
+  173  1        ///  -----------------------------------------------------------------------
+  174  1        /// - The USIC channel is disabled
+  175  1        /// - The parity generation is disabled
+  176  1      
+  177  1        U0C0_CCR       =  0x0000;      // load U0C0 channel control register
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 4   
+
+  178  1        
+  179  1      
+  180  1                                       
+  181  1        ///  -----------------------------------------------------------------------
+  182  1        ///  Configuration of the U0C0 Fractional Divider:
+  183  1        ///  -----------------------------------------------------------------------
+  184  1        ///  - The Fractional divider is selected
+  185  1        ///  - The step value STEP = 640
+  186  1      
+  187  1        U0C0_FDRL      =  0x8280;      // load U0C0 fractional divider register
+  188  1        
+  189  1      
+  190  1        ///  -----------------------------------------------------------------------
+  191  1        ///  Configuration of the U0C0 Baudrate Generator:
+  192  1        ///  -----------------------------------------------------------------------
+  193  1        ///  - The selected BaudRate is 100.000 kbaud
+  194  1        ///  - The PreDivider for CTQ, PCTQ = 0
+  195  1        ///  - The Denominator for CTQ, DCTQ = 0
+  196  1        ///  - The Divider factor PDIV = 249
+  197  1      
+  198  1        U0C0_BRGL      =  0x0000;      // load U0C0 load baud rate generator 
+  199  1                                       // register L
+  200  1      
+  201  1        ///  - Shift Clock output configuration (SCLKCFG) = 1, Clock polarity =1
+  202  1      
+  203  1        U0C0_BRGH      =  0x80F9;      // load U0C0 load baud rate generator 
+  204  1                                       // register H
+  205  1                                                                 
+  206  1        ///  -----------------------------------------------------------------------
+  207  1        ///  Configuration of the U0C0 Input Control Register:
+  208  1        ///  -----------------------------------------------------------------------
+  209  1        ///  - The data input DX0F is selected
+  210  1      
+  211  1        U0C0_DX0CR     =  0x0015;      // load U0C0 input control register(Data)
+  212  1        
+  213  1        ///  -----------------------------------------------------------------------
+  214  1        ///  Configuration of the U0C0 Interrupt Node Pointer Register:
+  215  1        ///  -----------------------------------------------------------------------
+  216  1        ///  - RINP pointer points to Interrupt node U0C0_0IC
+  217  1      
+  218  1        U0C0_INPRL     =  0x0000;      // load U0C0 Interrupt Node Pointer register 
+  219  1                                       // L
+  220  1        U0C0_INPRH     =  0x0000;      // load U0C0 Interrupt Node Pointer register 
+  221  1                                       // H
+  222  1        
+  223  1        ///  -----------------------------------------------------------------------
+  224  1        ///  Configuration of the U0C0 Shift Control:
+  225  1        ///  -----------------------------------------------------------------------
+  226  1        ///  - Transmit/Receive MSB first is selected
+  227  1      
+  228  1        U0C0_SCTRL     =  0x0103;      // load U0C0 shift control register L
+  229  1        U0C0_SCTRH     =  0x0717;      // load U0C0 shift control register H
+  230  1        
+  231  1        ///  -----------------------------------------------------------------------
+  232  1        ///  Configuration of the U0C0 Transmit Control/Status Register:
+  233  1        ///  -----------------------------------------------------------------------
+  234  1      
+  235  1        U0C0_TCSRL     =  0x0500;      // load U0C0 transmit control/status 
+  236  1                                       // register L
+  237  1        U0C0_TCSRH     =  0x0000;      // load U0C0 transmit control/status 
+  238  1                                       // register H
+  239  1                                       
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 5   
+
+  240  1        ///  -----------------------------------------------------------------------
+  241  1        ///  Configuration of the U0C0 Protocol Control Register:
+  242  1        ///  -----------------------------------------------------------------------
+  243  1      
+  244  1        U0C0_PCRL      =  0x0F47;      // load U0C0 protocol control register L
+  245  1        U0C0_PCRH      =  0x0001;      // load U0C0 protocol control register H                              
+  246  1        
+  247  1        ///  -----------------------------------------------------------------------
+  248  1        ///  Configuration of the U0C0 Protocol Status Register:
+  249  1        ///  -----------------------------------------------------------------------
+  250  1        ///  - TBIF is set to simplify polling
+  251  1      
+  252  1        U0C0_PSR      |=  0x2000;      // load U0C0 protocol status register
+  253  1        
+  254  1        //U0C0_0IC       =  0x005E;    //??
+  255  1        
+  256  1        ///  -----------------------------------------------------------------------
+  257  1        ///  Configuration of the U0C0 Channel Control Register (Mode & Interrupts):
+  258  1        ///  -----------------------------------------------------------------------
+  259  1        ///  - SSC (SPI) Protocol is selected 
+  260  1        ///  - The parity generation is disabled
+  261  1        ///  - Receive interrupt is enabled
+  262  1      
+  263  1        U0C0_CCR       =  0x4001;      // load U0C0 channel control register
+  264  1        
+  265  1        ///  -----------------------------------------------------------------------
+  266  1        ///  Configuration of the used U0C0 Port Pins:
+  267  1        ///  -----------------------------------------------------------------------
+  268  1        P2_IOCR04      =  0x0020; // load port register for data input (Pull-up device connected)
+  269  1      
+  270  1        ///  - P2.3 is used for USIC0 Channel0 Shift Data Output(DOUT)
+  271  1        ///  - P2.5 is used for USIC0 Channel0 Shift Clock Output(SCLKOUT)
+  272  1        ///  - P2.6 is used for USIC0 Channel0 Shift Control output0(SELO0)
+  273  1      
+  274  1        P2_IOCR03 = 0x0090;    //set direction register
+  275  1        P2_IOCR05 = 0x0090;    //set direction register
+  276  1        P2_IOCR06 = 0x0090;    //set direction register
+  277  1      
+  278  1        ///  -----------------------------------------------------------------------
+  279  1        ///  Configuration of U0C0 FIFO:
+  280  1        ///  -----------------------------------------------------------------------
+  281  1        ///  -----------------------------------------------------------------------
+  282  1        ///  Configuration of U0C0 Transmitter Buffer Conrol Register:
+  283  1        ///  -----------------------------------------------------------------------
+  284  1        ///  - Transmit FIFO buffer contains 2 entries
+  285  1        ///  - Transmit FIFO buffer starts at Data Pointer 0
+  286  1        ///  - Limit for transmit FIFO interrupt generation is 0
+  287  1        ///  - Limit for transmit FIFO interrupt generation is 0
+  288  1        ///  - Limit for transmit FIFO interrupt generation is 0
+  289  1      
+  290  1        U0C0_TBCTRL    =  0x0000;      // load U0C0 transmitter buffer control 
+  291  1                                       // register L
+  292  1        U0C0_TBCTRH    =  0x0100;      // load U0C0 transmitter buffer control 
+  293  1                                       // register H
+  294  1      
+  295  1      }
+  296         
+  297         /////////////////////////////////////////////////////////
+  298         void spi_tle9180d_31qk_putc(u16 ch)
+  299         {
+  300  1        U0C0_PSCR |= 0x2000;
+  301  1        U0C0_TBUF00=ch;
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 6   
+
+  302  1      }
+  303         
+  304         /////////////////////////////////////////////////////////
+  305         u16 spi_tle9180d_31qk_trans(u16 ch)
+  306         {
+  307  1        WAIT_EVENT_READY((U0C0_PSR & 0x2000),2);
+  308  1      
+  309  1        U0C0_PSCR     |= 0x2000;
+  310  1        U0C0_TBUF00    = ch;
+  311  1      
+  312  1        //2ms: enough to transmit a char
+  313  1        WAIT_EVENT_READY(((U0C0_PSR & 0x8000) || (U0C0_PSR & 0x4000)),2);
+  314  1        U0C0_PSCR     |= 0xC000;
+  315  1        return(U0C0_RBUF);
+  316  1      }
+  317         /////////////////////////////////////////////////////////
+  318         ////////////////////////////////////////////////////////////////////////////////
+  319         //
+  320         ////////////////////////////////////////////////////////////////////////////////
+  321         
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 7   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION tle9180d_31qk_init (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 150
+0000 2802          SUB       R0,#02H
+                                           ; SOURCE LINE # 151
+                                           ; SOURCE LINE # 164
+0002 E034          MOV       R4,#03H
+0004 D7102000      EXTS      #020H,#02H
+0008 F6F40C40      MOV       0400CH,R4
+                                           ; SOURCE LINE # 167
+000C F2F40C40      MOV       R4,0400CH
+0010 B840          MOV       [R0],R4       ; uwTemp
+                                           ; SOURCE LINE # 177
+0012 E004          MOV       R4,#00H
+0014 D7002000      EXTS      #020H,#01H
+0018 F6F41040      MOV       04010H,R4
+                                           ; SOURCE LINE # 187
+001C E6F48082      MOV       R4,#08280H
+0020 D7002000      EXTS      #020H,#01H
+0024 F6F40440      MOV       04004H,R4
+                                           ; SOURCE LINE # 198
+0028 E004          MOV       R4,#00H
+002A D7002000      EXTS      #020H,#01H
+002E F6F41C40      MOV       0401CH,R4
+                                           ; SOURCE LINE # 203
+0032 E6F4F980      MOV       R4,#080F9H
+0036 D7002000      EXTS      #020H,#01H
+003A F6F41E40      MOV       0401EH,R4
+                                           ; SOURCE LINE # 211
+003E E6F41500      MOV       R4,#015H
+0042 D7002000      EXTS      #020H,#01H
+0046 F6F42040      MOV       04020H,R4
+                                           ; SOURCE LINE # 218
+004A E004          MOV       R4,#00H
+004C D7102000      EXTS      #020H,#02H
+0050 F6F41440      MOV       04014H,R4
+                                           ; SOURCE LINE # 220
+0054 F6F41640      MOV       04016H,R4
+                                           ; SOURCE LINE # 228
+0058 E6F40301      MOV       R4,#0103H
+005C D7002000      EXTS      #020H,#01H
+0060 F6F43040      MOV       04030H,R4
+                                           ; SOURCE LINE # 229
+0064 E6F41707      MOV       R4,#0717H
+0068 D7002000      EXTS      #020H,#01H
+006C F6F43240      MOV       04032H,R4
+                                           ; SOURCE LINE # 235
+0070 E6F40005      MOV       R4,#0500H
+0074 D7002000      EXTS      #020H,#01H
+0078 F6F43C40      MOV       0403CH,R4
+                                           ; SOURCE LINE # 237
+007C E004          MOV       R4,#00H
+007E D7002000      EXTS      #020H,#01H
+0082 F6F43E40      MOV       0403EH,R4
+                                           ; SOURCE LINE # 244
+0086 E6F4470F      MOV       R4,#0F47H
+008A D7002000      EXTS      #020H,#01H
+008E F6F44040      MOV       04040H,R4
+                                           ; SOURCE LINE # 245
+0092 E014          MOV       R4,#01H
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 8   
+
+0094 D7102000      EXTS      #020H,#02H
+0098 F6F44240      MOV       04042H,R4
+                                           ; SOURCE LINE # 252
+009C F2F44440      MOV       R4,04044H
+00A0 DFF4          BSET      R4.13
+00A2 D7002000      EXTS      #020H,#01H
+00A6 F6F44440      MOV       04044H,R4
+                                           ; SOURCE LINE # 263
+00AA E6F40140      MOV       R4,#04001H
+00AE D7002000      EXTS      #020H,#01H
+00B2 F6F41040      MOV       04010H,R4
+                                           ; SOURCE LINE # 268
+00B6 E6F42000      MOV       R4,#020H
+00BA F6F448E8      MOV       0E848H,R4
+                                           ; SOURCE LINE # 274
+00BE E6F49000      MOV       R4,#090H
+00C2 F6F446E8      MOV       0E846H,R4
+                                           ; SOURCE LINE # 275
+00C6 F6F44AE8      MOV       0E84AH,R4
+                                           ; SOURCE LINE # 276
+00CA F6F44CE8      MOV       0E84CH,R4
+                                           ; SOURCE LINE # 290
+00CE E004          MOV       R4,#00H
+00D0 D7002000      EXTS      #020H,#01H
+00D4 F6F41041      MOV       04110H,R4
+                                           ; SOURCE LINE # 292
+00D8 E6F40001      MOV       R4,#0100H
+00DC D7002000      EXTS      #020H,#01H
+00E0 F6F41241      MOV       04112H,R4
+                                           ; SOURCE LINE # 295
+00E4 0802          ADD       R0,#02H
+00E6 DB00          RETS      
+             ; FUNCTION tle9180d_31qk_init (END    RMASK = @0x4010)
+
+             ; FUNCTION spi_tle9180d_31qk_putc (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 298
+;---- Variable 'ch' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 300
+00E8 D7002000      EXTS      #020H,#01H
+00EC F2F44840      MOV       R4,04048H
+00F0 DFF4          BSET      R4.13
+00F2 D7102000      EXTS      #020H,#02H
+00F6 F6F44840      MOV       04048H,R4
+                                           ; SOURCE LINE # 301
+00FA F6F88040      MOV       04080H,R8
+                                           ; SOURCE LINE # 302
+00FE DB00          RETS      
+             ; FUNCTION spi_tle9180d_31qk_putc (END    RMASK = @0x4010)
+
+             ; FUNCTION spi_tle9180d_31qk_trans (BEGIN  RMASK = @0x40D0)
+                                           ; SOURCE LINE # 305
+;---- Variable 'ch' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 307
+0100 F2F60000 E    MOV       R6,g_ms_uw
+;---- Variable 'tm1' assigned to Register 'R6' ----
+0104 F076          MOV       R7,R6
+;---- Variable 'tm0' assigned to Register 'R7' ----
+0106 0D07          JMPR      cc_UC,?C0001
+0108         ?C0003:
+0108 F2F60000 E    MOV       R6,g_ms_uw
+010C 2067          SUB       R6,R7
+010E 4862          CMP       R6,#02H
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 9   
+
+0110 ED08          JMPR      cc_UGT,?C0002
+0112         ?C0005:
+0112 A758A7A7      SRVWDT    
+0116         ?C0001:
+0116 D7002000      EXTS      #020H,#01H
+011A F2F44440      MOV       R4,04044H
+011E 9AF4F3D0      JNB       R4.13,?C0003
+0122         ?C0002:
+                                           ; SOURCE LINE # 309
+0122 D7002000      EXTS      #020H,#01H
+0126 F2F44840      MOV       R4,04048H
+012A DFF4          BSET      R4.13
+012C D7102000      EXTS      #020H,#02H
+0130 F6F44840      MOV       04048H,R4
+                                           ; SOURCE LINE # 310
+0134 F6F88040      MOV       04080H,R8
+                                           ; SOURCE LINE # 313
+0138 F2F60000 E    MOV       R6,g_ms_uw
+;---- Variable 'tm1' assigned to Register 'R6' ----
+013C F076          MOV       R7,R6
+;---- Variable 'tm0' assigned to Register 'R7' ----
+013E 0D07          JMPR      cc_UC,?C0006
+0140         ?C0008:
+0140 F2F60000 E    MOV       R6,g_ms_uw
+0144 2067          SUB       R6,R7
+0146 4862          CMP       R6,#02H
+0148 ED0E          JMPR      cc_UGT,?C0007
+014A         ?C0010:
+014A A758A7A7      SRVWDT    
+014E         ?C0006:
+014E D7002000      EXTS      #020H,#01H
+0152 F2F44440      MOV       R4,04044H
+0156 8AF406F0      JB        R4.15,?C0007
+015A D7002000      EXTS      #020H,#01H
+015E F2F44440      MOV       R4,04044H
+0162 9AF4EDE0      JNB       R4.14,?C0008
+0166         ?C0007:
+                                           ; SOURCE LINE # 314
+0166 D7002000      EXTS      #020H,#01H
+016A F2F44840      MOV       R4,04048H
+016E 76F400C0      OR        R4,#0C000H
+0172 D7102000      EXTS      #020H,#02H
+0176 F6F44840      MOV       04048H,R4
+                                           ; SOURCE LINE # 315
+017A F2F45C40      MOV       R4,0405CH
+                                           ; SOURCE LINE # 316
+017E DB00          RETS      
+             ; FUNCTION spi_tle9180d_31qk_trans (END    RMASK = @0x40D0)
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         384     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =          20     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/14/2020 10:56:37 PAGE 10  
+
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          26     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

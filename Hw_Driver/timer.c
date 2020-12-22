@@ -38,11 +38,11 @@ void isr_systick_timer(void) interrupt T3INT
 {
 	static u8 tmx=0;
 
-	SET_MCU1_MOSI(0); // Debug only: Time consumption test
-	if((++tmx)>=10)	     // 0.1ms tick: 1ms task (10ms in PC simulation)
+	SET_MCU1_MOSI(0);          // Debug only: Time consumption test
+	if((++tmx)>=10)	           // 0.1ms tick: 1ms task (10ms in PC simulation)
 	{
-		isr_timer_hook();
-		isr_timer_hook_user();  //CAN
+		isr_timer_hook();        //1ms timer
+		isr_timer_hook_user();   //CAN
 		tmx=0;
 	}
 	SET_MCU1_MOSI(1); // Debug only: Time consumption test

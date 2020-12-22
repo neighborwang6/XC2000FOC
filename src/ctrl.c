@@ -35,6 +35,7 @@
 #include "ebooster_ctrl.h"
 #include "MotorDrive.h"
 #include "pid.h"
+#include "tle9180d_31qk.h"
 
 /**************************************************
 *    MacroDefine Section
@@ -100,6 +101,8 @@ u16 g_ctrl_test_timer_uw=0;
 ////////////////////////////////////////////////////////////////////////////////
 u8 isr_5ms_hook_user(void)
 {
+	spi_tle9180d_31qk_trans(0xaaaa);
+	
 	#ifdef PRESURE_PID_CTRL
 	// Sensor measurement...
 	g_mc_pressure=get_mc_pressure();  //Gei the Mc Preseaure
@@ -110,6 +113,7 @@ u8 isr_5ms_hook_user(void)
 	
 	// Control logic...
 	//DoEboosterCtrl();
+	
 	
 	// Control output...
 	MotorDrive();
@@ -146,7 +150,9 @@ u8 isr_5ms_hook_user(void)
 ////////////////////////////////////////////////////////////////////////////////
 u8 isr_10ms_hook_user(void)
 {
+	
 	return 0;
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 1   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE MOTOR_BLDC
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE B
    51         s16 g_mot_speed_sw=0; //RPM
    52         u16 g_timer_calc_speed_ub=0;
    53         extern void calc_motor_pos(void);
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 2   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 2   
 
    54         #define FDEGREE(x) (4096UL*(x)/360)
    55         
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE B
   113  2          g_turns_cmd=g_turns;
   114  2          break;
   115  2          
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 3   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 3   
 
   116  2        case 0x5505:  // Set Continuous Mode (Dir also valid)
   117  2          g_time_inh=0;
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE B
   175  1        if(l_duty_uw!=g_duty_uw)
   176  1        {
   177  2          if(pt[3]<=950)  // Test only: FIXME
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 4   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 4   
 
   178  2            g_duty_uw=l_duty_uw;
   179  2        }
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE B
   237  1        
   238  1        // Calculate Slot Index (6-Steps/Slots for BLDC)
   239  1        tmpu16 = g_resolver_pos_uw;
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 5   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 5   
 
   240  1        tmpu16 += g_pos_offset_bldc_uw;
   241  1        tmpu16 &= 0x0FFF;
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE B
   299  2          pwm_setduty(2,g_duty_uw);
   300  2          set_phase_on(1,1);
   301  2          set_phase_on(2,1);
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 6   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 6   
 
   302  2          
   303  2          gate_bits = gate_bits | 0x0020;
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE B
   361  4            }
   362  3          }
   363  2        }
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 7   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 7   
 
   364  1        g_slot_bits0=g_slot_bits;
   365  1        
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE B
   423         {
   424  1        static u16 tmx_calc_speed_cnt=0;
   425  1        s32 tmps32;
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 8   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 8   
 
   426  1        
   427  1        ////////////////////////////////////////////////////////////////////////
@@ -500,7 +500,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\motor_bldc.c MODV2 LARGE B
   475  1        calc_mot_speed();
   476  1      }
   477         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 9   
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 9   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -564,7 +564,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 84
 006C DC49          EXTP      R9,#01H
 006E F4880600      MOVB      RL4,[R8+#POF(06H)]
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 10  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 10  
 
 0072 C084          MOVBZ     R4,RL4
 0074 C4400400      MOV       [R0+#04H],R4  ; l_buf+4
@@ -628,7 +628,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0104         ?C0006:
                                            ; SOURCE LINE # 101
 0104 DC4F          EXTP      R15,#01H
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 11  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 11  
 
 0106 A8DE          MOV       R13,[R14]
                                            ; SOURCE LINE # 102
@@ -692,7 +692,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 121
 0166 E019          MOV       R9,#01H
 0168 E008          MOV       R8,#00H
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 12  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 12  
 
 016A DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
                                            ; SOURCE LINE # 122
@@ -756,7 +756,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 141
 01D2 F6F42200 R    MOV       g_turns_cmd,R4
                                            ; SOURCE LINE # 142
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 13  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 13  
 
 01D6 0D2F          JMPR      cc_UC,?C0003
                                            ; SOURCE LINE # 144
@@ -820,7 +820,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 171
 0236         ?C0003:
                                            ; SOURCE LINE # 175
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 14  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 14  
 
 0236 42FD0C00 R    CMP       R13,g_duty_uw
 023A 2D08          JMPR      cc_Z,?C0002
@@ -884,7 +884,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0292 46F5FFFF      CMP       R5,#0FFFFH
 0296 EA20A204 R    JMPA      cc_Z,func_exit
                                            ; SOURCE LINE # 233
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 15  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 15  
 
 029A 048F2800 R    ADD       g_time_inh,ONES
                                            ; SOURCE LINE # 235
@@ -948,7 +948,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 031A 0845          ADD       R4,#05H
 031C EA304E04 R    JMPA      cc_NZ,?C0035
                                            ; SOURCE LINE # 257
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 16  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 16  
 
 0320         ?C0036:
                                            ; SOURCE LINE # 258
@@ -1012,7 +1012,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 284
 0384 E009          MOV       R9,#00H
 0386 E018          MOV       R8,#01H
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 17  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 17  
 
 0388 DA000000 E    CALLS     SEG (set_phase_on),set_phase_on
                                            ; SOURCE LINE # 285
@@ -1076,7 +1076,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 311
 03F0 E009          MOV       R9,#00H
 03F2 E018          MOV       R8,#01H
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 18  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 18  
 
 03F4 DA000000 E    CALLS     SEG (pwm_setduty),pwm_setduty
                                            ; SOURCE LINE # 312
@@ -1140,7 +1140,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 045E F68E2000 R    MOV       g_slot_bits,ZEROS
                                            ; SOURCE LINE # 345
 0462 F2F42C00 R    MOV       R4,g_turns
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 19  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 19  
 
 0466 2D19          JMPR      cc_Z,?C0043
                                            ; SOURCE LINE # 347
@@ -1204,7 +1204,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 04C8 E009          MOV       R9,#00H
                                            ; SOURCE LINE # 389
 04CA F0A6          MOV       R10,R6
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 20  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 20  
 
 04CC E00B          MOV       R11,#00H
                                            ; SOURCE LINE # 390
@@ -1268,7 +1268,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0524 14F90200 E    ADDC      g_total_angle_sl+02H,R9
                                            ; SOURCE LINE # 416
 0528 F2F40000 E    MOV       R4,g_resolver_pos_uw
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 21  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 21  
 
 052C F6F40000 E    MOV       g_resolver_pos0_uw,R4
                                            ; SOURCE LINE # 418
@@ -1332,7 +1332,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 059C 46F478EC      CMP       R4,#0EC78H
 05A0 DD04          JMPR      cc_SGE,?C0056
                                            ; SOURCE LINE # 454
-C166 COMPILER V7.57.0, MOTOR_BLDC                                                          02/15/2020 01:24:53 PAGE 22  
+C166 COMPILER V7.57.0, MOTOR_BLDC                                                          12/14/2020 10:56:42 PAGE 22  
 
 05A2 E6F478EC      MOV       R4,#0EC78H
 05A6 F6F40E00 R    MOV       g_mot_speed_sw,R4

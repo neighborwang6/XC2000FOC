@@ -6,6 +6,7 @@
 #include "xc2k_can.h"
 #include "adc.h"
 #include "ccu2_ccu6.h"
+#include "tle9180d_31qk.h"
 
 /////////////////////////////////////////////////////////
 
@@ -51,6 +52,8 @@ u16 hw_init(void)
 	cc2_setting();
 	cc6_setting();
 	
+	tle9180d_31qk_init();
+
 	mcu_lock();
 	PSW_IEN=1;
 	
