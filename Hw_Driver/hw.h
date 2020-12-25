@@ -98,7 +98,7 @@ void mcu_lock(void);
 #define SET_TLE_ENA(x)   P0_OUT_P7=(x)
 #define GET_TLE_ENA()    (P0_IN_P7)
 
-#define SET_VCC5B_EN(x)  P7_OUT_P2=(x)
+//#define SET_VCC5B_EN(x)  P7_OUT_P2=(x)
 #define SET_VCC5_HOLD(x) P7_OUT_P0=(x)
 #define SET_VCC5_SW(x)   P7_OUT_P4=(x)
 #define SET_VCC5_SS(x)   SET_VCC5_SW(x)

@@ -1,0 +1,997 @@
+{\rtf1\ansi\deff0\deftab720{\fonttbl{\f0\fnil MS Sans Serif;}{\f1\fnil\fcharset2 Symbol;}{\f2\fswiss\fprq2 System;}{\f3\fnil Times New Roman;}{\f4\fswiss\fprq2 Arial;}}
+{\colortbl\red0\green0\blue0;\red0\green0\blue128;\red255\green0\blue0;}
+\deflang1031\pard\plain\f4\fs28\cf0 DAvE's Project Documentation
+\par \plain\f4\fs22\cf0
+\par \plain\f4\fs22\cf0 Project: \tab\tab\b MotoCtrl.dav
+\par 
+\par \plain\f4\fs22\cf0 Controller: \tab\tab\b XC2365B-40F80
+\par \plain\f4\fs22\cf0 Compiler: \tab\tab\b TASKING VX-toolset
+\par \plain\f4\fs22\cf0 Memory Model: \tab\b NEAR
+\par 
+\par \plain\f4\fs22\cf0 Date: \tab\tab\tab\b 2020/12/24 14:40:44
+\par 
+\par 
+\par \plain\f4\fs22\cf2\b Please read this document carefully and note
+\par \plain\f4\fs22\cf2\b the red-colored hints.
+\par 
+\par \plain\f4\fs22\cf2\b If you miss a file in the generated files list
+\par \plain\f4\fs22\cf2\b maybe you have forgotten to select the
+\par \plain\f4\fs22\cf2\b initialisation function of the related module.
+\par 
+\par \plain\f4\fs22\cf0 Generated Files:
+\plain\f4\fs20\cf0\b
+\par \tab\tab\tab MAIN.H
+\par \tab\tab\tab MAIN.C
+\par \tab\tab\tab SCS.H
+\par \tab\tab\tab SCS.C
+\par \tab\tab\tab XC23XXBREGS.H
+\par \tab\tab\tab IO.H
+\par \tab\tab\tab IO.C
+\par \tab\tab\tab U0C0.H
+\par \tab\tab\tab U0C0.C
+\par \tab\tab\tab USIC0.H
+\par \tab\tab\tab USIC0.C
+\par \tab\tab\tab CCU61.H
+\par \tab\tab\tab CCU61.C
+\par \tab\tab\tab CAN.H
+\par \tab\tab\tab CAN.C
+\par 
+\par 
+\par \plain\f4\fs20\cf0
+\par \plain\f4\fs28\cf0\ul Project Settings
+\par
+\par \plain\f4\fs24\cf0 Macros:\f4\fs20\cf0
+\par \plain\f4\fs24\cf0 Functions:\f4\fs20\cf0
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void MAIN_vInit(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This function initializes the microcontroller.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void MAIN_vUnlockProtecReg(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This function makes it possible to write one protected
+
+\par \tab \tab register.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void MAIN_vLockProtecReg(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This function makes it possible to lock one protected
+
+\par \tab \tab register.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void MAIN_vChangeFreq(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This function is used to select the external crystal and
+
+\par \tab \tab configure the system frequency to 100MHz/80MHz/66MHz.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void main(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This is the main function.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs24\cf0 Initialization:
+\par \plain\f4\fs20\cf0\b
+\par
+\tab Configuration of the System Clock:\par 
+\tab - VCO clock used, input clock is connected\par 
+\tab - input frequency is 8.00 MHz\par 
+\tab - system clock is 80.00 MHz\par 
+\par 
+
+\par \plain\f4\fs20\cf0
+\par \plain\f4\fs28\cf0\ul Project Settings
+\par
+\par \plain\f4\fs24\cf0 Macros:\f4\fs20\cf0
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab INLINE void Scs_EnableHighPrecOsc(unsigned int Enable)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This use case function enables or disables the high precision
+
+\par \tab \tab oscillator for external crystal / clock at crystal input; may
+
+\par \tab \tab be called by the user to reduce waiting time.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab Enable: 0 = Disable, 1 = Enable
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab INLINE void Scs_CopyWords(unsigned int SHUGE *DestPtr,\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This global function copies words from source to destination.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab DestPtr: Destination pointer; SrcPtr: Source pointer;
+
+\par \tab \tab Words: Number of words to be copied (> 0)
+
+\par \plain\f4\fs24\cf0 Functions:\f4\fs20\cf0
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lWaitForVcoLock(unsigned int Timeout)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function waits for VCO lock.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lEnableVcoBypass(unsigned int Enable)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function enables or disables VCO bypass.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab Enable: 0 = Disable, 1 = Enable
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab INLINE Scs_ErrorType Scs_lSelectExternalPllClock(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function selects the external clock source for
+
+\par \tab \tab the PLL.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab INLINE void Scs_lStartTimer(unsigned int Cycles)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function starts timer T13 and waits until the
+
+\par \tab \tab specified number of clocks is counted.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab Cycles: Number of T13 clocks to count, 0...65535
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lApplyNewK1Div(unsigned int K1Div)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function applies a new K1 divider value to the
+
+\par \tab \tab PLL.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab K1Div: K1 divider value
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lApplyNewNDiv(unsigned int NDiv)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function applies a new N divider value
+
+\par \tab \tab to the PLL.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab NDiv: N divider value
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lApplyNewPDiv(unsigned int PDiv)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function applies a new P divider value
+
+\par \tab \tab to the PLL.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab PDiv: P divider value
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lApplyNewVcoDivs(unsigned int PDiv,\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function applies new P, N and K2 dividers
+
+\par \tab \tab to the VCO.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab PDiv: P divider value
+
+\par \tab \tab NDiv: N divider value
+
+\par \tab \tab K2Div: K2 divider value
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lCheckFreqHighPrecOsc(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function checks the high precision oscillator
+
+\par \tab \tab for a valid output clock.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lEnableVcoLockEmerg(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function enables the VCO loss-of-lock
+
+\par \tab \tab emergency handling.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_lRampPll(Scs_K2RampType *K2RampPtr)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This private function applies a stepwise ramp-up or ramp-down
+
+\par \tab \tab of the PLL output frequency using a set of K2 dividers
+
+\par \tab \tab and delay values.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_ApplyNewK2Div(unsigned int K2Div)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This global function applies a new K2 divider value
+
+\par \tab \tab to the PLL.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab K2Div: K2 divider value
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab Scs_ErrorType Scs_GoFromBaseModeToNormalMode(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This global function performs a transition from base mode
+
+\par \tab \tab to normal mode.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b Error code, 0 = no error\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void Scs_InitTimer(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This global function CCU6 timer T13 as driver timer;
+
+\par \tab \tab previous CCU6 register contents may be saved.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void Scs_RestoreTimer(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This global function restores CCU6 register contents
+
+\par \tab \tab saved during the previous execution of Scs_InitTimer.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par \plain\f4\fs20\cf0
+\par \plain\f4\fs28\cf0\ul Parallel Ports
+\par
+\par \plain\f4\fs24\cf0 Macros:\f4\fs20\cf0
+\par \plain\f4\fs24\cf0 Functions:\f4\fs20\cf0
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void IO_vInit(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This is the initialization function of the IO function
+
+\par \tab \tab library. It is assumed that the SFRs used by this library
+
+\par \tab \tab are in reset state.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs24\cf0 Initialization:
+\par \plain\f4\fs20\cf0\b
+\par
+\tab Configuration of Port P0:\par 
+\tab P0.0 is used as alternate output for the CCU61 output (CC60)\par 
+\tab - push/pull output is selected\par 
+\tab P0.1 is used as alternate output for the CCU61 output (CC61)\par 
+\tab - push/pull output is selected\par 
+\tab P0.2 is used as alternate output for the  CCU61 output (CC62)\par 
+\tab - push/pull output is selected\par 
+\tab P0.3 is used as alternate output for the CCU61 output (COUT60)\par 
+\tab - push/pull output is selected\par 
+\tab P0.4 is used as alternate output for the CCU61 output (COUT61)\par 
+\tab - push/pull output is selected\par 
+\tab P0.5 is used as alternate output for the  CCU61 output (COUT62)\par 
+\tab - push/pull output is selected\par 
+\par 
+\tab P0.0 - P0.3 output driver characteristic: strong driver\par 
+\tab P0.4 - P0.7 output driver characteristic: strong driver\par 
+\par 
+\tab P0.0 - P0.3 output edge characteristic: sharp edge mode\par 
+\tab P0.4 - P0.7 output edge characteristic: sharp edge mode\par 
+\par 
+\tab Configuration of Port P1:\par 
+\tab - no pin of port P1 is used\par 
+\par 
+\tab Configuration of Port P2:\par 
+\tab P2.0 is used as alternate input for the CAN0 Receive input(RXDC0C)\par 
+\tab P2.1 is used as alternate output for the CAN0 Transmit output(TXDC0C)\par 
+\tab - push/pull output is selected\par 
+\tab P2.3 is used as alternate output for the USIC0 Channel0 Shift Data\par 
+\tab Output(DOUT)\par 
+\tab - push/pull output is selected\par 
+\tab P2.4 is used as alternate input for the USIC0 Channel0 Shift Data\par 
+\tab input(DX0F)\par 
+\tab P2.5 is used as alternate output for the USIC0 Channel0 Shift Clock\par 
+\tab Output(SCLKOUT)\par 
+\tab - push/pull output is selected\par 
+\tab P2.6 is used as alternate output for the USIC0 Channel0 Shift Control\par 
+\tab output0(SELO0)\par 
+\tab - push/pull output is selected\par 
+\par 
+\tab P2.0 - P2.3 output driver characteristic: strong driver\par 
+\tab P2.4 - P2.7 output driver characteristic: strong driver\par 
+\tab P2.8 - P2.13 output driver characteristic: strong driver\par 
+\par 
+\tab P2.0 - P2.3 output edge characteristic: sharp edge mode\par 
+\tab P2.4 - P2.7 output edge characteristic: sharp edge mode\par 
+\tab P2.8 - P2.13 output edge characteristic: sharp edge mode\par 
+\par 
+\tab Configuration of Port P4:\par 
+\tab - no pin of port P4 is used\par 
+\par 
+\tab Configuration of Port P5:\par 
+\tab P5.8 is used as alternate input for the  CCU61 Ext.Run Select(T12HRC)\par 
+\par 
+\tab Configuration of Port P6:\par 
+\tab P6.0 is used as alternate output for the CAN2 Transmit output(TXDC2D)\par 
+\tab - push/pull output is selected\par 
+\tab P6.1 is used as alternate input for the CAN2 Receive input(RXDC2E)\par 
+\par 
+\tab P6.0 - P6.2 output driver characteristic: strong driver\par 
+\par 
+\tab P6.0 - P6.2 output edge characteristic: sharp edge mode\par 
+\par 
+\tab Configuration of Port P7:\par 
+\tab - no pin of port P7 is used\par 
+\par 
+\tab Configuration of Port P10:\par 
+\tab - no pin of port P10 is used\par 
+\par 
+\tab Configuration of Port P15:\par 
+\tab - no pin of port P15 is used\par 
+\tab - Port15 Data register P15(Read only)\par 
+\par 
+
+\par \plain\f4\fs20\cf0
+\par \plain\f4\fs28\cf0\ul Universal Serial Interface Channel (USIC) U0C0
+\par
+\par \plain\f4\fs24\cf0 Macros:\f4\fs20\cf0
+\par \plain\f4\fs24\cf0 Functions:\f4\fs20\cf0
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void U0C0_SSC_vInit(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This is the initialization function of the U0C0 function
+
+\par \tab \tab library. It is assumed that the SFRs used by this library
+
+\par \tab \tab are in reset state.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void U0C0_SSC_vi0IC(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This is the interrupt service routine for the Service
+
+\par \tab \tab Request Node U0C0_0IC.
+
+\par \tab \tab Please note that you have to add application specific code
+
+\par \tab \tab to this function.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs24\cf0 Initialization:
+\par \plain\f4\fs20\cf0\b
+\par
+\tab Configuration of the U0C0 Channel Control Register (Mode & Interrupts):\par 
+\tab - The USIC channel is disabled\par 
+\tab - The parity generation is disabled\par 
+\par 
+\tab Configuration of the U0C0 Fractional Divider:\par 
+\tab - The Fractional divider is selected\par 
+\tab - The step value STEP = 640\par 
+\par 
+\tab Configuration of the U0C0 Baudrate Generator:\par 
+\tab - The selected BaudRate is 100.000 kbaud\par 
+\tab - The PreDivider for CTQ, PCTQ = 0\par 
+\tab - The Denominator for CTQ, DCTQ = 0\par 
+\tab - The Divider factor PDIV = 249\par 
+\par 
+\tab - Shift Clock output configuration (SCLKCFG) = 2, Clock phase =1\par 
+\par 
+\tab Configuration of the U0C0 Input Control Register:\par 
+\tab - The data input DX0F is selected\par 
+\par 
+\tab Configuration of the U0C0 Interrupt Node Pointer Register:\par 
+\tab - RINP pointer points to Interrupt node U0C0_0IC\par 
+\par 
+\tab Configuration of the U0C0 Shift Control:\par 
+\tab - Transmit/Receive MSB first is selected\par 
+\par 
+\tab Configuration of the U0C0 Transmit Control/Status Register:\par 
+\par 
+\tab Configuration of the U0C0 Protocol Control Register:\par 
+\par 
+\tab Configuration of the U0C0 Protocol Status Register:\par 
+\tab - TBIF is set to simplify polling\par 
+\par 
+\tab Configuration of the used U0C0 Interrupts:\par 
+\tab U0C00IC service request node configuration:\par 
+\tab - U0C00IC interrupt priority level (ILVL) = 12\par 
+\tab - U0C00IC interrupt group level (GLVL) = 1\par 
+\tab - U0C00IC group priority extension (GPX) = 0\par 
+\par 
+\tab Configuration of the U0C0 Channel Control Register (Mode & Interrupts):\par 
+\tab - SSC (SPI) Protocol is selected\par 
+\tab - The parity generation is disabled\par 
+\tab - Receive interrupt is enabled\par 
+\par 
+\tab Configuration of the used U0C0 Port Pins:\par 
+\par 
+\tab - P2.3 is used for USIC0 Channel0 Shift Data Output(DOUT)\par 
+\tab - P2.5 is used for USIC0 Channel0 Shift Clock Output(SCLKOUT)\par 
+\tab - P2.6 is used for USIC0 Channel0 Shift Control output0(SELO0)\par 
+\par 
+\tab Configuration of U0C0 FIFO:\par 
+\tab Configuration of U0C0 Transmitter Buffer Conrol Register:\par 
+\tab - Transmit FIFO buffer contains 2 entries\par 
+\tab - Transmit FIFO buffer starts at Data Pointer 0\par 
+\tab - Limit for transmit FIFO interrupt generation is 0\par 
+\tab - Limit for transmit FIFO interrupt generation is 0\par 
+\tab - Limit for transmit FIFO interrupt generation is 0\par 
+\par 
+\tab Configuration of U0C0 Receiver Buffer Conrol Register:\par 
+\tab - Receive FIFO buffer is disabled\par 
+\par 
+
+\par \plain\f4\fs20\cf0
+\par \plain\f4\fs28\cf0\ul USIC0
+\par
+\par \plain\f4\fs24\cf0 Macros:\f4\fs20\cf0
+\par \plain\f4\fs24\cf0 Functions:\f4\fs20\cf0
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void USIC0_vInit(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This function initializes USIC0 Module
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs24\cf0 Initialization:
+\par \plain\f4\fs20\cf0\b
+\par
+\tab - USIC0 module clock = 80.00 MHz\par 
+\par 
+\tab Configuration of the U0C0 Kernel State Configuration:\par 
+\par 
+
+\par \plain\f4\fs20\cf0
+\par \plain\f4\fs28\cf0\ul Capture / Compare Unit 61 (CCU61)
+\par
+\par \plain\f4\fs24\cf0 Macros:\f4\fs20\cf0
+\par \plain\f4\fs24\cf0 Functions:\f4\fs20\cf0
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void CCU61_vInit(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This is the initialization function of the CCU61 function
+
+\par \tab \tab library. It is assumed that the SFRs used by this library
+
+\par \tab \tab are in reset state.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs24\cf0 Initialization:
+\par \plain\f4\fs20\cf0\b
+\par
+\tab Configuration of KERNEL REGISTERS :\par 
+\tab - CCU61 Module is enabled.\par 
+\tab - The CCU61 module clock = 80.000 MHz.\par 
+\tab - T12 is enabled.\par 
+\tab - T13 is enabled.\par 
+\tab - MCM is enabled.\par 
+\par 
+\tab Configuration of CCU61 Timer 12:\par 
+\tab - Timer 12 Input clock factor (T12CLK) is 0\par 
+\tab - prescaler factor is 0\par 
+\tab - Timer 12 run bit is reset\par 
+\tab - Single shot mode is disabled\par 
+\tab - Timer 12 works in center aligned mode\par 
+\tab - Interrupt on period match is disabled\par 
+\tab - Interrupt on one match is disabled\par 
+\tab - No External run selection is selected.\par 
+\tab - Timer mode is selected.\par 
+\tab -\par 
+\par 
+\tab Configuration of T13HR Signal:\par 
+\tab - Signal T13HRD is selected as Input\par 
+\par 
+\tab Configuration of CCU61 Timer 13:\par 
+\tab - Timer 13 Input Clock factor (T13CLK) is 0\par 
+\tab - prescaler factor is 0\par 
+\tab - Timer 13 run bit is reset\par 
+\tab - Trigger control is disabled\par 
+\tab - No External run selection is selected.\par 
+\tab - Timer mode is selected.\par 
+\tab -\par 
+\tab - Single shot mode is disabled\par 
+\tab - Interrupt on period match is disabled\par 
+\tab - Interrupt on compare match is disabled\par 
+\par 
+\tab Configuration of Multi Channel Mode:\par 
+\tab - Multi channel mode is disabled\par 
+\par 
+\tab Configuration of CCU61 Channel 0:\par 
+\tab - Compare mode 1 is selected\par 
+\tab - T12 modulation for output CC60 is enabled\par 
+\tab - T13 modulation for output CC60 is disabled\par 
+\tab - The trap functionality of the pin CC60 is disabled\par 
+\tab - The compare output CC60 drives passive level while CC60ST is '1'\par 
+\tab - The passive level of the output CC60 is '0'\par 
+\tab - T12 modulation for output COUT60 is enabled\par 
+\tab - T13 modulation for output COUT60 is disabled\par 
+\tab - The trap functionality of the pin COUT60 is disabled\par 
+\tab - The compare output COUT60 drives passive level while CC60ST is '0'\par 
+\tab - The passive level of the output COUT60 is '0'\par 
+\tab - Dead time generation is disabled\par 
+\par 
+\tab - Generation interrupt on flag ICC60R is disabled\par 
+\tab - Generation interrupt on flag ICC60F is disabled\par 
+\par 
+\tab Configuration of CCU61 Channel 1:\par 
+\tab - Compare mode 1 is selected\par 
+\tab - T12 modulation for output CC61 is enabled\par 
+\tab - T13 modulation for output CC61 is disabled\par 
+\tab - The trap functionality of the pin CC61 is disabled\par 
+\tab - The compare output CC61 drives passive level while CC61ST is '0'\par 
+\tab - The passive level of the output CC61 is '1'\par 
+\tab - T12 modulation for output COUT61 is disabled\par 
+\tab - T13 modulation for output COUT61 is disabled\par 
+\tab - The trap functionality of the pin COUT61 is disabled\par 
+\tab - The compare output COUT61 drives passive level while CC61ST is '0'\par 
+\tab - The passive level of the output COUT61 is '0'\par 
+\tab - Dead time generation is disabled\par 
+\par 
+\tab - Generation interrupt on flag ICC61R is disabled\par 
+\tab - Generation interrupt on flag ICC61F is disabled\par 
+\par 
+\tab Configuration of CCU61 Channel 2:\par 
+\tab - Compare mode 1 is selected\par 
+\tab - T12 modulation for output CC62 is disabled\par 
+\tab - T13 modulation for output CC62 is disabled\par 
+\tab - The trap functionality of the pin CC62 is disabled\par 
+\tab - The compare output CC62 drives passive level while CC62ST is '0'\par 
+\tab - The passive level of the output CC62 is '0'\par 
+\tab - T12 modulation for output COUT62 is disabled\par 
+\tab - T13 modulation for output COUT62 is disabled\par 
+\tab - The trap functionality of the pin COUT62 is disabled\par 
+\tab - The compare output COUT62 drives passive level while CC62ST is '0'\par 
+\tab - The passive level of the output COUT62 is '0'\par 
+\tab - Dead time generation is disabled\par 
+\par 
+\tab - Generation interrupt on flag ICC62R is disabled\par 
+\tab - Generation interrupt on flag ICC62F is disabled\par 
+\par 
+\tab Configuration of CCU61 Channel 3:\par 
+\tab - T13 output is not inverted\par 
+\par 
+\tab Configuration of CCU61 trap control:\par 
+\tab - Trap can only be generated by SW by setting the bit TRPF\par 
+\tab - The trap state is left when a zero-match of T12 (while counting up)\par 
+\tab is detected (synchronization to T12)\par 
+\tab - Bit TRPF is automatically cleared by HW (according to TRPPEN, TRPM0\par 
+\tab and TRPM1)\par 
+\tab - Trap interrupt is disabled\par 
+\par 
+\tab Configuration of the used CCU61 Channels Interrupts:\par 
+\par 
+\tab Configuration of T12, T13 ---- CCU61_TCTR4 Register:\par 
+\tab - Enable shadow transfer of T12 and T13\par 
+\tab - Timer 12 run bit is reset\par 
+\tab - Timer 13 run bit is reset\par 
+\par 
+\tab Configuration of the used CCU61 Channel Port Pins:\par 
+\tab - P0.0 is used for CCU61 output (CC60)\par 
+\tab - P0.1 is used for CCU61 output (CC61)\par 
+\tab - P0.2 is used for  CCU61 output (CC62)\par 
+\tab - P0.3 is used for CCU61 output (COUT60)\par 
+\tab - P0.4 is used for CCU61 output (COUT61)\par 
+\tab - P0.5 is used for  CCU61 output (COUT62)\par 
+\tab - P5.8 is used for  CCU61 Ext.Run Select(T12HRC)\par 
+\par 
+
+\par \plain\f4\fs20\cf0
+\par \plain\f4\fs28\cf0\ul MultiCAN Module (CAN)
+\par
+\par \plain\f4\fs24\cf0 Macros:\f4\fs20\cf0
+\par \plain\f4\fs24\cf0 Functions:\f4\fs20\cf0
+\par
+\par \plain\f4\fs20\cf0 \tab Function:
+\par \plain\f4\fs20\cf0\b \tab \tab void CAN_vInit(void)\plain\f4\fs20\cf0
+\par \tab Description:
+\par \plain\f4\fs20\cf0\i
+\tab \tab This is the initialization function of the CAN function
+
+\par \tab \tab library. It is assumed that the SFRs used by this library
+
+\par \tab \tab are in reset state.
+
+\par \plain\f4\fs20\cf0 \tab Returnvalue:
+\par \tab \tab \plain\f4\fs20\cf0\b None\plain\f4\fs20\cf0
+\par \plain\f4\fs20\cf0 \tab Parameters:
+\par \plain\f4\fs20\cf0\b 
+\tab \tab None
+
+\par
+\par \plain\f4\fs24\cf0 Initialization:
+\par \plain\f4\fs20\cf0\b
+\par
+\tab Configuration of Kernel State Configuration Register:\par 
+\tab - Enable the CAN module(MODEN)\par 
+\tab - Enable Bit Protection for MODEN\par 
+\par 
+\tab Configuration of the Module Clock:\par 
+\tab - the CAN module clock = 80.00 MHz\par 
+\tab - Normal divider mode selected\par 
+\par 
+\tab Panel Control\par 
+\tab - wait until Panel has finished the initialisation\par 
+\par 
+\tab Configuration of CAN Node 0:\par 
+\par 
+\tab General Configuration of the Node 0:\par 
+\tab - set INIT and CCE\par 
+\par 
+\tab - load NODE 0 interrupt pointer register\par 
+\par 
+\tab Configuration of the used CAN Port Pins:\par 
+\tab - Loop-back mode is disabled\par 
+\tab - P2.0 is used for CAN0 Receive input(RXDC0C)\par 
+\tab - P2.1 is used for CAN0 Transmit output(TXDC0C)\par 
+\par 
+\tab Configuration of the Node 0 Baud Rate:\par 
+\tab - required baud rate = 500.000 kbaud\par 
+\tab - real baud rate     = 500.000 kbaud\par 
+\tab - sample point       = 80.00 %\par 
+\tab - there are 7 time quanta before sample point\par 
+\tab - there are 2 time quanta after sample point\par 
+\tab - the (re)synchronization jump width is 2 time quanta\par 
+\par 
+\tab Configuration of the Node 0 Error Counter:\par 
+\tab - the error warning threshold value (warning level) is 96\par 
+\par 
+\tab Configuration of the Frame Counter:\par 
+\tab - Frame Counter Mode: the counter is incremented upon the reception\par 
+\tab and transmission of frames\par 
+\tab - frame counter: 0x0000\par 
+\par 
+\tab Configuration of CAN Node 1:\par 
+\par 
+\tab General Configuration of the Node 1:\par 
+\tab - set INIT and CCE\par 
+\par 
+\tab Configuration of CAN Node 2:\par 
+\par 
+\tab General Configuration of the Node 2:\par 
+\tab - set INIT and CCE\par 
+\par 
+\tab - load NODE 2 interrupt pointer register\par 
+\par 
+\tab Configuration of the used CAN Port Pins:\par 
+\tab - Loop-back mode is disabled\par 
+\tab - P6.1 is used for CAN2 Receive input(RXDC2E)\par 
+\tab - P6.0 is used for CAN2 Transmit output(TXDC2D)\par 
+\par 
+\tab Configuration of the Node 2 Baud Rate:\par 
+\tab - required baud rate = 500.000 kbaud\par 
+\tab - real baud rate     = 500.000 kbaud\par 
+\tab - sample point       = 80.00 %\par 
+\tab - there are 7 time quanta before sample point\par 
+\tab - there are 2 time quanta after sample point\par 
+\tab - the (re)synchronization jump width is 2 time quanta\par 
+\par 
+\tab Configuration of the Node 2 Error Counter:\par 
+\tab - the error warning threshold value (warning level) is 96\par 
+\par 
+\tab Configuration of the Frame Counter:\par 
+\tab - Frame Counter Mode: the counter is incremented upon the reception\par 
+\tab and transmission of frames\par 
+\tab - frame counter: 0x0000\par 
+\par 
+\tab Configuration of the CAN Message Object List Structure:\par 
+\par 
+\tab Configuration of the CAN Message Objects 0 - 63:\par 
+\tab Configuration of Message Object 0:\par 
+\tab - message object 0 is not valid\par 
+\tab Configuration of Message Object 1:\par 
+\tab - message object 1 is not valid\par 
+\tab Configuration of Message Object 2:\par 
+\tab - message object 2 is not valid\par 
+\tab Configuration of Message Object 3:\par 
+\tab - message object 3 is not valid\par 
+\tab Configuration of Message Object 4:\par 
+\tab - message object 4 is not valid\par 
+\tab Configuration of Message Object 5:\par 
+\tab - message object 5 is not valid\par 
+\tab Configuration of Message Object 6:\par 
+\tab - message object 6 is not valid\par 
+\tab Configuration of Message Object 7:\par 
+\tab - message object 7 is not valid\par 
+\tab Configuration of Message Object 8:\par 
+\tab - message object 8 is not valid\par 
+\tab Configuration of Message Object 9:\par 
+\tab - message object 9 is not valid\par 
+\tab Configuration of Message Object 10:\par 
+\tab - message object 10 is not valid\par 
+\tab Configuration of Message Object 11:\par 
+\tab - message object 11 is not valid\par 
+\tab Configuration of Message Object 12:\par 
+\tab - message object 12 is not valid\par 
+\tab Configuration of Message Object 13:\par 
+\tab - message object 13 is not valid\par 
+\tab Configuration of Message Object 14:\par 
+\tab - message object 14 is not valid\par 
+\tab Configuration of Message Object 15:\par 
+\tab - message object 15 is not valid\par 
+\tab Configuration of Message Object 16:\par 
+\tab - message object 16 is not valid\par 
+\tab Configuration of Message Object 17:\par 
+\tab - message object 17 is not valid\par 
+\tab Configuration of Message Object 18:\par 
+\tab - message object 18 is not valid\par 
+\tab Configuration of Message Object 19:\par 
+\tab - message object 19 is not valid\par 
+\tab Configuration of Message Object 20:\par 
+\tab - message object 20 is not valid\par 
+\tab Configuration of Message Object 21:\par 
+\tab - message object 21 is not valid\par 
+\tab Configuration of Message Object 22:\par 
+\tab - message object 22 is not valid\par 
+\tab Configuration of Message Object 23:\par 
+\tab - message object 23 is not valid\par 
+\tab Configuration of Message Object 24:\par 
+\tab - message object 24 is not valid\par 
+\tab Configuration of Message Object 25:\par 
+\tab - message object 25 is not valid\par 
+\tab Configuration of Message Object 26:\par 
+\tab - message object 26 is not valid\par 
+\tab Configuration of Message Object 27:\par 
+\tab - message object 27 is not valid\par 
+\tab Configuration of Message Object 28:\par 
+\tab - message object 28 is not valid\par 
+\tab Configuration of Message Object 29:\par 
+\tab - message object 29 is not valid\par 
+\tab Configuration of Message Object 30:\par 
+\tab - message object 30 is not valid\par 
+\tab Configuration of Message Object 31:\par 
+\tab - message object 31 is not valid\par 
+\tab Configuration of Message Object 32:\par 
+\tab - message object 32 is not valid\par 
+\tab Configuration of Message Object 33:\par 
+\tab - message object 33 is not valid\par 
+\tab Configuration of Message Object 34:\par 
+\tab - message object 34 is not valid\par 
+\tab Configuration of Message Object 35:\par 
+\tab - message object 35 is not valid\par 
+\tab Configuration of Message Object 36:\par 
+\tab - message object 36 is not valid\par 
+\tab Configuration of Message Object 37:\par 
+\tab - message object 37 is not valid\par 
+\tab Configuration of Message Object 38:\par 
+\tab - message object 38 is not valid\par 
+\tab Configuration of Message Object 39:\par 
+\tab - message object 39 is not valid\par 
+\tab Configuration of Message Object 40:\par 
+\tab - message object 40 is not valid\par 
+\tab Configuration of Message Object 41:\par 
+\tab - message object 41 is not valid\par 
+\tab Configuration of Message Object 42:\par 
+\tab - message object 42 is not valid\par 
+\tab Configuration of Message Object 43:\par 
+\tab - message object 43 is not valid\par 
+\tab Configuration of Message Object 44:\par 
+\tab - message object 44 is not valid\par 
+\tab Configuration of Message Object 45:\par 
+\tab - message object 45 is not valid\par 
+\tab Configuration of Message Object 46:\par 
+\tab - message object 46 is not valid\par 
+\tab Configuration of Message Object 47:\par 
+\tab - message object 47 is not valid\par 
+\tab Configuration of Message Object 48:\par 
+\tab - message object 48 is not valid\par 
+\tab Configuration of Message Object 49:\par 
+\tab - message object 49 is not valid\par 
+\tab Configuration of Message Object 50:\par 
+\tab - message object 50 is not valid\par 
+\tab Configuration of Message Object 51:\par 
+\tab - message object 51 is not valid\par 
+\tab Configuration of Message Object 52:\par 
+\tab - message object 52 is not valid\par 
+\tab Configuration of Message Object 53:\par 
+\tab - message object 53 is not valid\par 
+\tab Configuration of Message Object 54:\par 
+\tab - message object 54 is not valid\par 
+\tab Configuration of Message Object 55:\par 
+\tab - message object 55 is not valid\par 
+\tab Configuration of Message Object 56:\par 
+\tab - message object 56 is not valid\par 
+\tab Configuration of Message Object 57:\par 
+\tab - message object 57 is not valid\par 
+\tab Configuration of Message Object 58:\par 
+\tab - message object 58 is not valid\par 
+\tab Configuration of Message Object 59:\par 
+\tab - message object 59 is not valid\par 
+\tab Configuration of Message Object 60:\par 
+\tab - message object 60 is not valid\par 
+\tab Configuration of Message Object 61:\par 
+\tab - message object 61 is not valid\par 
+\tab Configuration of Message Object 62:\par 
+\tab - message object 62 is not valid\par 
+\tab Configuration of Message Object 63:\par 
+\tab - message object 63 is not valid\par 
+\par 
+\tab Configuration of Service Request Nodes 0 - 15:\par 
+\par 
+
+}

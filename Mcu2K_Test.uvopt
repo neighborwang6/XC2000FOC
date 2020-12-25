@@ -219,7 +219,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DAS166</Key>
-          <Name> -O4591 -F15 -H"localhost" -S"UDAS" -D"MW3047BR" -T4294967295 -B"" -Q0"XC2xxx_N_B_X-40F" -J01 -L0C00000 -N050000 -M00</Name>
+          <Name> -O4591 -F15 -H"localhost" -S"UDAS" -D"MW1KIR13" -T4294967295 -B"" -Q0"XC2xxx_N_B_X-40F" -J01 -L0C00000 -N050000 -M00</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -263,6 +263,11 @@
           <count>5</count>
           <WinNumber>1</WinNumber>
           <ItemText>TryVqs,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>DEBUG_VAL</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

@@ -48,7 +48,7 @@ baudrate TSEG1   TSEG2  BRP
 #define CAN0_TSEG1   6
 #define CAN0_TSEG2   1
 #define CAN0_SJW     1
-#define CAN0_BRP	 7
+#define CAN0_BRP	 15
 // 500KHz: CAN Node 1
 #define CAN1_TSEG1   6
 #define CAN1_TSEG2   1

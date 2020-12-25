@@ -38,6 +38,7 @@ extern u16 test_dir;
 extern u16 motor_offset;
 extern u16 TryVqs;
 extern u16 g_disp_value_sent; //Relative Displacement - RT (Origional:CC2_CC22(PWM_EX3)) Relstive Displacement define in ccu2_ccu6.c
+U16 DEBUG_VAL=0;
 ////////////////////////////////////////////////////////////////////////////////
 // Main entry
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,18 +114,16 @@ void app_init(void)
 	
 	//////////////////////////////////////////////////////
 	// Wait the power stable
-	SET_BAT12V_SW(1); delay_ms(10);
+	SET_BAT12V_SW(1); delay_ms(10); //Open the power of XUAN BIAN RESOVER.
 	SET_AD2S_RESET(1); delay_ms(10);
 	
 	// Motor control OFF
 	set_motor_ctrl_enable(0);
 	
-	// MCU2 Power ON / TLE7189F INH
-	SET_VCC5B_EN(1);
-	
-	// VCC5 for Torque sensor ON
+	// VCC5 for Torque sensor ON.(The connector VCC5)
 	SET_VCC5_SS(1);
 	
+	//TLE9180D-31QK: -INH
 	SET_SCDL_DIS(0);
 	
 	//////////////////////////////////////////////////////
@@ -133,14 +132,14 @@ void app_init(void)
 	
 	//////////////////////////////////////////////////////
 	// Init the resolver decoder
-	resolver_ad2s_init(0);
+	//resolver_ad2s_init(0);
 	
 	// PWM Init
-	pwm_init();
+	//pwm_init();
 	
 	//////////////////////////////////////////////////////
 	// Motor control OFF (But enable)
-	set_motor_ctrl_enable(1);
+	//set_motor_ctrl_enable(1);
 	
 	//////////////////////////////////////////////////////
 }
@@ -158,6 +157,7 @@ void app_10ms_task(void)
 	isr_10ms_hook_user();
 	
 	do_boff_recovery();
+	DEBUG_VAL = GET_IGN();
 	/////////////////////////////////////////////////
 	// IGN Off?
 	if(!GET_IGN())
@@ -166,7 +166,7 @@ void app_10ms_task(void)
 		// power_down_hook_user();
 		SET_BAT12V_SW(0);
 		
-		keep_alive(0);
+		keep_alive(0);  
 	}
 	/////////////////////////////////////////////////
 }

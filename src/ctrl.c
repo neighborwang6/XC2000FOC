@@ -101,7 +101,7 @@ u16 g_ctrl_test_timer_uw=0;
 ////////////////////////////////////////////////////////////////////////////////
 u8 isr_5ms_hook_user(void)
 {
-	spi_tle9180d_31qk_trans(0xaaaa);
+	//spi_tle9180d_31qk_trans(0xaaaa);
 	
 	#ifdef PRESURE_PID_CTRL
 	// Sensor measurement...
@@ -208,18 +208,17 @@ void transmit_can_data_10ms(void)
 	//bufx[6]=(u8)(get_ad_value(AD_AIN3)>>2);
 	//bufx[7]=(u8)(get_ad_value(AD_VO1)>>2);
 
-	//bufx[0]=((u8)(((u16)(DisplacementSenseMM))>>8));
-	//bufx[1]=((u8)(((u16)(DisplacementSenseMM))&0xFF));
-	//bufx[2]=(u8)(Voltage>>8);
-	//bufx[3]=(u8)(Voltage&0xff);
-	//bufx[4]=(u8)(PressureAVE>>8);
-	//bufx[5]=(u8)(PressureAVE&0xff);
-	//bufx[6]=((u8)(((u16)(Eerror))>>8));
-	//bufx[7]=((u8)(((u16)(Eerror))&0xFF));
+	bufx[0]=((u8)(((u16)(DisplacementSenseMM))>>8));
+	bufx[1]=((u8)(((u16)(DisplacementSenseMM))&0xFF));
+	bufx[2]=(u8)(Voltage>>8);
+	bufx[3]=(u8)(Voltage&0xff);
+	bufx[4]=(u8)(PressureAVE>>8);
+	bufx[5]=(u8)(PressureAVE&0xff);
+	bufx[6]=((u8)(((u16)(Eerror))>>8));
+	bufx[7]=((u8)(((u16)(Eerror))&0xFF));
 	
-	
-	//can_sload(7,bufx);  //0x105
-  //can_stx(7);
+	can_sload(7,bufx);  //0x105
+  can_stx(7);
 		
 	////////////////////////////////////////////////////////////////////////////
 	//bufx[0]=(u8)(MotorState);
@@ -235,12 +234,12 @@ void transmit_can_data_10ms(void)
   //can_stx(8);
 	
 	////////////////////////////////////////////////////////////////////////////
-	//bufx[0]=(u8)(g_angle_eiq);
-	//bufx[1]=(u8)(g_angle_eiq>>8);
-	//bufx[2]=(u8)(g_total_angle_sl);
-	//bufx[3]=(u8)(g_total_angle_sl>>8);
-	//bufx[4]=(u8)(g_mot_speed_sw);
-	//bufx[5]=(u8)(g_mot_speed_sw>>8);
+	bufx[0]=(u8)(g_angle_eiq);
+	bufx[1]=(u8)(g_angle_eiq>>8);
+	bufx[2]=(u8)(g_total_angle_sl);
+	bufx[3]=(u8)(g_total_angle_sl>>8);
+	bufx[4]=(u8)(g_mot_speed_sw);
+	bufx[5]=(u8)(g_mot_speed_sw>>8);
 	//bufx[6]=(u8)(g_dir_ub);
 	//bufx[7]=(u8)(g_resolver_pos_uw/683);
 	

@@ -65,20 +65,20 @@ u16 hw_init(void)
 /////////////////////////////////////////////////////////
 void gpio_setting(void)
 {
-	P7_IOCR02      =  0x0080;  // VCC5B_ENAX
+	//P7_IOCR02      =  0x0080;  // VCC5B_ENAX
 	P7_IOCR00      =  0x0080;  // VCC5_HOLDX
 	P7_IOCR03      =  0x0080;  // AD2S_RESET
 	P7_IOCR01      =  0x0002;  // ERR1 (pull up)
 	P7_IOCR04      =  0x0080;  // U1_EN
-	P6_IOCR00      =  0x0000;  // ISN1X1
-	P6_IOCR01      =  0x0000;  // ISP1X1
+	P6_IOCR00      =  0x00A0;  // CAN2_TX
+	P6_IOCR01      =  0x0000;  // CAN2_RX
 	P6_IOCR02      =  0x0080;  // AD2S_DIR
 	P2_IOCR12      =  0x0080;  // AD2S_WR
 	P2_IOCR11      =  0x0080;  // AD2S_RD
 	
 	P2_IOCR01      =  0x0090;  // TXCAN0
 	P2_IOCR00      =  0x0000;  // RXCAN0
-	P2_IOCR02      =  0x0080;  // SCDL_DIS
+	//P2_IOCR02      =  0x0080;  // -INH
 	P4_IOCR00      =  0x0080;  // AD2S_A0A1
 	
 	P0_IOCR00      =  0x00B0;  // IH1
@@ -94,8 +94,8 @@ void gpio_setting(void)
 	//P2_IOCR10      =  0x0000;  // CC2_CC23
   P2_IOCR10      =  0x0010; //  ///  P2.10 is used as general input - pull-down device is assigned
 
-	P4_IOCR02      =  0x0000;  // CC2_CC26
-	P4_IOCR03      =  0x0000;  // CC2_CC27
+	//P4_IOCR02      =  0x0000;  // CC2_CC26
+	//P4_IOCR03      =  0x0000;  // CC2_CC27
 
 	P2_IOCR13      =  0x0080;  // AD2S_CS
 	
@@ -109,10 +109,10 @@ void gpio_setting(void)
 	P10_IOCR07     =  0x0080;  // EN_UVWX
 	P10_IOCR06     =  0x0000;  // DIS_UVW_X (Monitor the control of MCU2)
 	P0_IOCR06      =  0x0080;  // AD2S_SAMPLE
-	P0_IOCR07      =  0x0080;  // ENA
+	P0_IOCR07      =  0x0080;  // ENA (Enable TLE9180D-31QK)
 	
 	P5_DIDIS       =  0xFFFF;
-	P15_DIDIS      =  0xCF;  // P15.5: ERR2 (digital input enable)
+	P15_DIDIS      =  0xCF;    // P15.5: ERR2 (digital input enable)
 	
 	P2_IOCR03      =  0x0080;  // Debug only	
 }
@@ -177,11 +177,11 @@ void keep_alive(u8 on_off)
 {
 	if(on_off)
 	{
-		SET_VCC5_HOLD(0);
+		SET_VCC5_HOLD(1);
 	}
 	else
 	{
-		SET_VCC5_HOLD(1);
+		SET_VCC5_HOLD(0);
 	}
 }
 /////////////////////////////////////////////////////////

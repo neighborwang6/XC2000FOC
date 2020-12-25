@@ -18,7 +18,7 @@
 #endif
 
 #define STANDARD_ID
-#define EXTENDEDIDS
+//#define EXTENDEDIDS
 ////////////////////////////////////////////////////////////////////////////////
 // CAN IDs: Diagnose
 u16 g_diag_tester_id = 0x7C0;
