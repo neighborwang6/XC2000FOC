@@ -44,7 +44,7 @@ baudrate TSEG1   TSEG2  BRP
 
 #define CAN_STEP 1023
 
-// 1MHz: CAN Node 0
+// 500KHz: CAN Node 0
 #define CAN0_TSEG1   6
 #define CAN0_TSEG2   1
 #define CAN0_SJW     1
@@ -191,8 +191,6 @@ void can_rx(u8 no,u32 id,u32 mask,u8 cfg)
 	
 	CAN_HWOBJ[no].MOCTRH=  0x00A0;  // NEWDAT,RXEN
 	CAN_HWOBJ[no].MOCTRL=  0x0000;
-	
-
 	
 	// Set ID
 	tmpu16=0x4000;           // Priority Class: List order

@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 1   
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE HICAN
@@ -29,7 +29,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
               #endif
    19         
    20         #define STANDARD_ID
-   21         #define EXTENDEDIDS
+   21         //#define EXTENDEDIDS
    22         ////////////////////////////////////////////////////////////////////////////////
    23         // CAN IDs: Diagnose
    24         u16 g_diag_tester_id = 0x7C0;
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
    51  1        //can_rx(12,0,0|0x800,0x80);
    52  1        
    53  1        // Message Box 0/1: Accept the IDs specified
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 2   
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 2   
 
    54  1        can_rx(0,g_cto_id,        0x7FF|0x800,0x80);
    55  1        can_rx(1,g_diag_tester_id,0x7FF|0x800,0x80);
@@ -72,30 +72,30 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
    59  1        #endif
    60  1      
    61  1        #ifdef EXTENDEDIDS
-   62  1        // Message Box 16~19: Transmit (Extended IDs)
-   63  1          can_load(16,0x18F0010B,0x84,(u8 *)"--------"); // Node 0, 29bit-id
-   64  1          can_load(17,0x18FF020B,0x84,(u8 *)"--------"); // Node 0, 29bit-id
-   65  1          can_load(18,0x18FF030B,0x84,(u8 *)"--------"); // Node 0, 29bit-id
-   66  1          can_load(19,0x18FF040B,0x84,(u8 *)"--------"); // Node 0, 29bit-id
-   67  1          
-   68  1        // Message Box 28~31: Accept the IDs specified
-   69  1          can_rx(31,0x089F6265,0x1FFFFFFF|0x20000000,0x84); // Node 0
-   70  1          can_rx(30,0x1CF00401,0x1FFFFFFF|0x20000000,0x84); // Node 0
-   71  1          can_rx(29,0x0CF00402,0x1FFFFFFF|0x20000000,0x84); // Node 0 
-   72  1          can_rx(28,0x0CF00403,0x1FFFFFFF|0x20000000,0x84); // Node 0
-   73  1        //can_rx(31,0x110,0x7FF|0x800,0x80); // Node 0
-   74  1        //can_rx(30,0x110,0x7FF|0x800,0x80); // Node 0
-   75  1        //can_rx(29,0x110,0x7FF|0x800,0x80); // Node 0
-   76  1        //can_rx(28,0x110,0x7FF|0x800,0x80); // Node 0
-   77  1        
-   78  1        // Message Box 27: Accept all IDs
-   79  1        //can_rx(31,0x0CF00400,0x20000000,0x84);
-   80  1        
-   81  1        //can_rx(31,0x0CF00400,0x1FFFFFFF|0x20000000,0x85); // Node 1
-   82  1        //can_rx(30,0x0CF00401,0x1FFFFFFF|0x20000000,0x85); // Node 1
-   83  1        //can_rx(29,0x0CF00402,0x1FFFFFFF|0x20000000,0x85); // Node 1
-   84  1        //can_rx(28,0x0CF00403,0x1FFFFFFF|0x20000000,0x85); // Node 1
-   85  1      #endif
+                // Message Box 16~19: Transmit (Extended IDs)
+                  can_load(16,0x18F0010B,0x84,(u8 *)"--------"); // Node 0, 29bit-id
+                  can_load(17,0x18FF020B,0x84,(u8 *)"--------"); // Node 0, 29bit-id
+                  can_load(18,0x18FF030B,0x84,(u8 *)"--------"); // Node 0, 29bit-id
+                  can_load(19,0x18FF040B,0x84,(u8 *)"--------"); // Node 0, 29bit-id
+                  
+                // Message Box 28~31: Accept the IDs specified
+                  can_rx(31,0x089F6265,0x1FFFFFFF|0x20000000,0x84); // Node 0
+                  can_rx(30,0x1CF00401,0x1FFFFFFF|0x20000000,0x84); // Node 0
+                  can_rx(29,0x0CF00402,0x1FFFFFFF|0x20000000,0x84); // Node 0 
+                  can_rx(28,0x0CF00403,0x1FFFFFFF|0x20000000,0x84); // Node 0
+                //can_rx(31,0x110,0x7FF|0x800,0x80); // Node 0
+                //can_rx(30,0x110,0x7FF|0x800,0x80); // Node 0
+                //can_rx(29,0x110,0x7FF|0x800,0x80); // Node 0
+                //can_rx(28,0x110,0x7FF|0x800,0x80); // Node 0
+                
+                // Message Box 27: Accept all IDs
+                //can_rx(31,0x0CF00400,0x20000000,0x84);
+                
+                //can_rx(31,0x0CF00400,0x1FFFFFFF|0x20000000,0x85); // Node 1
+                //can_rx(30,0x0CF00401,0x1FFFFFFF|0x20000000,0x85); // Node 1
+                //can_rx(29,0x0CF00402,0x1FFFFFFF|0x20000000,0x85); // Node 1
+                //can_rx(28,0x0CF00403,0x1FFFFFFF|0x20000000,0x85); // Node 1
+              #endif
    86  1      
    87  1          return 0;
    88  1      }
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
   113  1        {
   114  2          l_timer_boff++;
   115  2          // Node Initialization retry: 500ms after Bus off
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 3   
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 3   
 
   116  2          if(l_timer_boff>=50) // 500ms
   117  2          {
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
   175  2          wgy = 1;
   176  2        }
   177  1        if(id == 0x0CF00403)
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 4   
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 4   
 
   178  1        {
   179  2          wgy = 1;
@@ -203,7 +203,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE CAN_Driver\hican.c MODV2 LARGE
   186  1        can_do_obj(id,len,buf);
   187  1      }
   188         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 5   
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -267,7 +267,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0094 0802          ADD       R0,#02H
                                            ; SOURCE LINE # 48
 0096 E6F40000 R    MOV       R4,#POF (SC?7?0)
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 6   
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 6   
 
 009A E6F50000 R    MOV       R5,#PAG (SC?7?0)
 009E 8850          MOV       [-R0],R5
@@ -298,284 +298,198 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 00E0 E018          MOV       R8,#01H
 00E2 DA000000 E    CALLS     SEG (can_rx),can_rx
 00E6 0802          ADD       R0,#02H
-                                           ; SOURCE LINE # 63
-00E8 E6F40000 R    MOV       R4,#POF (SC?7?0)
-00EC E6F50000 R    MOV       R5,#PAG (SC?7?0)
-00F0 8850          MOV       [-R0],R5
-00F2 F0C4          MOV       R12,R4
-00F4 E6FB8400      MOV       R11,#084H
-00F8 E6F90B01      MOV       R9,#010BH
-00FC E6FAF018      MOV       R10,#018F0H
-0100 E6F81000      MOV       R8,#010H
-0104 DA000000 E    CALLS     SEG (can_load),can_load
-0108 0802          ADD       R0,#02H
-                                           ; SOURCE LINE # 64
-010A E6F40000 R    MOV       R4,#POF (SC?7?0)
-010E E6F50000 R    MOV       R5,#PAG (SC?7?0)
-0112 8850          MOV       [-R0],R5
-0114 F0C4          MOV       R12,R4
-0116 E6FB8400      MOV       R11,#084H
-011A E6F90B02      MOV       R9,#020BH
-011E E6FAFF18      MOV       R10,#018FFH
-0122 E6F81100      MOV       R8,#011H
-0126 DA000000 E    CALLS     SEG (can_load),can_load
-012A 0802          ADD       R0,#02H
-                                           ; SOURCE LINE # 65
-012C E6F40000 R    MOV       R4,#POF (SC?7?0)
-0130 E6F50000 R    MOV       R5,#PAG (SC?7?0)
-0134 8850          MOV       [-R0],R5
-0136 F0C4          MOV       R12,R4
-0138 E6FB8400      MOV       R11,#084H
-013C E6F90B03      MOV       R9,#030BH
-0140 E6FAFF18      MOV       R10,#018FFH
-0144 E6F81200      MOV       R8,#012H
-0148 DA000000 E    CALLS     SEG (can_load),can_load
-014C 0802          ADD       R0,#02H
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 7   
-
-                                           ; SOURCE LINE # 66
-014E E6F40000 R    MOV       R4,#POF (SC?7?0)
-0152 E6F50000 R    MOV       R5,#PAG (SC?7?0)
-0156 8850          MOV       [-R0],R5
-0158 F0C4          MOV       R12,R4
-015A E6FB8400      MOV       R11,#084H
-015E E6F90B04      MOV       R9,#040BH
-0162 E6FAFF18      MOV       R10,#018FFH
-0166 E6F81300      MOV       R8,#013H
-016A DA000000 E    CALLS     SEG (can_load),can_load
-016E 0802          ADD       R0,#02H
-                                           ; SOURCE LINE # 69
-0170 E6F48400      MOV       R4,#084H
-0174 8840          MOV       [-R0],R4
-0176 E6FBFFFF      MOV       R11,#0FFFFH
-017A E6FCFF3F      MOV       R12,#03FFFH
-017E E6F96562      MOV       R9,#06265H
-0182 E6FA9F08      MOV       R10,#089FH
-0186 E6F81F00      MOV       R8,#01FH
-018A DA000000 E    CALLS     SEG (can_rx),can_rx
-018E 0802          ADD       R0,#02H
-                                           ; SOURCE LINE # 70
-0190 E6F48400      MOV       R4,#084H
-0194 8840          MOV       [-R0],R4
-0196 E6FBFFFF      MOV       R11,#0FFFFH
-019A E6FCFF3F      MOV       R12,#03FFFH
-019E E6F90104      MOV       R9,#0401H
-01A2 E6FAF01C      MOV       R10,#01CF0H
-01A6 E6F81E00      MOV       R8,#01EH
-01AA DA000000 E    CALLS     SEG (can_rx),can_rx
-01AE 0802          ADD       R0,#02H
-                                           ; SOURCE LINE # 71
-01B0 E6F48400      MOV       R4,#084H
-01B4 8840          MOV       [-R0],R4
-01B6 E6FBFFFF      MOV       R11,#0FFFFH
-01BA E6FCFF3F      MOV       R12,#03FFFH
-01BE E6F90204      MOV       R9,#0402H
-01C2 E6FAF00C      MOV       R10,#0CF0H
-01C6 E6F81D00      MOV       R8,#01DH
-01CA DA000000 E    CALLS     SEG (can_rx),can_rx
-01CE 0802          ADD       R0,#02H
-                                           ; SOURCE LINE # 72
-01D0 E6F48400      MOV       R4,#084H
-01D4 8840          MOV       [-R0],R4
-01D6 E6FBFFFF      MOV       R11,#0FFFFH
-01DA E6FCFF3F      MOV       R12,#03FFFH
-01DE E6F90304      MOV       R9,#0403H
-01E2 E6FAF00C      MOV       R10,#0CF0H
-01E6 E6F81C00      MOV       R8,#01CH
-01EA DA000000 E    CALLS     SEG (can_rx),can_rx
-01EE 0802          ADD       R0,#02H
                                            ; SOURCE LINE # 87
-01F0 E108          MOVB      RL4,#00H
+00E8 E108          MOVB      RL4,#00H
                                            ; SOURCE LINE # 88
-01F2 DB00          RETS      
+00EA DB00          RETS      
              ; FUNCTION hican_init (END    RMASK = @0x7FFF)
 
              ; FUNCTION hican_10ms_hook (BEGIN  RMASK = @0x8000)
                                            ; SOURCE LINE # 93
                                            ; SOURCE LINE # 95
-01F4 DB00          RETS      
+00EC DB00          RETS      
              ; FUNCTION hican_10ms_hook (END    RMASK = @0x8000)
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 8   
-
 
              ; FUNCTION hican_1ms_hook (BEGIN  RMASK = @0x8000)
                                            ; SOURCE LINE # 100
                                            ; SOURCE LINE # 102
-01F6 DB00          RETS      
+00EE DB00          RETS      
              ; FUNCTION hican_1ms_hook (END    RMASK = @0x8000)
 
              ; FUNCTION do_boff_recovery (BEGIN  RMASK = @0x7FFF)
                                            ; SOURCE LINE # 108
                                            ; SOURCE LINE # 109
                                            ; SOURCE LINE # 112
-01F8 DA000000 E    CALLS     SEG (get_can_bus_off),get_can_bus_off
-01FC 4980          CMPB      RL4,#00H
-01FE 2D0C          JMPR      cc_Z,?C0002
+00F0 DA000000 E    CALLS     SEG (get_can_bus_off),get_can_bus_off
+00F4 4980          CMPB      RL4,#00H
+00F6 2D0C          JMPR      cc_Z,?C0002
                                            ; SOURCE LINE # 114
-0200 258F0A00 R    SUBB      l_timer_boff,ONES
+00F8 258F0A00 R    SUBB      l_timer_boff,ONES
                                            ; SOURCE LINE # 116
-0204 F3F80A00 R    MOVB      RL4,l_timer_boff
-0208 47F83200      CMPB      RL4,#032H
-020C 8D07          JMPR      cc_ULT,?C0004
+00FC F3F80A00 R    MOVB      RL4,l_timer_boff
+0100 47F83200      CMPB      RL4,#032H
+0104 8D07          JMPR      cc_ULT,?C0004
                                            ; SOURCE LINE # 118
-020E DA000000 E    CALLS     SEG (set_can_on),set_can_on
+0106 DA000000 E    CALLS     SEG (set_can_on),set_can_on
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 7   
+
                                            ; SOURCE LINE # 119
-0212 F78E0A00 R    MOVB      l_timer_boff,ZEROS
+010A F78E0A00 R    MOVB      l_timer_boff,ZEROS
                                            ; SOURCE LINE # 120
-0216 0D02          JMPR      cc_UC,?C0004
-0218         ?C0002:
+010E 0D02          JMPR      cc_UC,?C0004
+0110         ?C0002:
                                            ; SOURCE LINE # 123
-0218 F78E0A00 R    MOVB      l_timer_boff,ZEROS
-021C         ?C0004:
+0110 F78E0A00 R    MOVB      l_timer_boff,ZEROS
+0114         ?C0004:
                                            ; SOURCE LINE # 125
-021C E108          MOVB      RL4,#00H
+0114 E108          MOVB      RL4,#00H
                                            ; SOURCE LINE # 126
-021E DB00          RETS      
+0116 DB00          RETS      
              ; FUNCTION do_boff_recovery (END    RMASK = @0x7FFF)
 
              ; FUNCTION can_do_objx_hook_hican (BEGIN  RMASK = @0x7FFF)
                                            ; SOURCE LINE # 131
-0220 ECFE          PUSH      R14
-0222 ECFF          PUSH      R15
-0224 88C0          MOV       [-R0],R12
-0226 88B0          MOV       [-R0],R11
-0228 F0E9          MOV       R14,R9
-022A F0FA          MOV       R15,R10
+0118 ECFE          PUSH      R14
+011A ECFF          PUSH      R15
+011C 88C0          MOV       [-R0],R12
+011E 88B0          MOV       [-R0],R11
+0120 F0E9          MOV       R14,R9
+0122 F0FA          MOV       R15,R10
 ;---- Variable 'id' assigned to Register 'R14/R15' ----
 ;---- Variable 'no' assigned to Register 'R8' ----
-022C 06F0E0FF      ADD       R0,#0FFE0H
+0124 06F0E0FF      ADD       R0,#0FFE0H
                                            ; SOURCE LINE # 132
                                            ; SOURCE LINE # 140
-0230 E10E          MOVB      RL7,#00H
+0128 E10E          MOVB      RL7,#00H
 ;---- Variable 'idx' assigned to Register 'RL7' ----
-0232 0D0C          JMPR      cc_UC,?C0008
-0234         ?C0009:
+012A 0D0C          JMPR      cc_UC,?C0008
+012C         ?C0009:
                                            ; SOURCE LINE # 142
-0234 C0E8          MOVBZ     R8,RL7
-0236 D4502200      MOV       R5,[R0+#022H] ; buf+2
-023A D4402000      MOV       R4,[R0+#020H] ; buf
-023E 0048          ADD       R4,R8
-0240 DC45          EXTP      R5,#01H
-0242 A9C4          MOVB      RL6,[R4]
-0244 F040          MOV       R4,R0
-0246 0048          ADD       R4,R8
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 9   
-
-0248 B9C4          MOVB      [R4],RL6
+012C C0E8          MOVBZ     R8,RL7
+012E D4502200      MOV       R5,[R0+#022H] ; buf+2
+0132 D4402000      MOV       R4,[R0+#020H] ; buf
+0136 0048          ADD       R4,R8
+0138 DC45          EXTP      R5,#01H
+013A A9C4          MOVB      RL6,[R4]
+013C F040          MOV       R4,R0
+013E 0048          ADD       R4,R8
+0140 B9C4          MOVB      [R4],RL6
                                            ; SOURCE LINE # 143
-024A 09E1          ADDB      RL7,#01H
-024C         ?C0008:
-024C F4A02400      MOVB      RL5,[R0+#024H]; len
-0250 41EA          CMPB      RL7,RL5
-0252 8DF0          JMPR      cc_ULT,?C0009
-0254         ?C0007:
+0142 09E1          ADDB      RL7,#01H
+0144         ?C0008:
+0144 F4A02400      MOVB      RL5,[R0+#024H]; len
+0148 41EA          CMPB      RL7,RL5
+014A 8DF0          JMPR      cc_ULT,?C0009
+014C         ?C0007:
                                            ; SOURCE LINE # 145
-0254 F2F60800 R    MOV       R6,g_diag_tester_id
-0258 E007          MOV       R7,#00H
-025A F04E          MOV       R4,R14
-025C F05F          MOV       R5,R15
-025E 2046          SUB       R4,R6
-0260 3057          SUBC      R5,R7
-0262 2D52          JMPR      cc_Z,?C0012
+014C F2F60800 R    MOV       R6,g_diag_tester_id
+0150 E007          MOV       R7,#00H
+0152 F04E          MOV       R4,R14
+0154 F05F          MOV       R5,R15
+0156 2046          SUB       R4,R6
+0158 3057          SUBC      R5,R7
+015A 2D52          JMPR      cc_Z,?C0012
                                            ; SOURCE LINE # 149
                                            ; SOURCE LINE # 150
-0264         ?C0011:
+015C         ?C0011:
                                            ; SOURCE LINE # 151
-0264 F2F60400 R    MOV       R6,g_cto_id
-0268 E007          MOV       R7,#00H
-026A F04E          MOV       R4,R14
-026C F05F          MOV       R5,R15
-026E 2046          SUB       R4,R6
-0270 3057          SUBC      R5,R7
-0272 3D08          JMPR      cc_NZ,?C0013
-                                           ; SOURCE LINE # 154
-0274 F080          MOV       R8,R0
-0276 66F8FF3F      AND       R8,#03FFFH
-027A F2F904FE      MOV       R9,DPP2
-027E DA000000 E    CALLS     SEG (XcpCommand),XcpCommand
-                                           ; SOURCE LINE # 162
-0282 0D42          JMPR      cc_UC,?C0012
-                                           ; SOURCE LINE # 163
-0284         ?C0013:
-                                           ; SOURCE LINE # 165
-0284 F04E          MOV       R4,R14
-0286 F05F          MOV       R5,R15
-0288 26F46562      SUB       R4,#06265H
-028C 36F59F08      SUBC      R5,#089FH
-0290 3D06          JMPR      cc_NZ,?C0014
-                                           ; SOURCE LINE # 167
-0292 D4902200      MOV       R9,[R0+#022H] ; buf+2
-0296 D4802000      MOV       R8,[R0+#020H] ; buf
-029A DA000000 E    CALLS     SEG (do_aut_drv_response),do_aut_drv_response
-                                           ; SOURCE LINE # 168
-029E         ?C0014:
-                                           ; SOURCE LINE # 169
-029E F04E          MOV       R4,R14
-02A0 F05F          MOV       R5,R15
-02A2 26F40104      SUB       R4,#0401H
-02A6 36F5F00C      SUBC      R5,#0CF0H
-02AA 3D03          JMPR      cc_NZ,?C0015
-                                           ; SOURCE LINE # 171
-02AC E014          MOV       R4,#01H
-02AE F6F40000 R    MOV       wgy,R4
-                                           ; SOURCE LINE # 172
-02B2         ?C0015:
-                                           ; SOURCE LINE # 173
-02B2 F04E          MOV       R4,R14
-02B4 F05F          MOV       R5,R15
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 10  
+015C F2F60400 R    MOV       R6,g_cto_id
+0160 E007          MOV       R7,#00H
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 8   
 
-02B6 26F40204      SUB       R4,#0402H
-02BA 36F5F00C      SUBC      R5,#0CF0H
-02BE 3D03          JMPR      cc_NZ,?C0016
+0162 F04E          MOV       R4,R14
+0164 F05F          MOV       R5,R15
+0166 2046          SUB       R4,R6
+0168 3057          SUBC      R5,R7
+016A 3D08          JMPR      cc_NZ,?C0013
+                                           ; SOURCE LINE # 154
+016C F080          MOV       R8,R0
+016E 66F8FF3F      AND       R8,#03FFFH
+0172 F2F904FE      MOV       R9,DPP2
+0176 DA000000 E    CALLS     SEG (XcpCommand),XcpCommand
+                                           ; SOURCE LINE # 162
+017A 0D42          JMPR      cc_UC,?C0012
+                                           ; SOURCE LINE # 163
+017C         ?C0013:
+                                           ; SOURCE LINE # 165
+017C F04E          MOV       R4,R14
+017E F05F          MOV       R5,R15
+0180 26F46562      SUB       R4,#06265H
+0184 36F59F08      SUBC      R5,#089FH
+0188 3D06          JMPR      cc_NZ,?C0014
+                                           ; SOURCE LINE # 167
+018A D4902200      MOV       R9,[R0+#022H] ; buf+2
+018E D4802000      MOV       R8,[R0+#020H] ; buf
+0192 DA000000 E    CALLS     SEG (do_aut_drv_response),do_aut_drv_response
+                                           ; SOURCE LINE # 168
+0196         ?C0014:
+                                           ; SOURCE LINE # 169
+0196 F04E          MOV       R4,R14
+0198 F05F          MOV       R5,R15
+019A 26F40104      SUB       R4,#0401H
+019E 36F5F00C      SUBC      R5,#0CF0H
+01A2 3D03          JMPR      cc_NZ,?C0015
+                                           ; SOURCE LINE # 171
+01A4 E014          MOV       R4,#01H
+01A6 F6F40000 R    MOV       wgy,R4
+                                           ; SOURCE LINE # 172
+01AA         ?C0015:
+                                           ; SOURCE LINE # 173
+01AA F04E          MOV       R4,R14
+01AC F05F          MOV       R5,R15
+01AE 26F40204      SUB       R4,#0402H
+01B2 36F5F00C      SUBC      R5,#0CF0H
+01B6 3D03          JMPR      cc_NZ,?C0016
                                            ; SOURCE LINE # 175
-02C0 E014          MOV       R4,#01H
-02C2 F6F40000 R    MOV       wgy,R4
+01B8 E014          MOV       R4,#01H
+01BA F6F40000 R    MOV       wgy,R4
                                            ; SOURCE LINE # 176
-02C6         ?C0016:
+01BE         ?C0016:
                                            ; SOURCE LINE # 177
-02C6 F04E          MOV       R4,R14
-02C8 F05F          MOV       R5,R15
-02CA 26F40304      SUB       R4,#0403H
-02CE 36F5F00C      SUBC      R5,#0CF0H
-02D2 3D03          JMPR      cc_NZ,?C0017
+01BE F04E          MOV       R4,R14
+01C0 F05F          MOV       R5,R15
+01C2 26F40304      SUB       R4,#0403H
+01C6 36F5F00C      SUBC      R5,#0CF0H
+01CA 3D03          JMPR      cc_NZ,?C0017
                                            ; SOURCE LINE # 179
-02D4 E014          MOV       R4,#01H
-02D6 F6F40000 R    MOV       wgy,R4
+01CC E014          MOV       R4,#01H
+01CE F6F40000 R    MOV       wgy,R4
                                            ; SOURCE LINE # 180
-02DA         ?C0017:
+01D2         ?C0017:
                                            ; SOURCE LINE # 181
-02DA F04E          MOV       R4,R14
-02DC F05F          MOV       R5,R15
-02DE 26F40104      SUB       R4,#0401H
-02E2 3850          SUBC      R5,#00H
-02E4 3D06          JMPR      cc_NZ,?C0018
+01D2 F04E          MOV       R4,R14
+01D4 F05F          MOV       R5,R15
+C166 COMPILER V7.57.0, HICAN                                                               12/25/2020 22:12:53 PAGE 9   
+
+01D6 26F40104      SUB       R4,#0401H
+01DA 3850          SUBC      R5,#00H
+01DC 3D06          JMPR      cc_NZ,?C0018
                                            ; SOURCE LINE # 183
-02E6 D4902200      MOV       R9,[R0+#022H] ; buf+2
-02EA D4802000      MOV       R8,[R0+#020H] ; buf
-02EE DA000000 E    CALLS     SEG (do_motor_bldc_debug),do_motor_bldc_debug
+01DE D4902200      MOV       R9,[R0+#022H] ; buf+2
+01E2 D4802000      MOV       R8,[R0+#020H] ; buf
+01E6 DA000000 E    CALLS     SEG (do_motor_bldc_debug),do_motor_bldc_debug
                                            ; SOURCE LINE # 184
-02F2         ?C0018:
+01EA         ?C0018:
                                            ; SOURCE LINE # 186
-02F2 D4C02200      MOV       R12,[R0+#022H]; buf+2
-02F6 D4B02000      MOV       R11,[R0+#020H]; buf
-02FA F4802400      MOVB      RL4,[R0+#024H]; len
-02FE C08A          MOVBZ     R10,RL4
-0300 F08E          MOV       R8,R14
-0302 F09F          MOV       R9,R15
-0304 DA000000 E    CALLS     SEG (can_do_obj),can_do_obj
+01EA D4C02200      MOV       R12,[R0+#022H]; buf+2
+01EE D4B02000      MOV       R11,[R0+#020H]; buf
+01F2 F4802400      MOVB      RL4,[R0+#024H]; len
+01F6 C08A          MOVBZ     R10,RL4
+01F8 F08E          MOV       R8,R14
+01FA F09F          MOV       R9,R15
+01FC DA000000 E    CALLS     SEG (can_do_obj),can_do_obj
                                            ; SOURCE LINE # 187
-0308         ?C0012:
-0308 06F02400      ADD       R0,#024H
-030C FCFF          POP       R15
-030E FCFE          POP       R14
-0310 DB00          RETS      
+0200         ?C0012:
+0200 06F02400      ADD       R0,#024H
+0204 FCFF          POP       R15
+0206 FCFE          POP       R14
+0208 DB00          RETS      
              ; FUNCTION can_do_objx_hook_hican (END    RMASK = @0x7FFF)
 
 
 
 MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
-  CODE SIZE        =         786     --------
+  CODE SIZE        =         522     --------
   NEAR-CONST SIZE  =    --------     --------
   FAR-CONST SIZE   =           9     --------
   HUGE-CONST SIZE  =    --------     --------
@@ -587,8 +501,6 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   SDATA-DATA SIZE  =    --------     --------
   BDATA-DATA SIZE  =    --------     --------
   HUGE-DATA SIZE   =    --------     --------
-C166 COMPILER V7.57.0, HICAN                                                               12/14/2020 10:56:40 PAGE 11  
-
   BIT SIZE         =    --------     --------
   INIT'L SIZE      =          36     --------
 END OF MODULE INFORMATION.

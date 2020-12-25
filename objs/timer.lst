@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, TIMER                                                               12/14/2020 10:56:37 PAGE 1   
+C166 COMPILER V7.57.0, TIMER                                                               12/25/2020 22:12:50 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE TIMER
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\timer.c MODV2 LARGE 
    51  1      }
    52         ///////////////////////////////////////////////////////////////////////////////
    53         // 1ms timer
-C166 COMPILER V7.57.0, TIMER                                                               12/14/2020 10:56:37 PAGE 2   
+C166 COMPILER V7.57.0, TIMER                                                               12/25/2020 22:12:50 PAGE 2   
 
    54         void isr_timer_hook(void) 
    55         { 
@@ -92,7 +92,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\timer.c MODV2 LARGE 
    79  1        calc_mot_total_angle();
    80  1      }
    81         ///////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, TIMER                                                               12/14/2020 10:56:37 PAGE 3   
+C166 COMPILER V7.57.0, TIMER                                                               12/25/2020 22:12:50 PAGE 3   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -156,7 +156,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 005E DA000000 R    CALLS     SEG (isr_timer_hook_user),isr_timer_hook_user
                                            ; SOURCE LINE # 46
 0062 F78E0200 R    MOVB      tmx,ZEROS
-C166 COMPILER V7.57.0, TIMER                                                               12/14/2020 10:56:37 PAGE 4   
+C166 COMPILER V7.57.0, TIMER                                                               12/25/2020 22:12:50 PAGE 4   
 
                                            ; SOURCE LINE # 47
 0066         ?C0001:
@@ -220,7 +220,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION isr_timer_hook (END    RMASK = @0x0010)
 
              ; FUNCTION isr_timer_hook_user (BEGIN  RMASK = @0x7FFF)
-C166 COMPILER V7.57.0, TIMER                                                               12/14/2020 10:56:37 PAGE 5   
+C166 COMPILER V7.57.0, TIMER                                                               12/25/2020 22:12:50 PAGE 5   
 
                                            ; SOURCE LINE # 75
                                            ; SOURCE LINE # 77

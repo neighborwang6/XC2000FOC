@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 1   
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE CTRL
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
    51         enum
    52         {
    53           MOTOR_FORWORD = 0,
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 2   
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 2   
 
    54           MOTOR_BACKWARD = 1,
    55           MOTOR_HOLD = 2
@@ -115,7 +115,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
   101         ////////////////////////////////////////////////////////////////////////////////
   102         u8 isr_5ms_hook_user(void)
   103         {
-  104  1        spi_tle9180d_31qk_trans(0xaaaa);
+  104  1        //spi_tle9180d_31qk_trans(0xaaaa);
   105  1        
   106  1        #ifdef PRESURE_PID_CTRL
                 // Sensor measurement...
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
                 filter_disp_sense(g_disp_value_sent);
                 
                 // Control logic...
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 3   
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 3   
 
                 //DoEboosterCtrl();
                 
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
   174  1        return 0;
   175  1      }
   176         
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 4   
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 4   
 
   177         ////////////////////////////////////////////////////////////////////////////////
   178         //
@@ -226,252 +226,248 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\ctrl.c MODV2 LARGE BROWSE 
   208  1        //bufx[6]=(u8)(get_ad_value(AD_AIN3)>>2);
   209  1        //bufx[7]=(u8)(get_ad_value(AD_VO1)>>2);
   210  1      
-  211  1        //bufx[0]=((u8)(((u16)(DisplacementSenseMM))>>8));
-  212  1        //bufx[1]=((u8)(((u16)(DisplacementSenseMM))&0xFF));
-  213  1        //bufx[2]=(u8)(Voltage>>8);
-  214  1        //bufx[3]=(u8)(Voltage&0xff);
-  215  1        //bufx[4]=(u8)(PressureAVE>>8);
-  216  1        //bufx[5]=(u8)(PressureAVE&0xff);
-  217  1        //bufx[6]=((u8)(((u16)(Eerror))>>8));
-  218  1        //bufx[7]=((u8)(((u16)(Eerror))&0xFF));
+  211  1        bufx[0]=((u8)(((u16)(DisplacementSenseMM))>>8));
+  212  1        bufx[1]=((u8)(((u16)(DisplacementSenseMM))&0xFF));
+  213  1        bufx[2]=(u8)(Voltage>>8);
+  214  1        bufx[3]=(u8)(Voltage&0xff);
+  215  1        bufx[4]=(u8)(PressureAVE>>8);
+  216  1        bufx[5]=(u8)(PressureAVE&0xff);
+  217  1        bufx[6]=((u8)(((u16)(Eerror))>>8));
+  218  1        bufx[7]=((u8)(((u16)(Eerror))&0xFF));
   219  1        
-  220  1        
-  221  1        //can_sload(7,bufx);  //0x105
-  222  1        //can_stx(7);
-  223  1          
-  224  1        ////////////////////////////////////////////////////////////////////////////
-  225  1        //bufx[0]=(u8)(MotorState);
-  226  1        //bufx[1]=(u8)(1);
-  227  1        //bufx[2]=(u8)(2);
-  228  1        //bufx[3]=(u8)(3);
-  229  1        //bufx[4]=(u8)(4);
-  230  1        //bufx[5]=(u8)(5);
-  231  1        //bufx[6]=(u8)(6);
-  232  1        //bufx[7]=(u8)(7);
-  233  1      
-  234  1        //can_sload(8,bufx);  //0x106
-  235  1        //can_stx(8);
-  236  1        
-  237  1        ////////////////////////////////////////////////////////////////////////////
-  238  1        //bufx[0]=(u8)(g_angle_eiq);
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 5   
+  220  1        can_sload(7,bufx);  //0x105
+  221  1        can_stx(7);
+  222  1          
+  223  1        ////////////////////////////////////////////////////////////////////////////
+  224  1        bufx[0]=(u8)(MotorState);
+  225  1        bufx[1]=(u8)(1);
+  226  1        bufx[2]=(u8)(2);
+  227  1        bufx[3]=(u8)(3);
+  228  1        bufx[4]=(u8)(4);
+  229  1        bufx[5]=(u8)(5);
+  230  1        bufx[6]=(u8)(6);
+  231  1        bufx[7]=(u8)(7);
+  232  1      
+  233  1        can_sload(8,bufx);  //0x106
+  234  1        can_stx(8);
+  235  1        
+  236  1        ////////////////////////////////////////////////////////////////////////////
+  237  1        bufx[0]=(u8)(g_angle_eiq);
+  238  1        bufx[1]=(u8)(g_angle_eiq>>8);
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 5   
 
-  239  1        //bufx[1]=(u8)(g_angle_eiq>>8);
-  240  1        //bufx[2]=(u8)(g_total_angle_sl);
-  241  1        //bufx[3]=(u8)(g_total_angle_sl>>8);
-  242  1        //bufx[4]=(u8)(g_mot_speed_sw);
-  243  1        //bufx[5]=(u8)(g_mot_speed_sw>>8);
-  244  1        //bufx[6]=(u8)(g_dir_ub);
-  245  1        //bufx[7]=(u8)(g_resolver_pos_uw/683);
-  246  1        
-  247  1          //can_sload(9,bufx);
-  248  1          //can_stx(9);
-  249  1            ////////////////////////////////////////////////////////////////////////////
-  250  1        bufx[0]=(u8)(1);
-  251  1        bufx[1]=(u8)(2);
-  252  1        bufx[2]=(u8)(3);
-  253  1        bufx[3]=(u8)(4);
-  254  1        bufx[4]=(u8)(5);
-  255  1        bufx[5]=(u8)(6);
-  256  1        bufx[6]=(u8)(7);
-  257  1        bufx[7]=(u8)(8);
-  258  1        
-  259  1        can_sload(16,bufx);
-  260  1        can_stx(16);
-  261  1        
-  262  1        bufx[0]=(u8)(1);
-  263  1        bufx[1]=(u8)(2);
-  264  1        bufx[2]=(u8)(3);
-  265  1        bufx[3]=(u8)(4);
-  266  1        bufx[4]=(u8)(5);
-  267  1        bufx[5]=(u8)(6);
-  268  1        bufx[6]=(u8)(7);
-  269  1        bufx[7]=(u8)(8);
-  270  1        
-  271  1        can_sload(17,bufx);
-  272  1        can_stx(17);
-  273  1        
-  274  1        bufx[0]=(u8)(1);
-  275  1        bufx[1]=(u8)(2);
-  276  1        bufx[2]=(u8)(3);
-  277  1        bufx[3]=(u8)(4);
-  278  1        bufx[4]=(u8)(5);
-  279  1        bufx[5]=(u8)(6);
-  280  1        bufx[6]=(u8)(7);
-  281  1        bufx[7]=(u8)(8);
-  282  1        
-  283  1        can_sload(18,bufx);
-  284  1        can_stx(18);
-  285  1        
-  286  1        bufx[0]=(u8)(1);
-  287  1        bufx[1]=(u8)(2);
-  288  1        bufx[2]=(u8)(3);
-  289  1        bufx[3]=(u8)(4);
-  290  1        bufx[4]=(u8)(5);
-  291  1        bufx[5]=(u8)(6);
-  292  1        bufx[6]=(u8)(7);
-  293  1        bufx[7]=(u8)(8);
-  294  1        
-  295  1        can_sload(19,bufx);
-  296  1        can_stx(19);
-  297  1        ////////////////////////////////////////////////////////////////////////////
-  298  1      }
-  299         
-  300         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 6   
+  239  1        bufx[2]=(u8)(g_total_angle_sl);
+  240  1        bufx[3]=(u8)(g_total_angle_sl>>8);
+  241  1        bufx[4]=(u8)(g_mot_speed_sw);
+  242  1        bufx[5]=(u8)(g_mot_speed_sw>>8);
+  243  1        //bufx[6]=(u8)(g_dir_ub);
+  244  1        //bufx[7]=(u8)(g_resolver_pos_uw/683);
+  245  1        
+  246  1          //can_sload(9,bufx);
+  247  1          //can_stx(9);
+  248  1            ////////////////////////////////////////////////////////////////////////////
+  249  1        bufx[0]=(u8)(1);
+  250  1        bufx[1]=(u8)(2);
+  251  1        bufx[2]=(u8)(3);
+  252  1        bufx[3]=(u8)(4);
+  253  1        bufx[4]=(u8)(5);
+  254  1        bufx[5]=(u8)(6);
+  255  1        bufx[6]=(u8)(7);
+  256  1        bufx[7]=(u8)(8);
+  257  1        
+  258  1        can_sload(16,bufx);
+  259  1        can_stx(16);
+  260  1        
+  261  1        bufx[0]=(u8)(1);
+  262  1        bufx[1]=(u8)(2);
+  263  1        bufx[2]=(u8)(3);
+  264  1        bufx[3]=(u8)(4);
+  265  1        bufx[4]=(u8)(5);
+  266  1        bufx[5]=(u8)(6);
+  267  1        bufx[6]=(u8)(7);
+  268  1        bufx[7]=(u8)(8);
+  269  1        
+  270  1        can_sload(17,bufx);
+  271  1        can_stx(17);
+  272  1        
+  273  1        bufx[0]=(u8)(1);
+  274  1        bufx[1]=(u8)(2);
+  275  1        bufx[2]=(u8)(3);
+  276  1        bufx[3]=(u8)(4);
+  277  1        bufx[4]=(u8)(5);
+  278  1        bufx[5]=(u8)(6);
+  279  1        bufx[6]=(u8)(7);
+  280  1        bufx[7]=(u8)(8);
+  281  1        
+  282  1        can_sload(18,bufx);
+  283  1        can_stx(18);
+  284  1        
+  285  1        bufx[0]=(u8)(1);
+  286  1        bufx[1]=(u8)(2);
+  287  1        bufx[2]=(u8)(3);
+  288  1        bufx[3]=(u8)(4);
+  289  1        bufx[4]=(u8)(5);
+  290  1        bufx[5]=(u8)(6);
+  291  1        bufx[6]=(u8)(7);
+  292  1        bufx[7]=(u8)(8);
+  293  1        
+  294  1        can_sload(19,bufx);
+  295  1        can_stx(19);
+  296  1        ////////////////////////////////////////////////////////////////////////////
+  297  1      }
+  298         
+  299         ////////////////////////////////////////////////////////////////////////////////
+  300         //
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 6   
 
-  301         //
-  302         ////////////////////////////////////////////////////////////////////////////////
-  303         void transmit_can_data_1ms(void)
-  304         {
-  305  1        /*
-  306  1        u8 bufx[8];
-  307  1        
-  308  1        ////////////////////////////////////////////////////////////////////////////
-  309  1        bufx[0]=(u8)(g_resolver_pos_uw);
-  310  1        bufx[1]=(u8)(g_resolver_pos_uw>>8);
-  311  1        bufx[2]=(u8)(g_duty_A/10);
-  312  1        bufx[3]=(u8)(g_duty_B/10);
-  313  1        bufx[4]=(u8)(g_duty_C/10);
-  314  1        bufx[5]=(u8)(g_angle_eiq);
-  315  1        bufx[6]=(u8)(g_angle_eiq>>8);
-  316  1        bufx[7]=0;
-  317  1        
-  318  1          can_sload(4,bufx);
-  319  1          can_stx(4);
-  320  1      
-  321  1        ////////////////////////////////////////////////////////////////////////////
-  322  1        // bufx[0]=(u8)(g_pwm_ex_duty_uw[0]);
-  323  1        // bufx[1]=(u8)(g_pwm_ex_duty_uw[0]>>8);
-  324  1        // bufx[2]=(u8)(g_pwm_ex_duty_uw[1]);
-  325  1        // bufx[3]=(u8)(g_pwm_ex_duty_uw[1]>>8);
-  326  1        // bufx[4]=(u8)(g_pwm_ex_duty_uw[2]);
-  327  1        // bufx[5]=(u8)(g_pwm_ex_duty_uw[2]>>8);
-  328  1        // bufx[6]=(u8)(g_pwm_ex_duty_uw[3]);
-  329  1        // bufx[7]=(u8)(g_pwm_ex_duty_uw[3]>>8);
-  330  1      
-  331  1        bufx[0]=(u8)(Vqs_cmd/100);
-  332  1        bufx[1]=(u8)(g_angle_offset/10);
-  333  1        bufx[2]=(u8)(V.Alpha/10); // 0.01V/bit
-  334  1        bufx[3]=(u8)(V.Beta/10);  // 0.01V/bit
-  335  1        bufx[4]=(u8)(V.VecSector);
-  336  1        bufx[5]=(u8)(V.T0/10);
-  337  1        bufx[6]=(u8)(V.T1/10);
-  338  1        bufx[7]=(u8)(V.T2/10);
-  339  1      
-  340  1          can_sload(5,bufx);
-  341  1          can_stx(5);
-  342  1      
-  343  1        ////////////////////////////////////////////////////////////////////////////
-  344  1        bufx[0]=(u8)(get_ad_value(AD_SCDL)>>2);
-  345  1        bufx[1]=(u8)(GET_TLE_ERR2());
-  346  1        bufx[1]<<=1;
-  347  1        bufx[1]|=(GET_TLE_ERR1());
-  348  1        bufx[2]=(u8)(get_ad_value(AD_BAT12V_SW)>>2);
-  349  1        // bufx[3]=(u8)(get_ad_value(AD_VRO)>>2);
-  350  1        // bufx[4]=(u8)(get_ad_value(AD_VO2)>>2);
-  351  1        bufx[3]=(u8)(get_ad_value(AD_VO2));
-  352  1        bufx[4]=(u8)(get_ad_value(AD_VO2)>>8);
-  353  1        bufx[5]=(u8)(get_ad_value(AD_SH1_MON)>>2);
-  354  1        bufx[6]=(u8)(get_ad_value(AD_SH2_MON)>>2);
-  355  1        bufx[7]=(u8)(get_ad_value(AD_SH3_MON)>>2);
-  356  1        
-  357  1          can_sload(6,bufx);
-  358  1          can_stx(6);
-  359  1          */
-  360  1        ////////////////////////////////////////////////////////////////////////////
-  361  1      }
-  362         
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 7   
+  301         ////////////////////////////////////////////////////////////////////////////////
+  302         void transmit_can_data_1ms(void)
+  303         {
+  304  1        /*
+  305  1        u8 bufx[8];
+  306  1        
+  307  1        ////////////////////////////////////////////////////////////////////////////
+  308  1        bufx[0]=(u8)(g_resolver_pos_uw);
+  309  1        bufx[1]=(u8)(g_resolver_pos_uw>>8);
+  310  1        bufx[2]=(u8)(g_duty_A/10);
+  311  1        bufx[3]=(u8)(g_duty_B/10);
+  312  1        bufx[4]=(u8)(g_duty_C/10);
+  313  1        bufx[5]=(u8)(g_angle_eiq);
+  314  1        bufx[6]=(u8)(g_angle_eiq>>8);
+  315  1        bufx[7]=0;
+  316  1        
+  317  1          can_sload(4,bufx);
+  318  1          can_stx(4);
+  319  1      
+  320  1        ////////////////////////////////////////////////////////////////////////////
+  321  1        // bufx[0]=(u8)(g_pwm_ex_duty_uw[0]);
+  322  1        // bufx[1]=(u8)(g_pwm_ex_duty_uw[0]>>8);
+  323  1        // bufx[2]=(u8)(g_pwm_ex_duty_uw[1]);
+  324  1        // bufx[3]=(u8)(g_pwm_ex_duty_uw[1]>>8);
+  325  1        // bufx[4]=(u8)(g_pwm_ex_duty_uw[2]);
+  326  1        // bufx[5]=(u8)(g_pwm_ex_duty_uw[2]>>8);
+  327  1        // bufx[6]=(u8)(g_pwm_ex_duty_uw[3]);
+  328  1        // bufx[7]=(u8)(g_pwm_ex_duty_uw[3]>>8);
+  329  1      
+  330  1        bufx[0]=(u8)(Vqs_cmd/100);
+  331  1        bufx[1]=(u8)(g_angle_offset/10);
+  332  1        bufx[2]=(u8)(V.Alpha/10); // 0.01V/bit
+  333  1        bufx[3]=(u8)(V.Beta/10);  // 0.01V/bit
+  334  1        bufx[4]=(u8)(V.VecSector);
+  335  1        bufx[5]=(u8)(V.T0/10);
+  336  1        bufx[6]=(u8)(V.T1/10);
+  337  1        bufx[7]=(u8)(V.T2/10);
+  338  1      
+  339  1          can_sload(5,bufx);
+  340  1          can_stx(5);
+  341  1      
+  342  1        ////////////////////////////////////////////////////////////////////////////
+  343  1        bufx[0]=(u8)(get_ad_value(AD_SCDL)>>2);
+  344  1        bufx[1]=(u8)(GET_TLE_ERR2());
+  345  1        bufx[1]<<=1;
+  346  1        bufx[1]|=(GET_TLE_ERR1());
+  347  1        bufx[2]=(u8)(get_ad_value(AD_BAT12V_SW)>>2);
+  348  1        // bufx[3]=(u8)(get_ad_value(AD_VRO)>>2);
+  349  1        // bufx[4]=(u8)(get_ad_value(AD_VO2)>>2);
+  350  1        bufx[3]=(u8)(get_ad_value(AD_VO2));
+  351  1        bufx[4]=(u8)(get_ad_value(AD_VO2)>>8);
+  352  1        bufx[5]=(u8)(get_ad_value(AD_SH1_MON)>>2);
+  353  1        bufx[6]=(u8)(get_ad_value(AD_SH2_MON)>>2);
+  354  1        bufx[7]=(u8)(get_ad_value(AD_SH3_MON)>>2);
+  355  1        
+  356  1          can_sload(6,bufx);
+  357  1          can_stx(6);
+  358  1          */
+  359  1        ////////////////////////////////////////////////////////////////////////////
+  360  1      }
+  361         
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 7   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
 
              ; FUNCTION isr_5ms_hook_user (BEGIN  RMASK = @0x7FFF)
                                            ; SOURCE LINE # 102
-                                           ; SOURCE LINE # 104
-0000 E6F8AAAA      MOV       R8,#0AAAAH
-0004 DA000000 E    CALLS     SEG (spi_tle9180d_31qk_trans),spi_tle9180d_31qk_trans
                                            ; SOURCE LINE # 121
-0008 F2F40400 R    MOV       R4,g_ctrl_test_timer_uw
-000C 06F40CFE      ADD       R4,#0FE0CH
-0010 2D16          JMPR      cc_Z,?C0004
-0012 06F470FE      ADD       R4,#0FE70H
-0016 2D1B          JMPR      cc_Z,?C0005
-0018 06F42003      ADD       R4,#0320H
-001C 3D1B          JMPR      cc_NZ,?C0001
+0000 F2F40400 R    MOV       R4,g_ctrl_test_timer_uw
+0004 06F40CFE      ADD       R4,#0FE0CH
+0008 2D16          JMPR      cc_Z,?C0004
+000A 06F470FE      ADD       R4,#0FE70H
+000E 2D1B          JMPR      cc_Z,?C0005
+0010 06F42003      ADD       R4,#0320H
+0014 3D1B          JMPR      cc_NZ,?C0001
                                            ; SOURCE LINE # 123
                                            ; SOURCE LINE # 124
                                            ; SOURCE LINE # 126
-001E         ?C0003:
+0016         ?C0003:
                                            ; SOURCE LINE # 128
-001E E028          MOV       R8,#02H
-0020 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
+0016 E028          MOV       R8,#02H
+0018 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
                                            ; SOURCE LINE # 129
-0024 F2F80000 R    MOV       R8,TryVqs
-0028 DA000000 E    CALLS     SEG (set_motor_volt),set_motor_volt
+001C F2F80000 R    MOV       R8,TryVqs
+0020 DA000000 E    CALLS     SEG (set_motor_volt),set_motor_volt
                                            ; SOURCE LINE # 130
-002C F2F80600 R    MOV       R8,test_dir
-0030 DA000000 E    CALLS     SEG (set_motor_dir),set_motor_dir
+0024 F2F80600 R    MOV       R8,test_dir
+0028 DA000000 E    CALLS     SEG (set_motor_dir),set_motor_dir
                                            ; SOURCE LINE # 131
-0034 F2F80800 R    MOV       R8,motor_offset
-0038 DA000000 E    CALLS     SEG (set_motor_offset),set_motor_offset
+002C F2F80800 R    MOV       R8,motor_offset
+0030 DA000000 E    CALLS     SEG (set_motor_offset),set_motor_offset
                                            ; SOURCE LINE # 132
-003C 0D0B          JMPR      cc_UC,?C0001
+0034 0D0B          JMPR      cc_UC,?C0001
                                            ; SOURCE LINE # 134
-003E         ?C0004:
+0036         ?C0004:
                                            ; SOURCE LINE # 135
-003E E018          MOV       R8,#01H
-0040 DA000000 E    CALLS     SEG (set_motor_dir),set_motor_dir
+0036 E018          MOV       R8,#01H
+0038 DA000000 E    CALLS     SEG (set_motor_dir),set_motor_dir
                                            ; SOURCE LINE # 136
-0044 E6F82602      MOV       R8,#0226H
-0048 DA000000 E    CALLS     SEG (set_motor_offset),set_motor_offset
+003C E6F82602      MOV       R8,#0226H
+0040 DA000000 E    CALLS     SEG (set_motor_offset),set_motor_offset
                                            ; SOURCE LINE # 137
-004C 0D03          JMPR      cc_UC,?C0001
+0044 0D03          JMPR      cc_UC,?C0001
                                            ; SOURCE LINE # 139
-004E         ?C0005:
+0046         ?C0005:
                                            ; SOURCE LINE # 140
-004E E008          MOV       R8,#00H
-0050 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
+0046 E008          MOV       R8,#00H
+0048 DA000000 E    CALLS     SEG (set_motor_ctrl_enable),set_motor_ctrl_enable
                                            ; SOURCE LINE # 141
                                            ; SOURCE LINE # 142
-0054         ?C0001:
+004C         ?C0001:
                                            ; SOURCE LINE # 145
-0054 E108          MOVB      RL4,#00H
+004C E108          MOVB      RL4,#00H
                                            ; SOURCE LINE # 146
-0056 DB00          RETS      
+004E DB00          RETS      
              ; FUNCTION isr_5ms_hook_user (END    RMASK = @0x7FFF)
 
              ; FUNCTION isr_10ms_hook_user (BEGIN  RMASK = @0x0010)
                                            ; SOURCE LINE # 151
                                            ; SOURCE LINE # 154
-0058 E108          MOVB      RL4,#00H
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 8   
-
+0050 E108          MOVB      RL4,#00H
                                            ; SOURCE LINE # 156
-005A DB00          RETS      
+0052 DB00          RETS      
              ; FUNCTION isr_10ms_hook_user (END    RMASK = @0x0010)
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 8   
+
 
              ; FUNCTION isr_1ms_hook_user (BEGIN  RMASK = @0x7FFF)
                                            ; SOURCE LINE # 161
                                            ; SOURCE LINE # 162
                                            ; SOURCE LINE # 166
-005C DA000000 R    CALLS     SEG (transmit_can_data_1ms),transmit_can_data_1ms
+0054 DA000000 R    CALLS     SEG (transmit_can_data_1ms),transmit_can_data_1ms
                                            ; SOURCE LINE # 168
-0060 258F0A00 R    SUBB      tmx,ONES
-0064 F3F80A00 R    MOVB      RL4,tmx
-0068 47F80A00      CMPB      RL4,#0AH
-006C 8D04          JMPR      cc_ULT,?C0008
+0058 258F0A00 R    SUBB      tmx,ONES
+005C F3F80A00 R    MOVB      RL4,tmx
+0060 47F80A00      CMPB      RL4,#0AH
+0064 8D04          JMPR      cc_ULT,?C0008
                                            ; SOURCE LINE # 170
-006E F78E0A00 R    MOVB      tmx,ZEROS
+0066 F78E0A00 R    MOVB      tmx,ZEROS
                                            ; SOURCE LINE # 171
-0072 DA000000 R    CALLS     SEG (transmit_can_data_10ms),transmit_can_data_10ms
+006A DA000000 R    CALLS     SEG (transmit_can_data_10ms),transmit_can_data_10ms
                                            ; SOURCE LINE # 172
-0076         ?C0008:
+006E         ?C0008:
                                            ; SOURCE LINE # 174
-0076 E108          MOVB      RL4,#00H
+006E E108          MOVB      RL4,#00H
                                            ; SOURCE LINE # 175
-0078 DB00          RETS      
+0070 DB00          RETS      
              ; FUNCTION isr_1ms_hook_user (END    RMASK = @0x7FFF)
 
              ; FUNCTION can_do_obj (BEGIN  RMASK = @0x4310)
@@ -480,185 +476,297 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 ;---- Variable 'cfg' assigned to Register 'R10' ----
 ;---- Variable 'id' assigned to Register 'R8/R9' ----
                                            ; SOURCE LINE # 185
-007A 26F88808      SUB       R8,#0888H
-007E 3890          SUBC      R9,#00H
-0080 2D02          JMPR      cc_Z,?C0010
+0072 26F88808      SUB       R8,#0888H
+0076 3890          SUBC      R9,#00H
+0078 2D02          JMPR      cc_Z,?C0010
                                            ; SOURCE LINE # 186
-0082 E118          MOVB      RL4,#01H
-0084 DB00          RETS      
-0086         ?C0010:
+007A E118          MOVB      RL4,#01H
+007C DB00          RETS      
+007E         ?C0010:
                                            ; SOURCE LINE # 188
-0086 DC4C          EXTP      R12,#01H
-0088 F48B0100      MOVB      RL4,[R11+#POF(01H)]
-008C C084          MOVBZ     R4,RL4
-008E F6F40000 E    MOV       g_brake_pedal_pos_can_uw,R4
+007E DC4C          EXTP      R12,#01H
+0080 F48B0100      MOVB      RL4,[R11+#POF(01H)]
+0084 C084          MOVBZ     R4,RL4
+0086 F6F40000 E    MOV       g_brake_pedal_pos_can_uw,R4
                                            ; SOURCE LINE # 189
-0092 5C24          SHL       R4,#02H
-0094 F6F40000 E    MOV       g_brake_pedal_pos_can_uw,R4
+008A 5C24          SHL       R4,#02H
+008C F6F40000 E    MOV       g_brake_pedal_pos_can_uw,R4
                                            ; SOURCE LINE # 191
-0098 E108          MOVB      RL4,#00H
+0090 E108          MOVB      RL4,#00H
                                            ; SOURCE LINE # 192
-009A         ?C0011:
-009A DB00          RETS      
+0092         ?C0011:
+0092 DB00          RETS      
              ; FUNCTION can_do_obj (END    RMASK = @0x4310)
 
              ; FUNCTION transmit_can_data_10ms (BEGIN  RMASK = @0x7FFF)
                                            ; SOURCE LINE # 197
-009C 06F0F8FF      ADD       R0,#0FFF8H
+0094 06F0F8FF      ADD       R0,#0FFF8H
                                            ; SOURCE LINE # 198
-                                           ; SOURCE LINE # 250
-00A0 E118          MOVB      RL4,#01H
-00A2 B980          MOVB      [R0],RL4      ; bufx
-                                           ; SOURCE LINE # 251
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 9   
+                                           ; SOURCE LINE # 211
+0098 F2F40000 E    MOV       R4,DisplacementSenseMM
+009C F2F50200 E    MOV       R5,DisplacementSenseMM+02H
+00A0 DA000000 E    CALLS     SEG (?C_CASTF),?C_CASTF
+00A4 F054          MOV       R5,R4
+00A6 7C84          SHR       R4,#08H
+00A8 B980          MOVB      [R0],RL4      ; bufx
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 9   
 
-00A4 E128          MOVB      RL4,#02H
-00A6 E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
-                                           ; SOURCE LINE # 252
-00AA E138          MOVB      RL4,#03H
-00AC E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
-                                           ; SOURCE LINE # 253
-00B0 E148          MOVB      RL4,#04H
-00B2 E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
-                                           ; SOURCE LINE # 254
-00B6 E158          MOVB      RL4,#05H
-00B8 E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
-                                           ; SOURCE LINE # 255
-00BC E168          MOVB      RL4,#06H
-00BE E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
-                                           ; SOURCE LINE # 256
-00C2 E178          MOVB      RL4,#07H
-00C4 E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
-                                           ; SOURCE LINE # 257
-00C8 E188          MOVB      RL4,#08H
-00CA E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
-                                           ; SOURCE LINE # 259
-00CE F090          MOV       R9,R0
-00D0 66F9FF3F      AND       R9,#03FFFH
-00D4 F2FA04FE      MOV       R10,DPP2
-00D8 E6F81000      MOV       R8,#010H
-00DC DA000000 E    CALLS     SEG (can_sload),can_sload
-                                           ; SOURCE LINE # 260
-00E0 E6F81000      MOV       R8,#010H
-00E4 DA000000 E    CALLS     SEG (can_stx),can_stx
-                                           ; SOURCE LINE # 262
-00E8 E118          MOVB      RL4,#01H
-00EA B980          MOVB      [R0],RL4      ; bufx
-                                           ; SOURCE LINE # 263
-00EC E128          MOVB      RL4,#02H
-00EE E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
-                                           ; SOURCE LINE # 264
-00F2 E138          MOVB      RL4,#03H
-00F4 E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
-                                           ; SOURCE LINE # 265
-00F8 E148          MOVB      RL4,#04H
-00FA E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
-                                           ; SOURCE LINE # 266
-00FE E158          MOVB      RL4,#05H
-0100 E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
-                                           ; SOURCE LINE # 267
-0104 E168          MOVB      RL4,#06H
-0106 E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
-                                           ; SOURCE LINE # 268
-010A E178          MOVB      RL4,#07H
-010C E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
-                                           ; SOURCE LINE # 269
-0110 E188          MOVB      RL4,#08H
-0112 E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
-                                           ; SOURCE LINE # 271
-0116 F090          MOV       R9,R0
-0118 66F9FF3F      AND       R9,#03FFFH
-011C F2FA04FE      MOV       R10,DPP2
-0120 E6F81100      MOV       R8,#011H
-0124 DA000000 E    CALLS     SEG (can_sload),can_sload
-                                           ; SOURCE LINE # 272
-0128 E6F81100      MOV       R8,#011H
-012C DA000000 E    CALLS     SEG (can_stx),can_stx
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 10  
+                                           ; SOURCE LINE # 212
+00AA 66F5FF00      AND       R5,#0FFH
+00AE F18A          MOVB      RL4,RL5
+00B0 E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
+                                           ; SOURCE LINE # 213
+00B4 F2F50000 E    MOV       R5,Voltage
+00B8 F045          MOV       R4,R5
+00BA 7C84          SHR       R4,#08H
+00BC E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
+                                           ; SOURCE LINE # 214
+00C0 66F5FF00      AND       R5,#0FFH
+00C4 F18A          MOVB      RL4,RL5
+00C6 E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
+                                           ; SOURCE LINE # 215
+00CA F2F50000 E    MOV       R5,PressureAVE
+00CE F045          MOV       R4,R5
+00D0 7C84          SHR       R4,#08H
+00D2 E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
+                                           ; SOURCE LINE # 216
+00D6 66F5FF00      AND       R5,#0FFH
+00DA F18A          MOVB      RL4,RL5
+00DC E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
+                                           ; SOURCE LINE # 217
+00E0 F2F40000 E    MOV       R4,Eerror
+00E4 F2F50200 E    MOV       R5,Eerror+02H
+00E8 DA000000 E    CALLS     SEG (?C_CASTF),?C_CASTF
+00EC F054          MOV       R5,R4
+00EE 7C84          SHR       R4,#08H
+00F0 E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
+                                           ; SOURCE LINE # 218
+00F4 66F5FF00      AND       R5,#0FFH
+00F8 F18A          MOVB      RL4,RL5
+00FA E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
+                                           ; SOURCE LINE # 220
+00FE F090          MOV       R9,R0
+0100 66F9FF3F      AND       R9,#03FFFH
+0104 F2FA04FE      MOV       R10,DPP2
+0108 E078          MOV       R8,#07H
+010A DA000000 E    CALLS     SEG (can_sload),can_sload
+                                           ; SOURCE LINE # 221
+010E E078          MOV       R8,#07H
+0110 DA000000 E    CALLS     SEG (can_stx),can_stx
+                                           ; SOURCE LINE # 224
+0114 F3F80000 E    MOVB      RL4,MotorState
+0118 B980          MOVB      [R0],RL4      ; bufx
+                                           ; SOURCE LINE # 225
+011A E118          MOVB      RL4,#01H
+011C E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
+                                           ; SOURCE LINE # 226
+0120 E128          MOVB      RL4,#02H
+0122 E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
+                                           ; SOURCE LINE # 227
+0126 E138          MOVB      RL4,#03H
+0128 E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
+                                           ; SOURCE LINE # 228
+012C E148          MOVB      RL4,#04H
+012E E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
+                                           ; SOURCE LINE # 229
+0132 E158          MOVB      RL4,#05H
+0134 E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
+                                           ; SOURCE LINE # 230
+0138 E168          MOVB      RL4,#06H
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 10  
 
-                                           ; SOURCE LINE # 274
-0130 E118          MOVB      RL4,#01H
-0132 B980          MOVB      [R0],RL4      ; bufx
-                                           ; SOURCE LINE # 275
-0134 E128          MOVB      RL4,#02H
-0136 E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
-                                           ; SOURCE LINE # 276
-013A E138          MOVB      RL4,#03H
-013C E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
-                                           ; SOURCE LINE # 277
-0140 E148          MOVB      RL4,#04H
-0142 E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
-                                           ; SOURCE LINE # 278
-0146 E158          MOVB      RL4,#05H
-0148 E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
-                                           ; SOURCE LINE # 279
-014C E168          MOVB      RL4,#06H
-014E E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
-                                           ; SOURCE LINE # 280
-0152 E178          MOVB      RL4,#07H
-0154 E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
-                                           ; SOURCE LINE # 281
-0158 E188          MOVB      RL4,#08H
-015A E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
-                                           ; SOURCE LINE # 283
-015E F090          MOV       R9,R0
-0160 66F9FF3F      AND       R9,#03FFFH
-0164 F2FA04FE      MOV       R10,DPP2
-0168 E6F81200      MOV       R8,#012H
-016C DA000000 E    CALLS     SEG (can_sload),can_sload
-                                           ; SOURCE LINE # 284
-0170 E6F81200      MOV       R8,#012H
-0174 DA000000 E    CALLS     SEG (can_stx),can_stx
-                                           ; SOURCE LINE # 286
-0178 E118          MOVB      RL4,#01H
-017A B980          MOVB      [R0],RL4      ; bufx
-                                           ; SOURCE LINE # 287
-017C E128          MOVB      RL4,#02H
-017E E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
-                                           ; SOURCE LINE # 288
-0182 E138          MOVB      RL4,#03H
-0184 E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
-                                           ; SOURCE LINE # 289
-0188 E148          MOVB      RL4,#04H
-018A E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
-                                           ; SOURCE LINE # 290
-018E E158          MOVB      RL4,#05H
-0190 E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
-                                           ; SOURCE LINE # 291
-0194 E168          MOVB      RL4,#06H
+013A E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
+                                           ; SOURCE LINE # 231
+013E E178          MOVB      RL4,#07H
+0140 E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
+                                           ; SOURCE LINE # 233
+0144 F090          MOV       R9,R0
+0146 66F9FF3F      AND       R9,#03FFFH
+014A F2FA04FE      MOV       R10,DPP2
+014E E088          MOV       R8,#08H
+0150 DA000000 E    CALLS     SEG (can_sload),can_sload
+                                           ; SOURCE LINE # 234
+0154 E088          MOV       R8,#08H
+0156 DA000000 E    CALLS     SEG (can_stx),can_stx
+                                           ; SOURCE LINE # 237
+015A F3F80000 E    MOVB      RL4,g_angle_eiq
+015E B980          MOVB      [R0],RL4      ; bufx
+                                           ; SOURCE LINE # 238
+0160 F2F40000 E    MOV       R4,g_angle_eiq
+0164 7C84          SHR       R4,#08H
+0166 E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
+                                           ; SOURCE LINE # 239
+016A F3F80000 E    MOVB      RL4,g_total_angle_sl
+016E E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
+                                           ; SOURCE LINE # 240
+0172 F2F40000 E    MOV       R4,g_total_angle_sl
+0176 F2F50200 E    MOV       R5,g_total_angle_sl+02H
+017A F065          MOV       R6,R5
+017C 7C84          SHR       R4,#08H
+017E BC85          ASHR      R5,#08H
+0180 5C86          SHL       R6,#08H
+0182 7046          OR        R4,R6
+0184 E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
+                                           ; SOURCE LINE # 241
+0188 F3F80000 E    MOVB      RL4,g_mot_speed_sw
+018C E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
+                                           ; SOURCE LINE # 242
+0190 F2F40000 E    MOV       R4,g_mot_speed_sw
+0194 BC84          ASHR      R4,#08H
 0196 E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
-                                           ; SOURCE LINE # 292
-019A E178          MOVB      RL4,#07H
-019C E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
-                                           ; SOURCE LINE # 293
-01A0 E188          MOVB      RL4,#08H
-01A2 E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
-                                           ; SOURCE LINE # 295
-01A6 F090          MOV       R9,R0
-01A8 66F9FF3F      AND       R9,#03FFFH
-01AC F2FA04FE      MOV       R10,DPP2
-01B0 E6F81300      MOV       R8,#013H
-C166 COMPILER V7.57.0, CTRL                                                                12/14/2020 10:56:41 PAGE 11  
+                                           ; SOURCE LINE # 249
+019A E118          MOVB      RL4,#01H
+019C B980          MOVB      [R0],RL4      ; bufx
+                                           ; SOURCE LINE # 250
+019E E128          MOVB      RL4,#02H
+01A0 E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
+                                           ; SOURCE LINE # 251
+01A4 E138          MOVB      RL4,#03H
+01A6 E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
+                                           ; SOURCE LINE # 252
+01AA E148          MOVB      RL4,#04H
+01AC E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
+                                           ; SOURCE LINE # 253
+01B0 E158          MOVB      RL4,#05H
+01B2 E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
+                                           ; SOURCE LINE # 254
+01B6 E168          MOVB      RL4,#06H
+01B8 E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
+                                           ; SOURCE LINE # 255
+01BC E178          MOVB      RL4,#07H
+01BE E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
+                                           ; SOURCE LINE # 256
+01C2 E188          MOVB      RL4,#08H
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 11  
 
-01B4 DA000000 E    CALLS     SEG (can_sload),can_sload
-                                           ; SOURCE LINE # 296
-01B8 E6F81300      MOV       R8,#013H
-01BC DA000000 E    CALLS     SEG (can_stx),can_stx
-                                           ; SOURCE LINE # 298
-01C0 06F00800      ADD       R0,#08H
-01C4 DB00          RETS      
+01C4 E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
+                                           ; SOURCE LINE # 258
+01C8 F090          MOV       R9,R0
+01CA 66F9FF3F      AND       R9,#03FFFH
+01CE F2FA04FE      MOV       R10,DPP2
+01D2 E6F81000      MOV       R8,#010H
+01D6 DA000000 E    CALLS     SEG (can_sload),can_sload
+                                           ; SOURCE LINE # 259
+01DA E6F81000      MOV       R8,#010H
+01DE DA000000 E    CALLS     SEG (can_stx),can_stx
+                                           ; SOURCE LINE # 261
+01E2 E118          MOVB      RL4,#01H
+01E4 B980          MOVB      [R0],RL4      ; bufx
+                                           ; SOURCE LINE # 262
+01E6 E128          MOVB      RL4,#02H
+01E8 E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
+                                           ; SOURCE LINE # 263
+01EC E138          MOVB      RL4,#03H
+01EE E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
+                                           ; SOURCE LINE # 264
+01F2 E148          MOVB      RL4,#04H
+01F4 E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
+                                           ; SOURCE LINE # 265
+01F8 E158          MOVB      RL4,#05H
+01FA E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
+                                           ; SOURCE LINE # 266
+01FE E168          MOVB      RL4,#06H
+0200 E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
+                                           ; SOURCE LINE # 267
+0204 E178          MOVB      RL4,#07H
+0206 E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
+                                           ; SOURCE LINE # 268
+020A E188          MOVB      RL4,#08H
+020C E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
+                                           ; SOURCE LINE # 270
+0210 F090          MOV       R9,R0
+0212 66F9FF3F      AND       R9,#03FFFH
+0216 F2FA04FE      MOV       R10,DPP2
+021A E6F81100      MOV       R8,#011H
+021E DA000000 E    CALLS     SEG (can_sload),can_sload
+                                           ; SOURCE LINE # 271
+0222 E6F81100      MOV       R8,#011H
+0226 DA000000 E    CALLS     SEG (can_stx),can_stx
+                                           ; SOURCE LINE # 273
+022A E118          MOVB      RL4,#01H
+022C B980          MOVB      [R0],RL4      ; bufx
+                                           ; SOURCE LINE # 274
+022E E128          MOVB      RL4,#02H
+0230 E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
+                                           ; SOURCE LINE # 275
+0234 E138          MOVB      RL4,#03H
+0236 E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
+                                           ; SOURCE LINE # 276
+023A E148          MOVB      RL4,#04H
+023C E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
+                                           ; SOURCE LINE # 277
+0240 E158          MOVB      RL4,#05H
+0242 E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
+                                           ; SOURCE LINE # 278
+0246 E168          MOVB      RL4,#06H
+0248 E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
+                                           ; SOURCE LINE # 279
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 12  
+
+024C E178          MOVB      RL4,#07H
+024E E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
+                                           ; SOURCE LINE # 280
+0252 E188          MOVB      RL4,#08H
+0254 E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
+                                           ; SOURCE LINE # 282
+0258 F090          MOV       R9,R0
+025A 66F9FF3F      AND       R9,#03FFFH
+025E F2FA04FE      MOV       R10,DPP2
+0262 E6F81200      MOV       R8,#012H
+0266 DA000000 E    CALLS     SEG (can_sload),can_sload
+                                           ; SOURCE LINE # 283
+026A E6F81200      MOV       R8,#012H
+026E DA000000 E    CALLS     SEG (can_stx),can_stx
+                                           ; SOURCE LINE # 285
+0272 E118          MOVB      RL4,#01H
+0274 B980          MOVB      [R0],RL4      ; bufx
+                                           ; SOURCE LINE # 286
+0276 E128          MOVB      RL4,#02H
+0278 E4800100      MOVB      [R0+#01H],RL4 ; bufx+1
+                                           ; SOURCE LINE # 287
+027C E138          MOVB      RL4,#03H
+027E E4800200      MOVB      [R0+#02H],RL4 ; bufx+2
+                                           ; SOURCE LINE # 288
+0282 E148          MOVB      RL4,#04H
+0284 E4800300      MOVB      [R0+#03H],RL4 ; bufx+3
+                                           ; SOURCE LINE # 289
+0288 E158          MOVB      RL4,#05H
+028A E4800400      MOVB      [R0+#04H],RL4 ; bufx+4
+                                           ; SOURCE LINE # 290
+028E E168          MOVB      RL4,#06H
+0290 E4800500      MOVB      [R0+#05H],RL4 ; bufx+5
+                                           ; SOURCE LINE # 291
+0294 E178          MOVB      RL4,#07H
+0296 E4800600      MOVB      [R0+#06H],RL4 ; bufx+6
+                                           ; SOURCE LINE # 292
+029A E188          MOVB      RL4,#08H
+029C E4800700      MOVB      [R0+#07H],RL4 ; bufx+7
+                                           ; SOURCE LINE # 294
+02A0 F090          MOV       R9,R0
+02A2 66F9FF3F      AND       R9,#03FFFH
+02A6 F2FA04FE      MOV       R10,DPP2
+02AA E6F81300      MOV       R8,#013H
+02AE DA000000 E    CALLS     SEG (can_sload),can_sload
+                                           ; SOURCE LINE # 295
+02B2 E6F81300      MOV       R8,#013H
+02B6 DA000000 E    CALLS     SEG (can_stx),can_stx
+                                           ; SOURCE LINE # 297
+02BA 06F00800      ADD       R0,#08H
+02BE DB00          RETS      
              ; FUNCTION transmit_can_data_10ms (END    RMASK = @0x7FFF)
 
              ; FUNCTION transmit_can_data_1ms (BEGIN  RMASK = @0x8000)
-                                           ; SOURCE LINE # 303
-                                           ; SOURCE LINE # 361
-01C6 DB00          RETS      
+                                           ; SOURCE LINE # 302
+                                           ; SOURCE LINE # 360
+02C0 DB00          RETS      
              ; FUNCTION transmit_can_data_1ms (END    RMASK = @0x8000)
 
 
 
 MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
-  CODE SIZE        =         456     --------
+  CODE SIZE        =         706     --------
+C166 COMPILER V7.57.0, CTRL                                                                12/25/2020 22:12:54 PAGE 13  
+
   NEAR-CONST SIZE  =           2     --------
   FAR-CONST SIZE   =    --------     --------
   HUGE-CONST SIZE  =    --------     --------

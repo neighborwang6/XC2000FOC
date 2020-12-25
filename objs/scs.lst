@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 1   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE SCS
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
    51         
    52         
    53         // Function-like macros ******************************************************
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 2   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 2   
 
    54         
    55         // PLLSTAT_COND_3: For polling a PLLSTAT condition up to 3 times; an "if"
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
               #endif
   114         
   115         // check fVCO
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 3   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 3   
 
   116         #if SCS_F_VCO < 10000000 || SCS_F_VCO > 160000000
               #   error  "SCS_F_VCO out of range"
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   175         //****************************************************************************
   176         
   177         
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 4   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 4   
 
   178         
   179         //****************************************************************************
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   237         //-----------------------------------------------------------------------------
   238         // @Parameters    None
   239         //
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 5   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 5   
 
   240         //-----------------------------------------------------------------------------
   241         // @Date          2010-4-18
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   299         //                Notes:
   300         //                - The user is responsible for disabling the register
   301         //                  protection.
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 6   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 6   
 
   302         //
   303         //-----------------------------------------------------------------------------
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   361  1           (0U    <<3U) | // Clear HPOSCCON.OSC2L2 (w)
   362  1           (1U    <<4U) | // Set PLLSTAT.FINDIS (w)
   363  1           (0U    <<5U) ; // Clear PLLSTAT.FINDIS (w)
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 7   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 7   
 
   364  1      
   365  1      } // end of function SCS_DisconnectVcoInput
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   423         // @Date          2010-4-18
   424         //
   425         //-----------------------------------------------------------------------------
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 8   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 8   
 
   426         
   427         // USER CODE BEGIN (SCS_SelectVcoBand,1)
@@ -510,7 +510,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   485  1         {
   486  2           Cycles = 3U;
   487  2         }
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 9   
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 9   
 
   488  1      
   489  1         //set T13 period
@@ -574,7 +574,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   547         //-----------------------------------------------------------------------------
   548         
   549         // USER CODE BEGIN (SCS_DelayByTimer,1)
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 10  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 10  
 
   550         
   551         // USER CODE END
@@ -638,7 +638,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   609  1             // set additional K2 divider step SCS_K2_2 if needed
   610  1             Error = SCS_ApplyNewK2Div(((unsigned int)SCS_K2_2) - 1U);
   611  1             if(Error)
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 11  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 11  
 
   612  1             {
   613  2               return Error;
@@ -702,7 +702,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   671         //
   672         //-----------------------------------------------------------------------------
   673         
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 12  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 12  
 
   674         // USER CODE BEGIN (SCS_GoFromBaseToNormalMode,1)
   675         
@@ -766,7 +766,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   733  1      
   734  1         // set final N divider
   735  1         Error = SCS_ApplyNewNDiv((((unsigned int)SCS_N)) - 1U);
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 13  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 13  
 
   736  1         if(Error)
   737  1         {
@@ -830,7 +830,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   795  1      
   796  1         // ramp up PLL for fSys = final value in normal operation mode
   797  1         Error = SCS_RampUpPllInNormalMode();
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 14  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 14  
 
   798  1         if(Error)
   799  1         {
@@ -894,7 +894,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   857  1                          // kernel mode applied in clock off mode
   858  1           (0U    <<15U); // BPCOM Bit Protection for COMCFG, set to 1 for change (w)
   859  1      
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 15  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 15  
 
   860  1         // read SFR back to avoid pipeline effects
   861  1         Work = CCU60_KSCFG;
@@ -958,7 +958,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   919  1           (4U    <<8U) | // T13CLK Timer T13 Input Clock Select
   920  1                          // 0: f = fCC6
   921  1                          // 1: f = fCC6 / 2
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 16  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 16  
 
   922  1                          // 2: f = fCC6 / 4
   923  1                          // 3: f = fCC6 / 8
@@ -1022,7 +1022,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
   981  1           (0U    <<4U)); // ISCNT13 T13 Input Select for Counting Input
   982  1                          // 0: T13 prescaler, 1: TCTR4.CNT13 written with 1,
   983  1                          // 2: Rising edge on T13HR signal, 3: Falling edge on T13HR signal
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 17  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 17  
 
   984  1      
   985  1      } // end of function SCS_InitTimer
@@ -1086,7 +1086,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1043  1        // restore CCU60_PISELH
  1044  1        CCU60_PISELH = Ccu60PiselhSave;
  1045  1      
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 18  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 18  
 
  1046  1        // restore CCU60_KSCFG, enable change
  1047  1        CCU60_KSCFG = Ccu60KscfgSave |
@@ -1150,7 +1150,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1105  3             // timeout error
  1106  3             return SCS_STATE_TO_OSC_HP_PLLV;
  1107  3           }
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 19  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 19  
 
  1108  2      
  1109  2           // clear status bit for high precision osc. frequency below limit
@@ -1214,7 +1214,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1167         
  1168         
  1169         SCS_ErrorType SCS_ApplyNewPDiv(unsigned int PDiv)
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 20  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 20  
 
  1170         {
  1171  1         if(PDiv == SCU_PLLCON1_PDIV)
@@ -1278,7 +1278,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1229  1         return SCS_STATE_NO_ERROR;
  1230  1      
  1231  1      }  // end of function SCS_ApplyNewPDiv
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 21  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 21  
 
  1232         
  1233         //****************************************************************************;
@@ -1342,7 +1342,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1291  1                          // 1: PLL is not powered (no operation possible)
  1292  1           (0U    <<5U) | // REGENSET PLL Power Regulator Enable Set (w)
  1293  1                          // 0: Configuration for PLL power regulator unchanged
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 22  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 22  
 
  1294  1                          // 1: PLL is powered (operation possible)
  1295  1           (NDiv  <<8U) | // NDIV N-Divider Value
@@ -1406,7 +1406,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1353  2           return SCS_STATE_NO_ERROR;
  1354  2         }
  1355  1      
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 23  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 23  
 
  1356  1         // set K1 divider value, clear K1 acknowledge 
  1357  1         SCU_PLLCON2 = 
@@ -1470,7 +1470,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1415  2           return SCS_STATE_NO_ERROR;
  1416  2         }
  1417  1      
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 24  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 24  
 
  1418  1         // set K2 divider value, clear K2 acknowledge 
  1419  1         SCU_PLLCON3 = 
@@ -1534,7 +1534,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1477  1                          // 0: Normal behavior
  1478  1                          // 1: PLL block is put into power saving mode
  1479  1           (0U    <<1U) | // OSCSEL Oscillator Input Selection
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 25  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 25  
 
  1480  1                          // 0: PLL external oscillator
  1481  1                          // 1: PLL internal oscillator
@@ -1598,7 +1598,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1539  2           // VCO unlocked
  1540  2           return SCS_STATE_VCO_UNLOCKED;
  1541  2         }
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 26  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 26  
 
  1542  1      
  1543  1         // clear VCO Lock Detection Lost and VCO Lock Detection Reached
@@ -1662,7 +1662,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1601  1          (1U    <<10U)| // VCOL0 VCO Lock Detection Lost Status (rh)
  1602  1          (1U    <<11U)| // VCOL1 VCO Lock Detection Reached Status (rh)
  1603  1          (0U    <<12U)))// REGSTAT PLL Power Regulator Status powered (operation possible) (rh)
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 27  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 27  
 
  1604  1          || (!(Work &
  1605  1          (1U    <<3U))))// VCOLOCK PLL VCO Lock Status (rh)
@@ -1726,7 +1726,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1663         // @Description   This expert level function enables VCO bypass.
  1664         //                Notes:
  1665         //                - The user is responsible for disabling the register protection.
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 28  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 28  
 
  1666         //
  1667         //-----------------------------------------------------------------------------
@@ -1762,7 +1762,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\scs.c MODV2 LARGE BR
  1697  1         return SCS_STATE_NO_ERROR;
  1698  1      
  1699  1      }  // end of function SCS_EnableVcoBypass
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 29  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 29  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -1826,7 +1826,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0036 9D01          JMPR      cc_UGE,?C0001
                                            ; SOURCE LINE # 486
 0038 E038          MOV       R8,#03H
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 30  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 30  
 
                                            ; SOURCE LINE # 487
 003A         ?C0001:
@@ -1890,7 +1890,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 ;---- Variable 'Error' assigned to Register 'R13' ----
                                            ; SOURCE LINE # 600
 008E 48D0          CMP       R13,#00H
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 31  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 31  
 
 0090 2D01          JMPR      cc_Z,?C0007
                                            ; SOURCE LINE # 602
@@ -1954,7 +1954,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 287
 00DA D180          EXTR      #01H
 00DC 66DA8006      AND       SCU_HPOSCCON,#0680H
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 32  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 32  
 
                                            ; SOURCE LINE # 687
 00E0 DA000000 R    CALLS     SEG (SCS_CheckFreqOscHiPrec),SCS_CheckFreqOscHiPrec
@@ -2018,7 +2018,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 728
 0132 E018          MOV       R8,#01H
 0134 DA000000 R    CALLS     SEG (SCS_ApplyNewPDiv),SCS_ApplyNewPDiv
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 33  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 33  
 
 0138 F0D4          MOV       R13,R4
                                            ; SOURCE LINE # 729
@@ -2082,7 +2082,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 322
 018C 2FDD          BSET      SCU_PLLCON1_RESLD
                                            ; SOURCE LINE # 776
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 34  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 34  
 
                                            ; SOURCE LINE # 481
 018E E6F40005      MOV       R4,#0500H
@@ -2146,7 +2146,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION SCS_InitTimer (BEGIN  RMASK = @0x4010)
                                            ; SOURCE LINE # 839
 01E8 2802          SUB       R0,#02H
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 35  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 35  
 
                                            ; SOURCE LINE # 840
                                            ; SOURCE LINE # 844
@@ -2210,7 +2210,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0274 F6F42CEA      MOV       0EA2CH,R4
                                            ; SOURCE LINE # 1041
 0278 F2F40000 R    MOV       R4,Ccu60Tctr2Save
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 36  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 36  
 
 027C F6F42EEA      MOV       0EA2EH,R4
                                            ; SOURCE LINE # 1044
@@ -2274,7 +2274,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 484
                                            ; SOURCE LINE # 486
                                            ; SOURCE LINE # 487
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 37  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 37  
 
                                            ; SOURCE LINE # 490
 02DC E6F48802      MOV       R4,#0288H
@@ -2338,7 +2338,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 1209
 033E F058          MOV       R5,R8
 0340 5C85          SHL       R5,#08H
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 38  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 38  
 
 0342 F2F4BAF1      MOV       R4,SCU_PLLCON1
 0346 66F46B00      AND       R4,#06BH
@@ -2402,7 +2402,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 03B2 6847          AND       R4,#07H
 03B4 7045          OR        R4,R5
 03B6 F6F4B8F1      MOV       SCU_PLLCON0,R4
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 39  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 39  
 
                                            ; SOURCE LINE # 1301
 03BA F2F4BCF0      MOV       R4,SCU_PLLSTAT
@@ -2466,7 +2466,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 1367
 042C         ?C0062:
                                            ; SOURCE LINE # 1370
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 40  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 40  
 
 042C D180          EXTR      #01H
 042E FFDE          BSET      SCU_PLLCON2_K1ACK
@@ -2530,7 +2530,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 049E E054          MOV       R4,#05H
 04A0 DB00          RETS      
                                            ; SOURCE LINE # 1439
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 41  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 41  
 
 04A2         ?C0067:
                                            ; SOURCE LINE # 1442
@@ -2594,7 +2594,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 1588
 04F2 F2F5BCF0      MOV       R5,SCU_PLLSTAT
 ;---- Variable 'Work' assigned to Register 'R5' ----
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 42  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 42  
 
                                            ; SOURCE LINE # 1590
 04F6 F045          MOV       R4,R5
@@ -2658,7 +2658,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 1697
 054E E004          MOV       R4,#00H
                                            ; SOURCE LINE # 1699
-C166 COMPILER V7.57.0, SCS                                                                 12/14/2020 10:56:36 PAGE 43  
+C166 COMPILER V7.57.0, SCS                                                                 12/25/2020 22:12:49 PAGE 43  
 
 0550         ?C0077:
 0550 DB00          RETS      

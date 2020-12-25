@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 1   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE XC2K_CAN
@@ -55,14 +55,14 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
    44         
    45         #define CAN_STEP 1023
    46         
-   47         // 1MHz: CAN Node 0
+   47         // 500KHz: CAN Node 0
    48         #define CAN0_TSEG1   6
    49         #define CAN0_TSEG2   1
    50         #define CAN0_SJW     1
-   51         #define CAN0_BRP   7
+   51         #define CAN0_BRP   15
    52         // 500KHz: CAN Node 1
    53         #define CAN1_TSEG1   6
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 2   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 2   
 
    54         #define CAN1_TSEG2   1
    55         #define CAN1_SJW     1
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   113  1      }
   114         
   115         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 3   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 3   
 
   116         /*******************************************************************************
   117         cfg:  Bit  7  6  5  4  3  2  1   0
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   175  1          CAN_HWOBJ[no].MOFCRL = 0x0000;
   176  1      }
   177         
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 4   
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 4   
 
   178         ////////////////////////////////////////////////////////////////////////////////
   179         //
@@ -209,119 +209,117 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
   192  1        CAN_HWOBJ[no].MOCTRH=  0x00A0;  // NEWDAT,RXEN
   193  1        CAN_HWOBJ[no].MOCTRL=  0x0000;
   194  1        
-  195  1      
-  196  1        
-  197  1        // Set ID
-  198  1        tmpu16=0x4000;           // Priority Class: List order
-  199  1        if(cfg&0x04)             // Extended ID
-  200  1        {
-  201  2          tmpu16|=0x2000;
-  202  2          tmpu16|=(u16)(id>>16);
-  203  2          CAN_HWOBJ[no].MOARH=tmpu16;
-  204  2          CAN_HWOBJ[no].MOARL=(u16)id;
-  205  2          
-  206  2        }
-  207  1        else
-  208  1        {
-  209  2          tmpu16|=(id<<2);
-  210  2          CAN_HWOBJ[no].MOARH=tmpu16;
-  211  2          CAN_HWOBJ[no].MOARL=0x0000;
-  212  2          
-  213  2        }
-  214  1        
-  215  1        // Mask
-  216  1        if(cfg&0x04)             // Extended ID
-  217  1        {
-  218  2          CAN_HWOBJ[no].MOAMRH = ((u16)(mask>>16)) & 0x3FFF;  // load MO[no] acceptance mask register high
-  219  2          CAN_HWOBJ[no].MOAMRL = (u16)mask;  // load MO[no] acceptance mask register low  
-  220  2          
-  221  2        }
-  222  1        else
-  223  1        {
-  224  2            CAN_HWOBJ[no].MOAMRH = ((u16)(mask<<2)) & 0x3FFF;
-  225  2            CAN_HWOBJ[no].MOAMRL = 0xFFFF;
-  226  2        }
-  227  1        
-  228  1        // Pending Bit
-  229  1          CAN_HWOBJ[no].MOIPRH = 0x0000;
-  230  1        if(no<16)
-  231  1          CAN_HWOBJ[no].MOIPRL = (((u16)no)<<8);
-  232  1        else if(no<32)
-  233  1          CAN_HWOBJ[no].MOIPRL = (((u16)no)<<8)|0x11;
-  234  1      
-  235  1        if(cfg&0x04)
-  236  1        {
-  237  2          // Function Control
-  238  2          CAN_HWOBJ[no].MOFCRH = 0x0801;
-  239  2          CAN_HWOBJ[no].MOFCRL = 0x0000;
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 5   
+  195  1        // Set ID
+  196  1        tmpu16=0x4000;           // Priority Class: List order
+  197  1        if(cfg&0x04)             // Extended ID
+  198  1        {
+  199  2          tmpu16|=0x2000;
+  200  2          tmpu16|=(u16)(id>>16);
+  201  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  202  2          CAN_HWOBJ[no].MOARL=(u16)id;
+  203  2          
+  204  2        }
+  205  1        else
+  206  1        {
+  207  2          tmpu16|=(id<<2);
+  208  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  209  2          CAN_HWOBJ[no].MOARL=0x0000;
+  210  2          
+  211  2        }
+  212  1        
+  213  1        // Mask
+  214  1        if(cfg&0x04)             // Extended ID
+  215  1        {
+  216  2          CAN_HWOBJ[no].MOAMRH = ((u16)(mask>>16)) & 0x3FFF;  // load MO[no] acceptance mask register high
+  217  2          CAN_HWOBJ[no].MOAMRL = (u16)mask;  // load MO[no] acceptance mask register low  
+  218  2          
+  219  2        }
+  220  1        else
+  221  1        {
+  222  2            CAN_HWOBJ[no].MOAMRH = ((u16)(mask<<2)) & 0x3FFF;
+  223  2            CAN_HWOBJ[no].MOAMRL = 0xFFFF;
+  224  2        }
+  225  1        
+  226  1        // Pending Bit
+  227  1          CAN_HWOBJ[no].MOIPRH = 0x0000;
+  228  1        if(no<16)
+  229  1          CAN_HWOBJ[no].MOIPRL = (((u16)no)<<8);
+  230  1        else if(no<32)
+  231  1          CAN_HWOBJ[no].MOIPRL = (((u16)no)<<8)|0x11;
+  232  1      
+  233  1        if(cfg&0x04)
+  234  1        {
+  235  2          // Function Control
+  236  2          CAN_HWOBJ[no].MOFCRH = 0x0801;
+  237  2          CAN_HWOBJ[no].MOFCRL = 0x0000;
+  238  2      
+  239  2        }
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 5   
 
-  240  2      
-  241  2        }
-  242  1        else
-  243  1        {
-  244  2          // Function Control
-  245  2          CAN_HWOBJ[no].MOFCRH = 0x0001;
-  246  2          CAN_HWOBJ[no].MOFCRL = 0x0000;
-  247  2        
-  248  2        }
-  249  1        
-  250  1      }
-  251         
+  240  1        else
+  241  1        {
+  242  2          // Function Control
+  243  2          CAN_HWOBJ[no].MOFCRH = 0x0001;
+  244  2          CAN_HWOBJ[no].MOFCRL = 0x0000;
+  245  2        
+  246  2        }
+  247  1        
+  248  1      }
+  249         
+  250         ////////////////////////////////////////////////////////////////////////////////
+  251         //
   252         ////////////////////////////////////////////////////////////////////////////////
-  253         //
-  254         ////////////////////////////////////////////////////////////////////////////////
-  255         void can_load(u8 no,u32 id,u8 cfg,u8 *buf)
-  256         {
-  257  1        u16 tmpu16;
-  258  1        
-  259  1        CAN_HWOBJ[no].MOCTRL = 0x0020;       // reset MSGVAL
-  260  1        CAN_HWOBJ[no].MOCTRH = 0x0808;       // set NEWDAT
-  261  1        fmemcpy((u8 *)CAN_HWOBJ[no].DATA,buf,8);
-  262  1        CAN_HWOBJ[no].MOCTRH = 0x0020;       // set MSGVAL
-  263  1        CAN_HWOBJ[no].MOCTRL = 0x0040;       // reset RTSEL
-  264  1        
-  265  1        // Set ID
-  266  1        tmpu16=0x4000;           // Priority Class: List order
-  267  1        if(cfg&0x04)             // Extended ID
-  268  1        {
-  269  2          tmpu16|=0x2000;
-  270  2          tmpu16|=(u16)(id>>16);
-  271  2          CAN_HWOBJ[no].MOARH=tmpu16;
-  272  2          CAN_HWOBJ[no].MOARL=(u16)id;
-  273  2        }
-  274  1        else
-  275  1        {
-  276  2          tmpu16|=(id<<2);
-  277  2          CAN_HWOBJ[no].MOARH=tmpu16;
-  278  2          CAN_HWOBJ[no].MOARL=0x0000;
-  279  2        }
-  280  1      
-  281  1        tmpu16=cfg&0xf0;
-  282  1        tmpu16<<=4;           // Set DLC
-  283  1        // tmpu16|=0x0080;       // Single Transmit Trial
-  284  1        
-  285  1          CAN_HWOBJ[no].MOFCRH = tmpu16;
-  286  1          CAN_HWOBJ[no].MOFCRL = 0x0000;
-  287  1      }
-  288         
+  253         void can_load(u8 no,u32 id,u8 cfg,u8 *buf)
+  254         {
+  255  1        u16 tmpu16;
+  256  1        
+  257  1        CAN_HWOBJ[no].MOCTRL = 0x0020;       // reset MSGVAL
+  258  1        CAN_HWOBJ[no].MOCTRH = 0x0808;       // set NEWDAT
+  259  1        fmemcpy((u8 *)CAN_HWOBJ[no].DATA,buf,8);
+  260  1        CAN_HWOBJ[no].MOCTRH = 0x0020;       // set MSGVAL
+  261  1        CAN_HWOBJ[no].MOCTRL = 0x0040;       // reset RTSEL
+  262  1        
+  263  1        // Set ID
+  264  1        tmpu16=0x4000;           // Priority Class: List order
+  265  1        if(cfg&0x04)             // Extended ID
+  266  1        {
+  267  2          tmpu16|=0x2000;
+  268  2          tmpu16|=(u16)(id>>16);
+  269  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  270  2          CAN_HWOBJ[no].MOARL=(u16)id;
+  271  2        }
+  272  1        else
+  273  1        {
+  274  2          tmpu16|=(id<<2);
+  275  2          CAN_HWOBJ[no].MOARH=tmpu16;
+  276  2          CAN_HWOBJ[no].MOARL=0x0000;
+  277  2        }
+  278  1      
+  279  1        tmpu16=cfg&0xf0;
+  280  1        tmpu16<<=4;           // Set DLC
+  281  1        // tmpu16|=0x0080;       // Single Transmit Trial
+  282  1        
+  283  1          CAN_HWOBJ[no].MOFCRH = tmpu16;
+  284  1          CAN_HWOBJ[no].MOFCRL = 0x0000;
+  285  1      }
+  286         
+  287         ////////////////////////////////////////////////////////////////////////////////
+  288         //
   289         ////////////////////////////////////////////////////////////////////////////////
-  290         //
-  291         ////////////////////////////////////////////////////////////////////////////////
-  292         void can_stx(u8 no)
-  293         {
-  294  1      #ifndef WIN32
-  295  1        // CAN Bus off
-  296  1        if(CAN_NSR0 & 0x80)
-  297  1          return;
-  298  1        // Node Initialization
-  299  1        if(CAN_NCR0 & 0x01)
-  300  1          return;
-  301  1      
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 6   
+  290         void can_stx(u8 no)
+  291         {
+  292  1      #ifndef WIN32
+  293  1        // CAN Bus off
+  294  1        if(CAN_NSR0 & 0x80)
+  295  1          return;
+  296  1        // Node Initialization
+  297  1        if(CAN_NCR0 & 0x01)
+  298  1          return;
+  299  1      
+  300  1        CAN_HWOBJ[no].MOCTRH = 0x0720;  // set TXRQ,TXEN0,TXEN1,MSGVAL
+  301  1      #else
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 6   
 
-  302  1        CAN_HWOBJ[no].MOCTRH = 0x0720;  // set TXRQ,TXEN0,TXEN1,MSGVAL
-  303  1      #else
               
                 u16 id;
                 u8 dlc;
@@ -343,283 +341,283 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\xc2k_can.c MODV2 LAR
                   sbus_putc(CAN_HWOBJ[no].DATA[dlc]);
                 }
               #endif
-  325  1      
-  326  1      }
-  327         
+  323  1      
+  324  1      }
+  325         
+  326         ////////////////////////////////////////////////////////////////////////////////
+  327         //
   328         ////////////////////////////////////////////////////////////////////////////////
-  329         //
-  330         ////////////////////////////////////////////////////////////////////////////////
-  331         u8 can_stx_ex(u8 no)
-  332         {
-  333  1        if(can_busy(no))
-  334  1        {
-  335  2          can_abort(no);
-  336  2          return 1;
-  337  2        }
-  338  1        can_stx(no);
-  339  1        return 0;
-  340  1      }
-  341         
+  329         u8 can_stx_ex(u8 no)
+  330         {
+  331  1        if(can_busy(no))
+  332  1        {
+  333  2          can_abort(no);
+  334  2          return 1;
+  335  2        }
+  336  1        can_stx(no);
+  337  1        return 0;
+  338  1      }
+  339         
+  340         ////////////////////////////////////////////////////////////////////////////////
+  341         //
   342         ////////////////////////////////////////////////////////////////////////////////
-  343         //
-  344         ////////////////////////////////////////////////////////////////////////////////
-  345         void can_abort(u8 no)
-  346         {
-  347  1        CAN_HWOBJ[no].MOCTRL = 0x0720;  // reset TXRQ,TXEN0,TXEN1,MSGVAL
-  348  1      }
-  349         
+  343         void can_abort(u8 no)
+  344         {
+  345  1        CAN_HWOBJ[no].MOCTRL = 0x0720;  // reset TXRQ,TXEN0,TXEN1,MSGVAL
+  346  1      }
+  347         
+  348         ////////////////////////////////////////////////////////////////////////////////
+  349         //
   350         ////////////////////////////////////////////////////////////////////////////////
-  351         //
-  352         ////////////////////////////////////////////////////////////////////////////////
-  353         u8 can_busy(u8 no)
-  354         {
-  355  1        return (CAN_HWOBJ[no].MOCTRL & 0x0100)?1:0; // MOCTRL => MOSTATL
-  356  1      }
-  357         
+  351         u8 can_busy(u8 no)
+  352         {
+  353  1        return (CAN_HWOBJ[no].MOCTRL & 0x0100)?1:0; // MOCTRL => MOSTATL
+  354  1      }
+  355         
+  356         ////////////////////////////////////////////////////////////////////////////////
+  357         //
   358         ////////////////////////////////////////////////////////////////////////////////
-  359         //
-  360         ////////////////////////////////////////////////////////////////////////////////
-  361         void can_sload(u8 no,u8 *buf)
-  362         {
-  363  1        CAN_HWOBJ[no].MOCTRH = 0x0008;       // set NEWDAT
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 7   
+  359         void can_sload(u8 no,u8 *buf)
+  360         {
+  361  1        CAN_HWOBJ[no].MOCTRH = 0x0008;       // set NEWDAT
+  362  1        fmemcpy((u8 *)CAN_HWOBJ[no].DATA,buf,8);
+  363  1        CAN_HWOBJ[no].MOCTRH = 0x0020;       // set MSGVAL
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 7   
 
-  364  1        fmemcpy((u8 *)CAN_HWOBJ[no].DATA,buf,8);
-  365  1        CAN_HWOBJ[no].MOCTRH = 0x0020;       // set MSGVAL
-  366  1        CAN_HWOBJ[no].MOCTRL = 0x0040;       // reset RTSEL
-  367  1      }
-  368         
+  364  1        CAN_HWOBJ[no].MOCTRL = 0x0040;       // reset RTSEL
+  365  1      }
+  366         
+  367         ////////////////////////////////////////////////////////////////////////////////
+  368         //
   369         ////////////////////////////////////////////////////////////////////////////////
-  370         //
-  371         ////////////////////////////////////////////////////////////////////////////////
-  372         void isr_can_txrx0(void) interrupt CAN_SRN0INT
-  373         {
-  374  1        u16 nodeinfo;
-  375  1        u16 objinfo;
-  376  1        u8 objno;
-  377  1        u32 id;
-  378  1      
-  379  1        nodeinfo = CAN_NSR0;
-  380  1        
-  381  1        if (nodeinfo & 0x0008)               // TXOK => reset 
-  382  1        {
-  383  2          CAN_NSR0 = 0x0337;
-  384  2          g_can_status|=0x02;
-  385  2        }
-  386  1        
-  387  1        if (nodeinfo & 0x0010)               // if RXOK => deal => reset
-  388  1        {
-  389  2          CAN_NSR0 = 0x032F;
-  390  2          g_can_status|=0x04;
-  391  2        }
-  392  1        
-  393  1        CAN_MSIMASKH = 0xf000;          // set message index mask register
-  394  1        CAN_MSIMASKL = 0x000f;
-  395  1        //CAN_MSIMASKH = 0x8000;
-  396  1        //CAN_MSIMASKL = 0x0000;
-  397  1        
-  398  1        while (CAN_MSID0 != 0x0020)
-  399  1        {
-  400  2          objno=(u8)CAN_MSID0;
-  401  2          objinfo = CAN_HWOBJ[objno].MOCTRL;
-  402  2          
-  403  2          if(objinfo & MOSTAT_RXPND)          // Receive interrupt
-  404  2          {       
-  405  3            if(objinfo & MOSTAT_NEWDAT)       // if NEWDAT is set
-  406  3            {
-  407  4              id=CAN_HWOBJ[objno].MOARH & 0x1FFF;
-  408  4              id<<=16;
-  409  4              id|=(CAN_HWOBJ[objno].MOARL);
-  410  4              if((CAN_HWOBJ[objno].MOARH & 0x2000)==0)  //Notation! ((CAN_HWOBJ[objno].MOARH & 0x20000000)==0) befor
+  370         void isr_can_txrx0(void) interrupt CAN_SRN0INT
+  371         {
+  372  1        u16 nodeinfo;
+  373  1        u16 objinfo;
+  374  1        u8 objno;
+  375  1        u32 id;
+  376  1      
+  377  1        nodeinfo = CAN_NSR0;
+  378  1        
+  379  1        if (nodeinfo & 0x0008)               // TXOK => reset 
+  380  1        {
+  381  2          CAN_NSR0 = 0x0337;
+  382  2          g_can_status|=0x02;
+  383  2        }
+  384  1        
+  385  1        if (nodeinfo & 0x0010)               // if RXOK => deal => reset
+  386  1        {
+  387  2          CAN_NSR0 = 0x032F;
+  388  2          g_can_status|=0x04;
+  389  2        }
+  390  1        
+  391  1        CAN_MSIMASKH = 0xf000;          // set message index mask register
+  392  1        CAN_MSIMASKL = 0x000f;
+  393  1        //CAN_MSIMASKH = 0x8000;
+  394  1        //CAN_MSIMASKL = 0x0000;
+  395  1        
+  396  1        while (CAN_MSID0 != 0x0020)
+  397  1        {
+  398  2          objno=(u8)CAN_MSID0;
+  399  2          objinfo = CAN_HWOBJ[objno].MOCTRL;
+  400  2          
+  401  2          if(objinfo & MOSTAT_RXPND)          // Receive interrupt
+  402  2          {       
+  403  3            if(objinfo & MOSTAT_NEWDAT)       // if NEWDAT is set
+  404  3            {
+  405  4              id=CAN_HWOBJ[objno].MOARH & 0x1FFF;
+  406  4              id<<=16;
+  407  4              id|=(CAN_HWOBJ[objno].MOARL);
+  408  4              if((CAN_HWOBJ[objno].MOARH & 0x2000)==0)  //Notation! ((CAN_HWOBJ[objno].MOARH & 0x20000000)==0) befor
              -e.
-  411  4                id>>=18;
-  412  4              do_objx(objno, id,
-  413  4                (u8 *)CAN_HWOBJ[objno].DATA,
-  414  4                (u8)((CAN_HWOBJ[objno].MOFCRH>>8)&0x0f));
-  415  4            }
-  416  3            CAN_HWOBJ[objno].MOCTRL = MOSTAT_RST_MNR;            // reset MSGLST + NEWDAT + RXPND
-  417  3          } 
-  418  2          if(objno<16)
-  419  2            CAN_MSPND0L = ~(((u16)1)<<objno);
-  420  2          else if(objno<32)
-  421  2            CAN_MSPND0H = ~(((u16)1)<<(objno-16));
-  422  2        }
-  423  1      }
-  424         
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 8   
+  409  4                id>>=18;
+  410  4              do_objx(objno, id,
+  411  4                (u8 *)CAN_HWOBJ[objno].DATA,
+  412  4                (u8)((CAN_HWOBJ[objno].MOFCRH>>8)&0x0f));
+  413  4            }
+  414  3            CAN_HWOBJ[objno].MOCTRL = MOSTAT_RST_MNR;            // reset MSGLST + NEWDAT + RXPND
+  415  3          } 
+  416  2          if(objno<16)
+  417  2            CAN_MSPND0L = ~(((u16)1)<<objno);
+  418  2          else if(objno<32)
+  419  2            CAN_MSPND0H = ~(((u16)1)<<(objno-16));
+  420  2        }
+  421  1      }
+  422         
+  423         ////////////////////////////////////////////////////////////////////////////////
+  424         //
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 8   
 
   425         ////////////////////////////////////////////////////////////////////////////////
-  426         //
-  427         ////////////////////////////////////////////////////////////////////////////////
-  428         void isr_can_status(void) interrupt CAN_SRN1INT
-  429         {
-  430  1        u16 nodeinfo;
+  426         void isr_can_status(void) interrupt CAN_SRN1INT
+  427         {
+  428  1        u16 nodeinfo;
+  429  1        
+  430  1        nodeinfo = CAN_NSR0;
   431  1        
-  432  1        nodeinfo = CAN_NSR0;
-  433  1        
-  434  1        if (!(nodeinfo & 0x0020))               // if ALERT
-  435  1          return;
-  436  1          
-  437  1        
-  438  1        if (nodeinfo & 0x0080)           // if BOFF
-  439  1        {
-  440  2          // CAN_NCR0 &= ~((u16)0x0041);  // reset INIT and CCE
-  441  2          g_can_status|=1;
-  442  2        }
+  432  1        if (!(nodeinfo & 0x0020))               // if ALERT
+  433  1          return;
+  434  1          
+  435  1        
+  436  1        if (nodeinfo & 0x0080)           // if BOFF
+  437  1        {
+  438  2          // CAN_NCR0 &= ~((u16)0x0041);  // reset INIT and CCE
+  439  2          g_can_status|=1;
+  440  2        }
+  441  1        
+  442  1        // if (nodeinfo & 0x0040);          // if EWRN
   443  1        
-  444  1        // if (nodeinfo & 0x0040);          // if EWRN
-  445  1        
-  446  1        if (nodeinfo & 0x0100)           // if LLE
-  447  1        {
-  448  2          // A list length error has been detected during message
-  449  2          // acceptance filtering. The number of elements in the list
-  450  2          // that belongs to this CAN node differs from the list SIZE 
-  451  2          // given in the list termination pointer
-  452  2          
-  453  2          CAN_NSR0      = 0x023F;        // reset LLE
-  454  2        }
-  455  1        
-  456  1        if (nodeinfo & 0x0200)           // if LOE
-  457  1        {
-  458  2          // A list object error has been detected during message
-  459  2          // acceptance filtering. A message object with wrong LIST 
-  460  2          // index entry in the Message Object Control Register has 
-  461  2          // been detected
-  462  2          
-  463  2          CAN_NSR0      = 0x013F;        // reset LOE
-  464  2        }
-  465  1        
-  466  1        if (CAN_NCR0 & 0x0001)           // if INIT
-  467  1        {
-  468  2        }
+  444  1        if (nodeinfo & 0x0100)           // if LLE
+  445  1        {
+  446  2          // A list length error has been detected during message
+  447  2          // acceptance filtering. The number of elements in the list
+  448  2          // that belongs to this CAN node differs from the list SIZE 
+  449  2          // given in the list termination pointer
+  450  2          
+  451  2          CAN_NSR0      = 0x023F;        // reset LLE
+  452  2        }
+  453  1        
+  454  1        if (nodeinfo & 0x0200)           // if LOE
+  455  1        {
+  456  2          // A list object error has been detected during message
+  457  2          // acceptance filtering. A message object with wrong LIST 
+  458  2          // index entry in the Message Object Control Register has 
+  459  2          // been detected
+  460  2          
+  461  2          CAN_NSR0      = 0x013F;        // reset LOE
+  462  2        }
+  463  1        
+  464  1        if (CAN_NCR0 & 0x0001)           // if INIT
+  465  1        {
+  466  2        }
+  467  1        
+  468  1        CAN_NSR0      = 0x031F;          // reset ALERT
   469  1        
-  470  1        CAN_NSR0      = 0x031F;          // reset ALERT
-  471  1        
-  472  1      }
-  473         
+  470  1      }
+  471         
+  472         ////////////////////////////////////////////////////////////////////////////////
+  473         //
   474         ////////////////////////////////////////////////////////////////////////////////
-  475         //
-  476         ////////////////////////////////////////////////////////////////////////////////
-  477         void isr_can_error(void) interrupt CAN_SRN2INT
-  478         {
+  475         void isr_can_error(void) interrupt CAN_SRN2INT
+  476         {
+  477  1        
+  478  1        u16 nodeinfo;
   479  1        
-  480  1        u16 nodeinfo;
+  480  1        nodeinfo = CAN_NSR0;
   481  1        
-  482  1        nodeinfo = CAN_NSR0;
-  483  1        
-  484  1        if (!(nodeinfo & 0x0007))               // if LEC
-  485  1          return;
-  486  1          
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 9   
+  482  1        if (!(nodeinfo & 0x0007))               // if LEC
+  483  1          return;
+  484  1          
+  485  1        switch (nodeinfo & 0x0007)       // LEC0 (Last Error Code0)
+  486  1        {
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 9   
 
-  487  1        switch (nodeinfo & 0x0007)       // LEC0 (Last Error Code0)
-  488  1        {
-  489  2        case 1: // Stuff Error
-  490  2          // More than 5 equal bits in a sequence have occurred
-  491  2          // in a part of a received message where this is not
-  492  2          // allowed.
+  487  2        case 1: // Stuff Error
+  488  2          // More than 5 equal bits in a sequence have occurred
+  489  2          // in a part of a received message where this is not
+  490  2          // allowed.
+  491  2          
+  492  2          break;
   493  2          
-  494  2          break;
-  495  2          
-  496  2        case 2: // Form Error
-  497  2          // A fixed format part of a received frame has the
-  498  2          // wrong format.
+  494  2        case 2: // Form Error
+  495  2          // A fixed format part of a received frame has the
+  496  2          // wrong format.
+  497  2          
+  498  2          break;
   499  2          
-  500  2          break;
-  501  2          
-  502  2        case 3: // Ack Error
-  503  2          // The message this CAN controller transmitted was
-  504  2          // not acknowledged by another node.
+  500  2        case 3: // Ack Error
+  501  2          // The message this CAN controller transmitted was
+  502  2          // not acknowledged by another node.
+  503  2          
+  504  2          break;
   505  2          
-  506  2          break;
-  507  2          
-  508  2        case 4: // Bit1 Error
-  509  2          // During the transmission of a message (with the
-  510  2          // exeption of the arbitration field), the device
-  511  2          // wanted to send a recessive level ("1"), but the
-  512  2          // monitored bus value was dominant.
+  506  2        case 4: // Bit1 Error
+  507  2          // During the transmission of a message (with the
+  508  2          // exeption of the arbitration field), the device
+  509  2          // wanted to send a recessive level ("1"), but the
+  510  2          // monitored bus value was dominant.
+  511  2          
+  512  2          break;
   513  2          
-  514  2          break;
-  515  2          
-  516  2        case 5: // Bit0 Error
-  517  2          // During the transmission of a message (or acknow-
-  518  2          // ledge bit, active error flag, or overload flag),
-  519  2          // the device wanted to send a dominant level ("0"),
-  520  2          // but the monitored bus value was recessive.
-  521  2          
-  522  2          // During busoff recovery this status is set each time 
-  523  2          // a sequence of 11 recessive bits has been monitored.
-  524  2          // The CPU may use this code as indication that the 
-  525  2          // bus is not continuously disturbed).
-  526  2          
-  527  2          if (nodeinfo & 0x0080)  // if Busoff status
-  528  2          {
-  529  3            
-  530  3          }
-  531  2          else
-  532  2          {
-  533  3          }
-  534  2          break;
-  535  2          
-  536  2        case 6: // CRC Error
-  537  2          // The CRC check sum was incorrect in the message
-  538  2          // received.
+  514  2        case 5: // Bit0 Error
+  515  2          // During the transmission of a message (or acknow-
+  516  2          // ledge bit, active error flag, or overload flag),
+  517  2          // the device wanted to send a dominant level ("0"),
+  518  2          // but the monitored bus value was recessive.
+  519  2          
+  520  2          // During busoff recovery this status is set each time 
+  521  2          // a sequence of 11 recessive bits has been monitored.
+  522  2          // The CPU may use this code as indication that the 
+  523  2          // bus is not continuously disturbed).
+  524  2          
+  525  2          if (nodeinfo & 0x0080)  // if Busoff status
+  526  2          {
+  527  3            
+  528  3          }
+  529  2          else
+  530  2          {
+  531  3          }
+  532  2          break;
+  533  2          
+  534  2        case 6: // CRC Error
+  535  2          // The CRC check sum was incorrect in the message
+  536  2          // received.
+  537  2          
+  538  2          break;
   539  2          
-  540  2          break;
-  541  2          
-  542  2        default:
-  543  2          break;
-  544  2        }
-  545  1        CAN_NSR0      = 0x0338;          // reset LEC
-  546  1      }
-  547         
+  540  2        default:
+  541  2          break;
+  542  2        }
+  543  1        CAN_NSR0      = 0x0338;          // reset LEC
+  544  1      }
+  545         
+  546         ////////////////////////////////////////////////////////////////////////////////
+  547         //
   548         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 10  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 10  
 
-  549         //
-  550         ////////////////////////////////////////////////////////////////////////////////
-  551         void set_can_on(void)
-  552         {
-  553  1        CAN_NCR0 &= ~((u16)0x0041);  // reset INIT and CCE
-  554  1        g_can_status &= (u8)0xFE;    // clear Bus OFF status
-  555  1      }
-  556         
+  549         void set_can_on(void)
+  550         {
+  551  1        CAN_NCR0 &= ~((u16)0x0041);  // reset INIT and CCE
+  552  1        g_can_status &= (u8)0xFE;    // clear Bus OFF status
+  553  1      }
+  554         
+  555         ////////////////////////////////////////////////////////////////////////////////
+  556         //
   557         ////////////////////////////////////////////////////////////////////////////////
-  558         //
-  559         ////////////////////////////////////////////////////////////////////////////////
-  560         u8 get_can_bus_off(void)
-  561         {
-  562  1        // CAN Bus off
-  563  1        // if(CAN_NSR0 & 0x80)
-  564  1        if(g_can_status & 1)
-  565  1          return 1;
-  566  1        else
-  567  1          return 0;
-  568  1      }
-  569         
+  558         u8 get_can_bus_off(void)
+  559         {
+  560  1        // CAN Bus off
+  561  1        // if(CAN_NSR0 & 0x80)
+  562  1        if(g_can_status & 1)
+  563  1          return 1;
+  564  1        else
+  565  1          return 0;
+  566  1      }
+  567         
+  568         ////////////////////////////////////////////////////////////////////////////////
+  569         //
   570         ////////////////////////////////////////////////////////////////////////////////
-  571         //
-  572         ////////////////////////////////////////////////////////////////////////////////
-  573         u8 can_txx(u32 id,u8 *buf)
-  574         {
-  575  1        UNUSED_PARA(id);
-  576  1        UNUSED_PARA(buf);
-  577  1      
-  578  1        return 1;
-  579  1      }
-  580         
+  571         u8 can_txx(u32 id,u8 *buf)
+  572         {
+  573  1        UNUSED_PARA(id);
+  574  1        UNUSED_PARA(buf);
+  575  1      
+  576  1        return 1;
+  577  1      }
+  578         
+  579         ////////////////////////////////////////////////////////////////////////////////
+  580         //
   581         ////////////////////////////////////////////////////////////////////////////////
-  582         //
-  583         ////////////////////////////////////////////////////////////////////////////////
-  584         u8 can_settingx(u32 baudrate, u8 option)
-  585         {
-  586  1        UNUSED_PARA(baudrate);
-  587  1        UNUSED_PARA(option);
-  588  1      
-  589  1        return 1;
-  590  1      }
-  591         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 11  
+  582         u8 can_settingx(u32 baudrate, u8 option)
+  583         {
+  584  1        UNUSED_PARA(baudrate);
+  585  1        UNUSED_PARA(option);
+  586  1      
+  587  1        return 1;
+  588  1      }
+  589         ////////////////////////////////////////////////////////////////////////////////
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 11  
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -668,7 +666,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0056 D7002000      EXTS      #020H,#01H
 005A F6F40C02      MOV       020CH,R4
                                            ; SOURCE LINE # 92
-005E E6F44716      MOV       R4,#01647H
+005E E6F44F16      MOV       R4,#0164FH
 0062 D7002000      EXTS      #020H,#01H
 0066 F6F41002      MOV       0210H,R4
                                            ; SOURCE LINE # 94
@@ -683,7 +681,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0080 F6F41A02      MOV       021AH,R4
                                            ; SOURCE LINE # 97
 0084 F6F41802      MOV       0218H,R4
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 12  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 12  
 
                                            ; SOURCE LINE # 102
 0088 E005          MOV       R5,#00H
@@ -747,7 +745,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 134
 00EE         ?C0014:
 00EE D7002000      EXTS      #020H,#01H
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 13  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 13  
 
 00F2 F2F4C401      MOV       R4,01C4H
 00F6 8AF4FA80      JB        R4.8,?C0014
@@ -811,7 +809,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 154
 017A         ?C0023:
                                            ; SOURCE LINE # 157
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 14  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 14  
 
 017A E08C          MOV       R12,#08H
 017C D4B00200      MOV       R11,[R0+#02H] ; buf+2
@@ -875,7 +873,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0204 FCFE          POP       R14
 0206 FCFD          POP       R13
 0208 DB00          RETS      
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 15  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 15  
 
              ; FUNCTION can_tx (END    RMASK = @0x7FFF)
 
@@ -906,56 +904,56 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 022A E005          MOV       R5,#00H
 022C D7408000      EXTP      #080H,#01H
 0230 C4571C10      MOV       [R7+#POF(0101CH)],R5
-                                           ; SOURCE LINE # 198
+                                           ; SOURCE LINE # 196
 0234 E6F10040      MOV       R1,#04000H
-                                           ; SOURCE LINE # 199
+                                           ; SOURCE LINE # 197
 0238 9AF21220      JNB       R2.2,?C0027
-                                           ; SOURCE LINE # 201
-                                           ; SOURCE LINE # 202
+                                           ; SOURCE LINE # 199
+                                           ; SOURCE LINE # 200
 023C F06A          MOV       R6,R10
 023E E6F40060      MOV       R4,#06000H
 0242 F014          MOV       R1,R4
 0244 701A          OR        R1,R10
-                                           ; SOURCE LINE # 203
+                                           ; SOURCE LINE # 201
 0246 5C53          SHL       R3,#05H
 0248 D7408000      EXTP      #080H,#01H
 024C C4131A10      MOV       [R3+#POF(0101AH)],R1
-                                           ; SOURCE LINE # 204
+                                           ; SOURCE LINE # 202
 0250 F048          MOV       R4,R8
 0252 C084          MOVBZ     R4,RL4
 0254 5C54          SHL       R4,#05H
 0256 D7408000      EXTP      #080H,#01H
 025A C4941810      MOV       [R4+#POF(01018H)],R9
-                                           ; SOURCE LINE # 206
+                                           ; SOURCE LINE # 204
 025E 0D15          JMPR      cc_UC,?C0028
 0260         ?C0027:
-                                           ; SOURCE LINE # 209
+                                           ; SOURCE LINE # 207
 0260 F059          MOV       R5,R9
 0262 5C25          SHL       R5,#02H
 0264 E6F40040      MOV       R4,#04000H
 0268 F014          MOV       R1,R4
 026A 7015          OR        R1,R5
-                                           ; SOURCE LINE # 210
+                                           ; SOURCE LINE # 208
 026C F048          MOV       R4,R8
 026E C084          MOVBZ     R4,RL4
 0270 5C54          SHL       R4,#05H
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 16  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 16  
 
 0272 D7408000      EXTP      #080H,#01H
 0276 C4141A10      MOV       [R4+#POF(0101AH)],R1
-                                           ; SOURCE LINE # 211
+                                           ; SOURCE LINE # 209
 027A E005          MOV       R5,#00H
 027C F048          MOV       R4,R8
 027E C084          MOVBZ     R4,RL4
 0280 5C54          SHL       R4,#05H
 0282 D7408000      EXTP      #080H,#01H
 0286 C4541810      MOV       [R4+#POF(01018H)],R5
-                                           ; SOURCE LINE # 213
+                                           ; SOURCE LINE # 211
 028A         ?C0028:
-                                           ; SOURCE LINE # 216
+                                           ; SOURCE LINE # 214
 028A A980          MOVB      RL4,[R0]      ; cfg
 028C 9AF41320      JNB       R4.2,?C0029
-                                           ; SOURCE LINE # 218
+                                           ; SOURCE LINE # 216
 0290 E005          MOV       R5,#00H
 0292 F05C          MOV       R5,R12
 0294 66F5FF3F      AND       R5,#03FFFH
@@ -964,16 +962,16 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 029C 5C54          SHL       R4,#05H
 029E D7408000      EXTP      #080H,#01H
 02A2 C4540E10      MOV       [R4+#POF(0100EH)],R5
-                                           ; SOURCE LINE # 219
+                                           ; SOURCE LINE # 217
 02A6 F048          MOV       R4,R8
 02A8 C084          MOVBZ     R4,RL4
 02AA 5C54          SHL       R4,#05H
 02AC D7408000      EXTP      #080H,#01H
 02B0 C4B40C10      MOV       [R4+#POF(0100CH)],R11
-                                           ; SOURCE LINE # 221
+                                           ; SOURCE LINE # 219
 02B4 0D19          JMPR      cc_UC,?C0030
 02B6         ?C0029:
-                                           ; SOURCE LINE # 224
+                                           ; SOURCE LINE # 222
 02B6 F04B          MOV       R4,R11
 02B8 F05C          MOV       R5,R12
 02BA 0044          ADD       R4,R4
@@ -987,29 +985,29 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 02CC 5C54          SHL       R4,#05H
 02CE D7408000      EXTP      #080H,#01H
 02D2 C4540E10      MOV       [R4+#POF(0100EH)],R5
-                                           ; SOURCE LINE # 225
+                                           ; SOURCE LINE # 223
 02D6 E6F5FFFF      MOV       R5,#0FFFFH
 02DA F048          MOV       R4,R8
 02DC C084          MOVBZ     R4,RL4
 02DE 5C54          SHL       R4,#05H
 02E0 D7408000      EXTP      #080H,#01H
 02E4 C4540C10      MOV       [R4+#POF(0100CH)],R5
-                                           ; SOURCE LINE # 226
+                                           ; SOURCE LINE # 224
 02E8         ?C0030:
-                                           ; SOURCE LINE # 229
+                                           ; SOURCE LINE # 227
 02E8 E005          MOV       R5,#00H
 02EA F048          MOV       R4,R8
 02EC C084          MOVBZ     R4,RL4
 02EE 5C54          SHL       R4,#05H
 02F0 D7408000      EXTP      #080H,#01H
 02F4 C4540A10      MOV       [R4+#POF(0100AH)],R5
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 17  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 17  
 
-                                           ; SOURCE LINE # 230
+                                           ; SOURCE LINE # 228
 02F8 F048          MOV       R4,R8
 02FA 47F81000      CMPB      RL4,#010H
 02FE 9D09          JMPR      cc_UGE,?C0031
-                                           ; SOURCE LINE # 231
+                                           ; SOURCE LINE # 229
 0300 C085          MOVBZ     R5,RL4
 0302 5C85          SHL       R5,#08H
 0304 C084          MOVBZ     R4,RL4
@@ -1018,11 +1016,11 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 030C C4540810      MOV       [R4+#POF(01008H)],R5
 0310 0D0E          JMPR      cc_UC,?C0032
 0312         ?C0031:
-                                           ; SOURCE LINE # 232
+                                           ; SOURCE LINE # 230
 0312 F048          MOV       R4,R8
 0314 47F82000      CMPB      RL4,#020H
 0318 9D0A          JMPR      cc_UGE,?C0032
-                                           ; SOURCE LINE # 233
+                                           ; SOURCE LINE # 231
 031A C085          MOVBZ     R5,RL4
 031C 5C85          SHL       R5,#08H
 031E 76F51100      OR        R5,#011H
@@ -1031,50 +1029,50 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0326 D7408000      EXTP      #080H,#01H
 032A C4540810      MOV       [R4+#POF(01008H)],R5
 032E         ?C0032:
-                                           ; SOURCE LINE # 235
+                                           ; SOURCE LINE # 233
 032E A980          MOVB      RL4,[R0]      ; cfg
 0330 9AF41220      JNB       R4.2,?C0034
-                                           ; SOURCE LINE # 238
+                                           ; SOURCE LINE # 236
 0334 E6F50108      MOV       R5,#0801H
 0338 F048          MOV       R4,R8
 033A C084          MOVBZ     R4,RL4
 033C 5C54          SHL       R4,#05H
 033E D7408000      EXTP      #080H,#01H
 0342 C4540210      MOV       [R4+#POF(01002H)],R5
-                                           ; SOURCE LINE # 239
+                                           ; SOURCE LINE # 237
 0346 E005          MOV       R5,#00H
 0348 F048          MOV       R4,R8
 034A C084          MOVBZ     R4,RL4
 034C 5C54          SHL       R4,#05H
 034E D7408000      EXTP      #080H,#01H
 0352 C4540010      MOV       [R4+#POF(01000H)],R5
-                                           ; SOURCE LINE # 241
+                                           ; SOURCE LINE # 239
 0356 DB00          RETS      
 0358         ?C0034:
-                                           ; SOURCE LINE # 245
+                                           ; SOURCE LINE # 243
 0358 E015          MOV       R5,#01H
 035A F048          MOV       R4,R8
 035C C084          MOVBZ     R4,RL4
 035E 5C54          SHL       R4,#05H
 0360 D7408000      EXTP      #080H,#01H
 0364 C4540210      MOV       [R4+#POF(01002H)],R5
-                                           ; SOURCE LINE # 246
+                                           ; SOURCE LINE # 244
 0368 E005          MOV       R5,#00H
 036A F048          MOV       R4,R8
 036C C084          MOVBZ     R4,RL4
 036E 5C54          SHL       R4,#05H
 0370 D7408000      EXTP      #080H,#01H
 0374 C4540010      MOV       [R4+#POF(01000H)],R5
-                                           ; SOURCE LINE # 248
+                                           ; SOURCE LINE # 246
 0378         ?C0035:
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 18  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 18  
 
-                                           ; SOURCE LINE # 250
+                                           ; SOURCE LINE # 248
 0378 DB00          RETS      
              ; FUNCTION can_rx (END    RMASK = @0x40FE)
 
              ; FUNCTION can_load (BEGIN  RMASK = @0x7FFF)
-                                           ; SOURCE LINE # 255
+                                           ; SOURCE LINE # 253
 037A ECFD          PUSH      R13
 037C ECFE          PUSH      R14
 037E ECFF          PUSH      R15
@@ -1085,19 +1083,19 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 ;---- Variable 'id' assigned to Register 'R14/R15' ----
 0388 F0D8          MOV       R13,R8
 ;---- Variable 'no' assigned to Register 'R13' ----
-                                           ; SOURCE LINE # 256
-                                           ; SOURCE LINE # 259
+                                           ; SOURCE LINE # 254
+                                           ; SOURCE LINE # 257
 038A E6F52000      MOV       R5,#020H
 038E F048          MOV       R4,R8
 0390 C086          MOVBZ     R6,RL4
 0392 5C56          SHL       R6,#05H
 0394 D7408000      EXTP      #080H,#01H
 0398 C4561C10      MOV       [R6+#POF(0101CH)],R5
-                                           ; SOURCE LINE # 260
+                                           ; SOURCE LINE # 258
 039C E6F50808      MOV       R5,#0808H
 03A0 D7408000      EXTP      #080H,#01H
 03A4 C4561E10      MOV       [R6+#POF(0101EH)],R5
-                                           ; SOURCE LINE # 261
+                                           ; SOURCE LINE # 259
 03A8 E08C          MOV       R12,#08H
 03AA D4B00400      MOV       R11,[R0+#04H] ; buf+2
 03AE D4A00200      MOV       R10,[R0+#02H] ; buf
@@ -1105,67 +1103,67 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 03B6 E6F98000      MOV       R9,#080H
 03BA 0086          ADD       R8,R6
 03BC DA000000 E    CALLS     SEG (fmemcpy),fmemcpy
-                                           ; SOURCE LINE # 262
+                                           ; SOURCE LINE # 260
 03C0 E6F52000      MOV       R5,#020H
 03C4 F04D          MOV       R4,R13
 03C6 C08B          MOVBZ     R11,RL4
 03C8 5C5B          SHL       R11,#05H
 03CA D7408000      EXTP      #080H,#01H
 03CE C45B1E10      MOV       [R11+#POF(0101EH)],R5
-                                           ; SOURCE LINE # 263
+                                           ; SOURCE LINE # 261
 03D2 E6F54000      MOV       R5,#040H
 03D6 D7408000      EXTP      #080H,#01H
 03DA C45B1C10      MOV       [R11+#POF(0101CH)],R5
-                                           ; SOURCE LINE # 266
+                                           ; SOURCE LINE # 264
 03DE E6F80040      MOV       R8,#04000H
 ;---- Variable 'tmpu16' assigned to Register 'R8' ----
-                                           ; SOURCE LINE # 267
+                                           ; SOURCE LINE # 265
 03E2 A920          MOVB      RL1,[R0]      ; cfg
 03E4 9AF10D20      JNB       R1.2,?C0036
-                                           ; SOURCE LINE # 269
+                                           ; SOURCE LINE # 267
 03E8 E6F80060      MOV       R8,#06000H
-                                           ; SOURCE LINE # 270
+                                           ; SOURCE LINE # 268
 03EC F06F          MOV       R6,R15
 03EE E6F40060      MOV       R4,#06000H
 03F2 708F          OR        R8,R15
-                                           ; SOURCE LINE # 271
+                                           ; SOURCE LINE # 269
 03F4 D7508000      EXTP      #080H,#02H
 03F8 C48B1A10      MOV       [R11+#POF(0101AH)],R8
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 19  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 19  
 
-                                           ; SOURCE LINE # 272
+                                           ; SOURCE LINE # 270
 03FC C4EB1810      MOV       [R11+#POF(01018H)],R14
-                                           ; SOURCE LINE # 273
+                                           ; SOURCE LINE # 271
 0400 0D0F          JMPR      cc_UC,?C0037
 0402         ?C0036:
-                                           ; SOURCE LINE # 276
+                                           ; SOURCE LINE # 274
 0402 F05E          MOV       R5,R14
 0404 5C25          SHL       R5,#02H
 0406 E6F40040      MOV       R4,#04000H
 040A F084          MOV       R8,R4
 040C 7085          OR        R8,R5
-                                           ; SOURCE LINE # 277
+                                           ; SOURCE LINE # 275
 040E D7408000      EXTP      #080H,#01H
 0412 C48B1A10      MOV       [R11+#POF(0101AH)],R8
-                                           ; SOURCE LINE # 278
+                                           ; SOURCE LINE # 276
 0416 E005          MOV       R5,#00H
 0418 D7408000      EXTP      #080H,#01H
 041C C45B1810      MOV       [R11+#POF(01018H)],R5
-                                           ; SOURCE LINE # 279
+                                           ; SOURCE LINE # 277
 0420         ?C0037:
-                                           ; SOURCE LINE # 281
+                                           ; SOURCE LINE # 279
 0420 67F2F000      ANDB      RL1,#0F0H
 0424 C028          MOVBZ     R8,RL1
-                                           ; SOURCE LINE # 282
+                                           ; SOURCE LINE # 280
 0426 5C48          SHL       R8,#04H
-                                           ; SOURCE LINE # 285
+                                           ; SOURCE LINE # 283
 0428 D7408000      EXTP      #080H,#01H
 042C C48B0210      MOV       [R11+#POF(01002H)],R8
-                                           ; SOURCE LINE # 286
+                                           ; SOURCE LINE # 284
 0430 E005          MOV       R5,#00H
 0432 D7408000      EXTP      #080H,#01H
 0436 C45B0010      MOV       [R11+#POF(01000H)],R5
-                                           ; SOURCE LINE # 287
+                                           ; SOURCE LINE # 285
 043A 0804          ADD       R0,#04H
 043C FCFF          POP       R15
 043E FCFE          POP       R14
@@ -1174,84 +1172,84 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION can_load (END    RMASK = @0x7FFF)
 
              ; FUNCTION can_stx (BEGIN  RMASK = @0x4030)
-                                           ; SOURCE LINE # 292
+                                           ; SOURCE LINE # 290
 ;---- Variable 'no' assigned to Register 'R8' ----
-                                           ; SOURCE LINE # 296
+                                           ; SOURCE LINE # 294
 0444 D7002000      EXTS      #020H,#01H
 0448 F2F40402      MOV       R4,0204H
 044C 8AF40F70      JB        R4.7,?C0039
-                                           ; SOURCE LINE # 297
+                                           ; SOURCE LINE # 295
 0450         ?C0038:
-                                           ; SOURCE LINE # 299
+                                           ; SOURCE LINE # 297
 0450 D7002000      EXTS      #020H,#01H
 0454 F2F40002      MOV       R4,0200H
 0458 8AF40900      JB        R4.0,?C0039
-                                           ; SOURCE LINE # 300
+                                           ; SOURCE LINE # 298
 045C         ?C0040:
-                                           ; SOURCE LINE # 302
+                                           ; SOURCE LINE # 300
 045C E6F52007      MOV       R5,#0720H
 0460 F048          MOV       R4,R8
 0462 C084          MOVBZ     R4,RL4
 0464 5C54          SHL       R4,#05H
 0466 D7408000      EXTP      #080H,#01H
 046A C4541E10      MOV       [R4+#POF(0101EH)],R5
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 20  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 20  
 
-                                           ; SOURCE LINE # 326
+                                           ; SOURCE LINE # 324
 046E         ?C0039:
 046E DB00          RETS      
              ; FUNCTION can_stx (END    RMASK = @0x4030)
 
              ; FUNCTION can_stx_ex (BEGIN  RMASK = @0x7FFF)
-                                           ; SOURCE LINE # 331
+                                           ; SOURCE LINE # 329
 0470 ECFD          PUSH      R13
 0472 F0D8          MOV       R13,R8
 ;---- Variable 'no' assigned to Register 'R13' ----
-                                           ; SOURCE LINE # 333
+                                           ; SOURCE LINE # 331
 0474 F048          MOV       R4,R8
 0476 C088          MOVBZ     R8,RL4
 0478 DA000000 R    CALLS     SEG (can_busy),can_busy
 047C 4980          CMPB      RL4,#00H
 047E 2D06          JMPR      cc_Z,?C0041
-                                           ; SOURCE LINE # 335
+                                           ; SOURCE LINE # 333
 0480 F04D          MOV       R4,R13
 0482 C088          MOVBZ     R8,RL4
 0484 DA000000 R    CALLS     SEG (can_abort),can_abort
-                                           ; SOURCE LINE # 336
+                                           ; SOURCE LINE # 334
 0488 E118          MOVB      RL4,#01H
 048A 0D05          JMPR      cc_UC,?C0042
-                                           ; SOURCE LINE # 337
+                                           ; SOURCE LINE # 335
 048C         ?C0041:
-                                           ; SOURCE LINE # 338
+                                           ; SOURCE LINE # 336
 048C F04D          MOV       R4,R13
 048E C088          MOVBZ     R8,RL4
 0490 DA000000 R    CALLS     SEG (can_stx),can_stx
-                                           ; SOURCE LINE # 339
+                                           ; SOURCE LINE # 337
 0494 E108          MOVB      RL4,#00H
-                                           ; SOURCE LINE # 340
+                                           ; SOURCE LINE # 338
 0496         ?C0042:
 0496 FCFD          POP       R13
 0498 DB00          RETS      
              ; FUNCTION can_stx_ex (END    RMASK = @0x7FFF)
 
              ; FUNCTION can_abort (BEGIN  RMASK = @0x4030)
-                                           ; SOURCE LINE # 345
+                                           ; SOURCE LINE # 343
 ;---- Variable 'no' assigned to Register 'R8' ----
-                                           ; SOURCE LINE # 347
+                                           ; SOURCE LINE # 345
 049A E6F52007      MOV       R5,#0720H
 049E F048          MOV       R4,R8
 04A0 C084          MOVBZ     R4,RL4
 04A2 5C54          SHL       R4,#05H
 04A4 D7408000      EXTP      #080H,#01H
 04A8 C4541C10      MOV       [R4+#POF(0101CH)],R5
-                                           ; SOURCE LINE # 348
+                                           ; SOURCE LINE # 346
 04AC DB00          RETS      
              ; FUNCTION can_abort (END    RMASK = @0x4030)
 
              ; FUNCTION can_busy (BEGIN  RMASK = @0x4010)
-                                           ; SOURCE LINE # 353
+                                           ; SOURCE LINE # 351
 ;---- Variable 'no' assigned to Register 'R8' ----
-                                           ; SOURCE LINE # 355
+                                           ; SOURCE LINE # 353
 04AE F048          MOV       R4,R8
 04B0 C084          MOVBZ     R4,RL4
 04B2 5C54          SHL       R4,#05H
@@ -1259,32 +1257,32 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 04B8 D4441C10      MOV       R4,[R4+#POF(0101CH)]
 04BC 9AF40280      JNB       R4.8,?C0044
 04C0 E118          MOVB      RL4,#01H
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 21  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 21  
 
 04C2 0D01          JMPR      cc_UC,?C0045
 04C4         ?C0044:
 04C4 E108          MOVB      RL4,#00H
 04C6         ?C0045:
-                                           ; SOURCE LINE # 356
+                                           ; SOURCE LINE # 354
 04C6 DB00          RETS      
              ; FUNCTION can_busy (END    RMASK = @0x4010)
 
              ; FUNCTION can_sload (BEGIN  RMASK = @0x7FFF)
-                                           ; SOURCE LINE # 361
+                                           ; SOURCE LINE # 359
 04C8 ECFD          PUSH      R13
 04CA F069          MOV       R6,R9
 04CC F07A          MOV       R7,R10
 ;---- Variable 'buf' assigned to Register 'R6/R7' ----
 04CE F0D8          MOV       R13,R8
 ;---- Variable 'no' assigned to Register 'R13' ----
-                                           ; SOURCE LINE # 363
+                                           ; SOURCE LINE # 361
 04D0 E085          MOV       R5,#08H
 04D2 F048          MOV       R4,R8
 04D4 C081          MOVBZ     R1,RL4
 04D6 5C51          SHL       R1,#05H
 04D8 D7408000      EXTP      #080H,#01H
 04DC C4511E10      MOV       [R1+#POF(0101EH)],R5
-                                           ; SOURCE LINE # 364
+                                           ; SOURCE LINE # 362
 04E0 E08C          MOV       R12,#08H
 04E2 F0BA          MOV       R11,R10
 04E4 F0A9          MOV       R10,R9
@@ -1292,24 +1290,24 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 04EA E6F98000      MOV       R9,#080H
 04EE 0081          ADD       R8,R1
 04F0 DA000000 E    CALLS     SEG (fmemcpy),fmemcpy
-                                           ; SOURCE LINE # 365
+                                           ; SOURCE LINE # 363
 04F4 E6F52000      MOV       R5,#020H
 04F8 F04D          MOV       R4,R13
 04FA C087          MOVBZ     R7,RL4
 04FC 5C57          SHL       R7,#05H
 04FE D7408000      EXTP      #080H,#01H
 0502 C4571E10      MOV       [R7+#POF(0101EH)],R5
-                                           ; SOURCE LINE # 366
+                                           ; SOURCE LINE # 364
 0506 E6F54000      MOV       R5,#040H
 050A D7408000      EXTP      #080H,#01H
 050E C4571C10      MOV       [R7+#POF(0101CH)],R5
-                                           ; SOURCE LINE # 367
+                                           ; SOURCE LINE # 365
 0512 FCFD          POP       R13
 0514 DB00          RETS      
              ; FUNCTION can_sload (END    RMASK = @0x7FFF)
 
              ; FUNCTION isr_can_txrx0 (BEGIN  RMASK = @0x7FFF)
-                                           ; SOURCE LINE # 372
+                                           ; SOURCE LINE # 370
 0516 C6030300      SCXT      DPP3,#03H
 051A EC00          PUSH      DPP0
 051C C6871000      SCXT      MDC,#010H
@@ -1323,71 +1321,71 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 052E ECF6          PUSH      R6
 0530 ECF7          PUSH      R7
 0532 ECF8          PUSH      R8
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 22  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 22  
 
 0534 ECF9          PUSH      R9
 0536 ECFA          PUSH      R10
 0538 ECFB          PUSH      R11
 053A ECFC          PUSH      R12
 053C ECFD          PUSH      R13
-                                           ; SOURCE LINE # 373
-                                           ; SOURCE LINE # 379
+                                           ; SOURCE LINE # 371
+                                           ; SOURCE LINE # 377
 053E D7002000      EXTS      #020H,#01H
 0542 F2F50402      MOV       R5,0204H
 ;---- Variable 'nodeinfo' assigned to Register 'R5' ----
-                                           ; SOURCE LINE # 381
+                                           ; SOURCE LINE # 379
 0546 9AF50930      JNB       R5.3,?C0046
-                                           ; SOURCE LINE # 383
+                                           ; SOURCE LINE # 381
 054A E6F43703      MOV       R4,#0337H
 054E D7002000      EXTS      #020H,#01H
 0552 F6F40402      MOV       0204H,R4
-                                           ; SOURCE LINE # 384
+                                           ; SOURCE LINE # 382
 0556 E128          MOVB      RL4,#02H
 0558 75F80000 R    ORB       g_can_status,RL4
-                                           ; SOURCE LINE # 385
+                                           ; SOURCE LINE # 383
 055C         ?C0046:
-                                           ; SOURCE LINE # 387
+                                           ; SOURCE LINE # 385
 055C 9AF50940      JNB       R5.4,?C0047
-                                           ; SOURCE LINE # 389
+                                           ; SOURCE LINE # 387
 0560 E6F42F03      MOV       R4,#032FH
 0564 D7002000      EXTS      #020H,#01H
 0568 F6F40402      MOV       0204H,R4
-                                           ; SOURCE LINE # 390
+                                           ; SOURCE LINE # 388
 056C E148          MOVB      RL4,#04H
 056E 75F80000 R    ORB       g_can_status,RL4
-                                           ; SOURCE LINE # 391
+                                           ; SOURCE LINE # 389
 0572         ?C0047:
-                                           ; SOURCE LINE # 393
+                                           ; SOURCE LINE # 391
 0572 E6F400F0      MOV       R4,#0F000H
 0576 D7002000      EXTS      #020H,#01H
 057A F6F4C201      MOV       01C2H,R4
-                                           ; SOURCE LINE # 394
+                                           ; SOURCE LINE # 392
 057E E0F4          MOV       R4,#0FH
 0580 D7002000      EXTS      #020H,#01H
 0584 F6F4C001      MOV       01C0H,R4
-                                           ; SOURCE LINE # 398
+                                           ; SOURCE LINE # 396
 0588 0D71          JMPR      cc_UC,?C0048
 058A         ?C0050:
-                                           ; SOURCE LINE # 400
+                                           ; SOURCE LINE # 398
 058A D7002000      EXTS      #020H,#01H
 058E F2F48001      MOV       R4,0180H
 0592 F0D4          MOV       R13,R4
 ;---- Variable 'objno' assigned to Register 'R13' ----
-                                           ; SOURCE LINE # 401
+                                           ; SOURCE LINE # 399
 0594 F04D          MOV       R4,R13
 0596 C084          MOVBZ     R4,RL4
 0598 5C54          SHL       R4,#05H
 059A D7408000      EXTP      #080H,#01H
 059E D4541C10      MOV       R5,[R4+#POF(0101CH)]
 ;---- Variable 'objinfo' assigned to Register 'R5' ----
-                                           ; SOURCE LINE # 403
+                                           ; SOURCE LINE # 401
 05A2 9AF54900      JNB       R5.0,?C0052
-                                           ; SOURCE LINE # 405
+                                           ; SOURCE LINE # 403
 05A6 9AF53E30      JNB       R5.3,?C0053
-                                           ; SOURCE LINE # 407
+                                           ; SOURCE LINE # 405
 05AA F04D          MOV       R4,R13
 05AC C084          MOVBZ     R4,RL4
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 23  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 23  
 
 05AE 5C54          SHL       R4,#05H
 05B0 D7408000      EXTP      #080H,#01H
@@ -1396,10 +1394,10 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 05BC F024          MOV       R2,R4
 05BE E003          MOV       R3,#00H
 ;---- Variable 'id' assigned to Register 'R2/R3' ----
-                                           ; SOURCE LINE # 408
+                                           ; SOURCE LINE # 406
 05C0 F034          MOV       R3,R4
 05C2 E002          MOV       R2,#00H
-                                           ; SOURCE LINE # 409
+                                           ; SOURCE LINE # 407
 05C4 F04D          MOV       R4,R13
 05C6 C084          MOVBZ     R4,RL4
 05C8 5C54          SHL       R4,#05H
@@ -1408,19 +1406,19 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 05D2 E005          MOV       R5,#00H
 05D4 7024          OR        R2,R4
 05D6 7035          OR        R3,R5
-                                           ; SOURCE LINE # 410
+                                           ; SOURCE LINE # 408
 05D8 F04D          MOV       R4,R13
 05DA C084          MOVBZ     R4,RL4
 05DC 5C54          SHL       R4,#05H
 05DE D7408000      EXTP      #080H,#01H
 05E2 D4441A10      MOV       R4,[R4+#POF(0101AH)]
 05E6 8AF403D0      JB        R4.13,?C0054
-                                           ; SOURCE LINE # 411
+                                           ; SOURCE LINE # 409
 05EA F023          MOV       R2,R3
 05EC 7C22          SHR       R2,#02H
 05EE E003          MOV       R3,#00H
 05F0         ?C0054:
-                                           ; SOURCE LINE # 414
+                                           ; SOURCE LINE # 412
 05F0 F04D          MOV       R4,R13
 05F2 C084          MOVBZ     R4,RL4
 05F4 5C54          SHL       R4,#05H
@@ -1442,24 +1440,24 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 061E C088          MOVBZ     R8,RL4
 0620 DA000000 E    CALLS     SEG (do_objx),do_objx
 0624 0802          ADD       R0,#02H
-                                           ; SOURCE LINE # 415
+                                           ; SOURCE LINE # 413
 0626         ?C0053:
-                                           ; SOURCE LINE # 416
+                                           ; SOURCE LINE # 414
 0626 E6F51900      MOV       R5,#019H
 062A F04D          MOV       R4,R13
 062C C084          MOVBZ     R4,RL4
 062E 5C54          SHL       R4,#05H
 0630 D7408000      EXTP      #080H,#01H
 0634 C4541C10      MOV       [R4+#POF(0101CH)],R5
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 24  
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 24  
 
-                                           ; SOURCE LINE # 417
+                                           ; SOURCE LINE # 415
 0638         ?C0052:
-                                           ; SOURCE LINE # 418
+                                           ; SOURCE LINE # 416
 0638 F04D          MOV       R4,R13
 063A 47F81000      CMPB      RL4,#010H
 063E 9D08          JMPR      cc_UGE,?C0055
-                                           ; SOURCE LINE # 419
+                                           ; SOURCE LINE # 417
 0640 E014          MOV       R4,#01H
 0642 4C4D          SHL       R4,R13
 0644 9140          CPL       R4
@@ -1467,11 +1465,11 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 064A F6F44001      MOV       0140H,R4
 064E 0D0E          JMPR      cc_UC,?C0048
 0650         ?C0055:
-                                           ; SOURCE LINE # 420
+                                           ; SOURCE LINE # 418
 0650 F04D          MOV       R4,R13
 0652 47F82000      CMPB      RL4,#020H
 0656 9D0A          JMPR      cc_UGE,?C0048
-                                           ; SOURCE LINE # 421
+                                           ; SOURCE LINE # 419
 0658 C085          MOVBZ     R5,RL4
 065A 26F51000      SUB       R5,#010H
 065E E014          MOV       R4,#01H
@@ -1479,14 +1477,14 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0662 9140          CPL       R4
 0664 D7002000      EXTS      #020H,#01H
 0668 F6F44201      MOV       0142H,R4
-                                           ; SOURCE LINE # 422
+                                           ; SOURCE LINE # 420
 066C         ?C0048:
 066C D7002000      EXTS      #020H,#01H
 0670 F2F48001      MOV       R4,0180H
 0674 46F42000      CMP       R4,#020H
 0678 3D88          JMPR      cc_NZ,?C0050
 067A         ?C0049:
-                                           ; SOURCE LINE # 423
+                                           ; SOURCE LINE # 421
 067A FCFD          POP       R13
 067C FCFC          POP       R12
 067E FCFB          POP       R11
@@ -1509,53 +1507,53 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION isr_can_txrx0 (END    RMASK = @0x7FFF)
 
              ; FUNCTION isr_can_status (BEGIN  RMASK = @0x4030)
-                                           ; SOURCE LINE # 428
+                                           ; SOURCE LINE # 426
 06A0 C6030300      SCXT      DPP3,#03H
 06A4 ECF4          PUSH      R4
 06A6 ECF5          PUSH      R5
-                                           ; SOURCE LINE # 429
-                                           ; SOURCE LINE # 432
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 25  
+                                           ; SOURCE LINE # 427
+                                           ; SOURCE LINE # 430
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 25  
 
 06A8 D7002000      EXTS      #020H,#01H
 06AC F2F50402      MOV       R5,0204H
 ;---- Variable 'nodeinfo' assigned to Register 'R5' ----
-                                           ; SOURCE LINE # 434
+                                           ; SOURCE LINE # 432
 06B0 9AF51F50      JNB       R5.5,?C0059
-                                           ; SOURCE LINE # 435
+                                           ; SOURCE LINE # 433
 06B4         ?C0058:
-                                           ; SOURCE LINE # 438
+                                           ; SOURCE LINE # 436
 06B4 9AF50370      JNB       R5.7,?C0060
-                                           ; SOURCE LINE # 441
+                                           ; SOURCE LINE # 439
 06B8 E118          MOVB      RL4,#01H
 06BA 75F80000 R    ORB       g_can_status,RL4
-                                           ; SOURCE LINE # 442
+                                           ; SOURCE LINE # 440
 06BE         ?C0060:
-                                           ; SOURCE LINE # 446
+                                           ; SOURCE LINE # 444
 06BE 9AF50680      JNB       R5.8,?C0061
-                                           ; SOURCE LINE # 453
+                                           ; SOURCE LINE # 451
 06C2 E6F43F02      MOV       R4,#023FH
 06C6 D7002000      EXTS      #020H,#01H
 06CA F6F40402      MOV       0204H,R4
-                                           ; SOURCE LINE # 454
+                                           ; SOURCE LINE # 452
 06CE         ?C0061:
-                                           ; SOURCE LINE # 456
+                                           ; SOURCE LINE # 454
 06CE 9AF50690      JNB       R5.9,?C0062
-                                           ; SOURCE LINE # 463
+                                           ; SOURCE LINE # 461
 06D2 E6F43F01      MOV       R4,#013FH
 06D6 D7002000      EXTS      #020H,#01H
 06DA F6F40402      MOV       0204H,R4
-                                           ; SOURCE LINE # 464
+                                           ; SOURCE LINE # 462
 06DE         ?C0062:
-                                           ; SOURCE LINE # 466
+                                           ; SOURCE LINE # 464
 06DE D7002000      EXTS      #020H,#01H
 06E2 F2F40002      MOV       R4,0200H
+                                           ; SOURCE LINE # 466
                                            ; SOURCE LINE # 468
-                                           ; SOURCE LINE # 470
 06E6 E6F41F03      MOV       R4,#031FH
 06EA D7002000      EXTS      #020H,#01H
 06EE F6F40402      MOV       0204H,R4
-                                           ; SOURCE LINE # 472
+                                           ; SOURCE LINE # 470
 06F2         ?C0059:
 06F2 FCF5          POP       R5
 06F4 FCF4          POP       R4
@@ -1564,50 +1562,50 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION isr_can_status (END    RMASK = @0x4030)
 
              ; FUNCTION isr_can_error (BEGIN  RMASK = @0x4070)
-                                           ; SOURCE LINE # 477
+                                           ; SOURCE LINE # 475
 06FA C6030300      SCXT      DPP3,#03H
 06FE ECF4          PUSH      R4
 0700 ECF5          PUSH      R5
 0702 ECF6          PUSH      R6
-                                           ; SOURCE LINE # 478
-                                           ; SOURCE LINE # 482
+                                           ; SOURCE LINE # 476
+                                           ; SOURCE LINE # 480
 0704 D7002000      EXTS      #020H,#01H
 0708 F2F50402      MOV       R5,0204H
 ;---- Variable 'nodeinfo' assigned to Register 'R5' ----
-                                           ; SOURCE LINE # 484
+                                           ; SOURCE LINE # 482
 070C F065          MOV       R6,R5
 070E 6867          AND       R6,#07H
 0710 2D07          JMPR      cc_Z,?C0065
-                                           ; SOURCE LINE # 485
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 26  
+                                           ; SOURCE LINE # 483
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 26  
 
 0712         ?C0064:
-                                           ; SOURCE LINE # 487
+                                           ; SOURCE LINE # 485
 0712 0D00          JMPR      cc_UC,?C0066
-                                           ; SOURCE LINE # 489
+                                           ; SOURCE LINE # 487
+                                           ; SOURCE LINE # 492
                                            ; SOURCE LINE # 494
-                                           ; SOURCE LINE # 496
+                                           ; SOURCE LINE # 498
                                            ; SOURCE LINE # 500
-                                           ; SOURCE LINE # 502
+                                           ; SOURCE LINE # 504
                                            ; SOURCE LINE # 506
-                                           ; SOURCE LINE # 508
+                                           ; SOURCE LINE # 512
                                            ; SOURCE LINE # 514
-                                           ; SOURCE LINE # 516
-                                           ; SOURCE LINE # 527
-                                           ; SOURCE LINE # 530
-                                           ; SOURCE LINE # 533
+                                           ; SOURCE LINE # 525
+                                           ; SOURCE LINE # 528
+                                           ; SOURCE LINE # 531
+                                           ; SOURCE LINE # 532
                                            ; SOURCE LINE # 534
-                                           ; SOURCE LINE # 536
+                                           ; SOURCE LINE # 538
                                            ; SOURCE LINE # 540
+                                           ; SOURCE LINE # 541
                                            ; SOURCE LINE # 542
-                                           ; SOURCE LINE # 543
-                                           ; SOURCE LINE # 544
 0714         ?C0066:
-                                           ; SOURCE LINE # 545
+                                           ; SOURCE LINE # 543
 0714 E6F43803      MOV       R4,#0338H
 0718 D7002000      EXTS      #020H,#01H
 071C F6F40402      MOV       0204H,R4
-                                           ; SOURCE LINE # 546
+                                           ; SOURCE LINE # 544
 0720         ?C0065:
 0720 FCF6          POP       R6
 0722 FCF5          POP       R5
@@ -1617,55 +1615,55 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION isr_can_error (END    RMASK = @0x4070)
 
              ; FUNCTION set_can_on (BEGIN  RMASK = @0x4010)
+                                           ; SOURCE LINE # 549
                                            ; SOURCE LINE # 551
-                                           ; SOURCE LINE # 553
 072A D7002000      EXTS      #020H,#01H
 072E F2F40002      MOV       R4,0200H
 0732 66F4BEFF      AND       R4,#0FFBEH
 0736 D7002000      EXTS      #020H,#01H
 073A F6F40002      MOV       0200H,R4
-                                           ; SOURCE LINE # 554
+                                           ; SOURCE LINE # 552
 073E E7F8FE00      MOVB      RL4,#0FEH
 0742 65F80000 R    ANDB      g_can_status,RL4
-                                           ; SOURCE LINE # 555
+                                           ; SOURCE LINE # 553
 0746 DB00          RETS      
              ; FUNCTION set_can_on (END    RMASK = @0x4010)
 
              ; FUNCTION get_can_bus_off (BEGIN  RMASK = @0x0010)
-                                           ; SOURCE LINE # 560
-                                           ; SOURCE LINE # 564
+                                           ; SOURCE LINE # 558
+                                           ; SOURCE LINE # 562
 0748 F3F80000 R    MOVB      RL4,g_can_status
 074C 9AF40200      JNB       R4.0,?C0076
-                                           ; SOURCE LINE # 565
+                                           ; SOURCE LINE # 563
 0750 E118          MOVB      RL4,#01H
 0752 DB00          RETS      
 0754         ?C0076:
-                                           ; SOURCE LINE # 567
+                                           ; SOURCE LINE # 565
 0754 E108          MOVB      RL4,#00H
-                                           ; SOURCE LINE # 568
-C166 COMPILER V7.57.0, XC2K_CAN                                                            12/14/2020 10:56:37 PAGE 27  
+                                           ; SOURCE LINE # 566
+C166 COMPILER V7.57.0, XC2K_CAN                                                            12/25/2020 22:12:50 PAGE 27  
 
 0756         ?C0077:
 0756 DB00          RETS      
              ; FUNCTION get_can_bus_off (END    RMASK = @0x0010)
 
              ; FUNCTION can_txx (BEGIN  RMASK = @0x4010)
-                                           ; SOURCE LINE # 573
+                                           ; SOURCE LINE # 571
 ;---- Variable 'buf' assigned to Register 'R10/R11' ----
 ;---- Variable 'id' assigned to Register 'R8/R9' ----
-                                           ; SOURCE LINE # 578
+                                           ; SOURCE LINE # 576
 0758 E118          MOVB      RL4,#01H
-                                           ; SOURCE LINE # 579
+                                           ; SOURCE LINE # 577
 075A DB00          RETS      
              ; FUNCTION can_txx (END    RMASK = @0x4010)
 
              ; FUNCTION can_settingx (BEGIN  RMASK = @0x4010)
-                                           ; SOURCE LINE # 584
+                                           ; SOURCE LINE # 582
 ;---- Variable 'option' assigned to Register 'R10' ----
 ;---- Variable 'baudrate' assigned to Register 'R8/R9' ----
-                                           ; SOURCE LINE # 589
+                                           ; SOURCE LINE # 587
 075C E118          MOVB      RL4,#01H
-                                           ; SOURCE LINE # 590
+                                           ; SOURCE LINE # 588
 075E DB00          RETS      
              ; FUNCTION can_settingx (END    RMASK = @0x4010)
 

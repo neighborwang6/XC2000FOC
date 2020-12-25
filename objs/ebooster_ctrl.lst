@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 1   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE EBOOSTER_CTRL
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE EBS_Ctrl_Logic\ebooster_ctrl.c
    51         float RodMotor=0,RodActual=0,RodActual0=0.2,PercentError=0;
    52         float DisplacementSenseMM_Pre=0,RodActual_Pre=0;
    53         u16 DataTimer20ms=0,TimerState0=0,TimerState1=0,TimerState2=0;
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 2   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 2   
 
    54         
    55         float Eerror=0,sum_error=0,Derror=0,e_error_0=50,Eerror_pre=0;
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE EBS_Ctrl_Logic\ebooster_ctrl.c
   112  2              RodActual=RodMotor+DisplacementSenseMM*0.00122;
   113  2              if(RodActual<0)
   114  2              {
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 3   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 3   
 
   115  3                  RodActual=0;
   116  3              }
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE EBS_Ctrl_Logic\ebooster_ctrl.c
   172  4                  //ControlI = 0.002;
   173  4                  if((ControlP*Eerror+ControlI*sum_error+ControlD*Derror)>=0)
   174  4                    {
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 4   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 4   
 
   175  5                      Voltage=(ControlP*Eerror+ControlI*sum_error+ControlD*Derror);
   176  5                      MotorState=0;
@@ -250,7 +250,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE EBS_Ctrl_Logic\ebooster_ctrl.c
   230  1      
   231  1      
   232  1      }
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 5   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -314,7 +314,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 007E E6F77041      MOV       R7,#04170H
 0082 DA000000 E    CALLS     SEG (?C_FPCMP),?C_FPCMP
 0086 CD0B          JMPR      cc_SLT,?C0006
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 6   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 6   
 
                                            ; SOURCE LINE # 105
 0088 E6F57041      MOV       R5,#04170H
@@ -378,7 +378,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 010C F2F47A00 R    MOV       R4,DisplacementSenseMM
 0110 F2F57C00 R    MOV       R5,DisplacementSenseMM+02H
 0114 F6F41000 R    MOV       Eerror,R4
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 7   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 7   
 
 0118 F6F51200 R    MOV       Eerror+02H,R5
                                            ; SOURCE LINE # 133
@@ -442,7 +442,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 01C2 E004          MOV       R4,#00H
 01C4 E6F596C3      MOV       R5,#0C396H
 01C8 DA000000 E    CALLS     SEG (?C_FPDIV),?C_FPDIV
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 8   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 8   
 
 01CC F6F41C00 R    MOV       sum_error,R4
 01D0 F6F51E00 R    MOV       sum_error+02H,R5
@@ -506,7 +506,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0276 F6F42800 R    MOV       Voltage,R4
                                            ; SOURCE LINE # 157
 027A F68E5E00 R    MOV       MotorState,ZEROS
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 9   
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 9   
 
                                            ; SOURCE LINE # 158
 027E EA002004 R    JMPA      cc_UC,?C0010
@@ -570,7 +570,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0328 DA000000 E    CALLS     SEG (?C_FPCMP),?C_FPCMP
 032C DD79          JMPR      cc_SGE,?C0010
 032E         ?C0020:
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 10  
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 10  
 
                                            ; SOURCE LINE # 173
 032E F2F61C00 R    MOV       R6,sum_error
@@ -634,7 +634,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 03D6 DA000000 E    CALLS     SEG (?C_FPADD),?C_FPADD
 03DA F0C4          MOV       R12,R4
 03DC F0D5          MOV       R13,R5
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 11  
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 11  
 
 03DE F2F61400 R    MOV       R6,Derror
 03E2 F2F71600 R    MOV       R7,Derror+02H
@@ -698,7 +698,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 046E 46F4BC02      CMP       R4,#02BCH
 0472 8D04          JMPR      cc_ULT,?C0026
                                            ; SOURCE LINE # 201
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 12  
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 12  
 
 0474 E6F4BC02      MOV       R4,#02BCH
 0478 F6F42800 R    MOV       Voltage,R4
@@ -762,7 +762,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 04F4 FCFD          POP       R13
 04F6 DB00          RETS      
              ; FUNCTION DoEboosterCtrl (END    RMASK = @0x7FFE)
-C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/14/2020 10:56:44 PAGE 13  
+C166 COMPILER V7.57.0, EBOOSTER_CTRL                                                       12/25/2020 22:12:57 PAGE 13  
 
 
 
