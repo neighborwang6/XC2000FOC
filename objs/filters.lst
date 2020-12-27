@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, FILTERS                                                             12/25/2020 22:12:56 PAGE 1   
+C166 COMPILER V7.57.0, FILTERS                                                             12/26/2020 15:24:04 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE FILTERS
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\filters.c MODV2 LARGE BROW
    51         {
    52  1        s32 sum_temp;
    53  1      
-C166 COMPILER V7.57.0, FILTERS                                                             12/25/2020 22:12:56 PAGE 2   
+C166 COMPILER V7.57.0, FILTERS                                                             12/26/2020 15:24:04 PAGE 2   
 
    54  1        sum_s_sense+=s_sense_get;
    55  1        sum_s_sense-=s_sense;
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\filters.c MODV2 LARGE BROW
   113         ////////////////////////////////////////////////////////////////////////////////
   114         u16 filter_currentB(u16 currentB_adc)
   115         {
-C166 COMPILER V7.57.0, FILTERS                                                             12/25/2020 22:12:56 PAGE 3   
+C166 COMPILER V7.57.0, FILTERS                                                             12/26/2020 15:24:04 PAGE 3   
 
   116  1        s32 sum_temp;
   117  1      
@@ -171,7 +171,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\filters.c MODV2 LARGE BROW
   156  1        return phase_currentM;
   157  1      }
   158         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, FILTERS                                                             12/25/2020 22:12:56 PAGE 4   
+C166 COMPILER V7.57.0, FILTERS                                                             12/26/2020 15:24:04 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -235,7 +235,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 006E E6F6A000      MOV       R6,#0A0H
 0072 E007          MOV       R7,#00H
 0074 F048          MOV       R4,R8
-C166 COMPILER V7.57.0, FILTERS                                                             12/25/2020 22:12:56 PAGE 5   
+C166 COMPILER V7.57.0, FILTERS                                                             12/26/2020 15:24:04 PAGE 5   
 
 0076 F059          MOV       R5,R9
 0078 DA000000 E    CALLS     SEG (?C_LMUL),?C_LMUL
@@ -299,7 +299,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 00D4 F2F40800 R    MOV       R4,currentQ
 00D8 24F41C00 R    SUB       sum_currentQ,R4
                                            ; SOURCE LINE # 88
-C166 COMPILER V7.57.0, FILTERS                                                             12/25/2020 22:12:56 PAGE 6   
+C166 COMPILER V7.57.0, FILTERS                                                             12/26/2020 15:24:04 PAGE 6   
 
 00DC F2F81C00 R    MOV       R8,sum_currentQ
 00E0 E009          MOV       R9,#00H
@@ -363,7 +363,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 115
                                            ; SOURCE LINE # 118
 0138 04F82400 R    ADD       sum_currentB,R8
-C166 COMPILER V7.57.0, FILTERS                                                             12/25/2020 22:12:56 PAGE 7   
+C166 COMPILER V7.57.0, FILTERS                                                             12/26/2020 15:24:04 PAGE 7   
 
                                            ; SOURCE LINE # 119
 013C F2F41000 R    MOV       R4,phase_currentB
@@ -427,7 +427,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
              ; FUNCTION filter_currentM (BEGIN  RMASK = @0x63F0)
                                            ; SOURCE LINE # 146
-C166 COMPILER V7.57.0, FILTERS                                                             12/25/2020 22:12:56 PAGE 8   
+C166 COMPILER V7.57.0, FILTERS                                                             12/26/2020 15:24:04 PAGE 8   
 
 ;---- Variable 'currentM_adc' assigned to Register 'R8' ----
                                            ; SOURCE LINE # 147

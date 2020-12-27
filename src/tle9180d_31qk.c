@@ -318,4 +318,18 @@ u16 spi_tle9180d_31qk_trans(u16 ch)
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
+u8 crc3()
+{
+	//The CRC generator polynomial is x^3+x^1+1. 0b1011
+	u8 checksum=0;
+	
+	
+}
 
+void TLE9180D_Communicate(u8 C,u8 ADDR,u8 Data)
+{
+	//MOSI: C+ADDR[6:0]+DATA[7:0]+Resverd[4:0]+CRC[3:0]
+	
+	//MISO: SPI status[5:0]+ADDR[6:0]+DATA[7:0]+R+CRC[3:0]
+	
+}
