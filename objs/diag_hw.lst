@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, DIAG_HW                                                             12/26/2020 15:24:00 PAGE 1   
+C166 COMPILER V7.57.0, DIAG_HW                                                             12/27/2020 17:22:40 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE DIAG_HW
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\diag_hw.c MODV2 LARGE
    51  1        ///////////////////////////////////////////////////////
    52  1        // Post Prossess the SPI Message
    53  1        do_mcu1_msg();
-C166 COMPILER V7.57.0, DIAG_HW                                                             12/26/2020 15:24:00 PAGE 2   
+C166 COMPILER V7.57.0, DIAG_HW                                                             12/27/2020 17:22:40 PAGE 2   
 
    54  1        do_mcu2_msg();
    55  1        ///////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\diag_hw.c MODV2 LARGE
    75         {
    76  1      }
    77         
-C166 COMPILER V7.57.0, DIAG_HW                                                             12/26/2020 15:24:00 PAGE 3   
+C166 COMPILER V7.57.0, DIAG_HW                                                             12/27/2020 17:22:40 PAGE 3   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -152,7 +152,7 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   NEAR-CONST SIZE  =    --------     --------
   FAR-CONST SIZE   =    --------     --------
   HUGE-CONST SIZE  =    --------     --------
-C166 COMPILER V7.57.0, DIAG_HW                                                             12/26/2020 15:24:00 PAGE 4   
+C166 COMPILER V7.57.0, DIAG_HW                                                             12/27/2020 17:22:40 PAGE 4   
 
   XHUGE-CONST SIZE =    --------     --------
   NEAR-DATA SIZE   =           4     --------

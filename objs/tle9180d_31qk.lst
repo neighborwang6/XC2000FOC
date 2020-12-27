@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 1   
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE TLE9180D_31QK
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\tle9180d_31qk.c MODV2 LARG
    51         #define Dt_hs       0DH
    52         #define Dt_ls       0EH
    53         #define Ft_1        0FH
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 2   
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 2   
 
    54         #define Ft_2        10H
    55         #define Ft_3        11H
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\tle9180d_31qk.c MODV2 LARG
   113         #define temp_hs1_addr         5DH
   114         #define temp_hs2_addr         5EH
   115         #define temp_hs3_addr         5FH
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 3   
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 3   
 
   116         #define wwlc_addr             60H
   117         #define res_cc1_addr          61H
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\tle9180d_31qk.c MODV2 LARG
   175  1        /// - The parity generation is disabled
   176  1      
   177  1        U0C0_CCR       =  0x0000;      // load U0C0 channel control register
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 4   
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 4   
 
   178  1        
   179  1      
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\tle9180d_31qk.c MODV2 LARG
   237  1        U0C0_TCSRH     =  0x0000;      // load U0C0 transmit control/status 
   238  1                                       // register H
   239  1                                       
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 5   
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 5   
 
   240  1        ///  -----------------------------------------------------------------------
   241  1        ///  Configuration of the U0C0 Protocol Control Register:
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\tle9180d_31qk.c MODV2 LARG
   299         {
   300  1        U0C0_PSCR |= 0x2000;
   301  1        U0C0_TBUF00=ch;
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 6   
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 6   
 
   302  1      }
   303         
@@ -339,8 +339,41 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\tle9180d_31qk.c MODV2 LARG
   318         ////////////////////////////////////////////////////////////////////////////////
   319         //
   320         ////////////////////////////////////////////////////////////////////////////////
-  321         
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 7   
+  321         u8 crc3(u16 Data)
+  322         {
+  323  1        u8 i;
+  324  1        u8 checksum=0;
+  325  1        //The CRC generator polynomial is x^3+x^1+1. 0b1011
+  326  1        u32 Polynomial=0xB0000000;
+  327  1        u32 RealPolynomial=0x30000000;
+  328  1        u32 Gk=(u32)Data;
+  329  1        
+  330  1        for(i=0;i<24;i++)
+  331  1        {
+  332  2          if((Gk&0x80000000)==1)
+  333  2          {
+  334  3            Gk^=RealPolynomial;
+  335  3            Gk<<=1;
+  336  3          }
+  337  2            else
+  338  2            {
+  339  3              Gk<<=1;
+  340  3            }
+  341  2        }
+  342  1        
+  343  1      
+  344  1        return 0;
+  345  1        
+  346  1      }
+  347         
+  348         //void TLE9180D_Communicate(u8 C,u8 ADDR,u8 Data)
+  349         //{
+  350         //  //MOSI: C+ADDR[6:0]+DATA[7:0]+Resverd[4:0]+CRC[3:0]
+  351         //  
+  352         //  //MISO: SPI status[5:0]+ADDR[6:0]+DATA[7:0]+R+CRC[3:0]
+  353         //  
+  354         //}
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 7   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -404,7 +437,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 008E F6F44040      MOV       04040H,R4
                                            ; SOURCE LINE # 245
 0092 E014          MOV       R4,#01H
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 8   
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 8   
 
 0094 D7102000      EXTS      #020H,#02H
 0098 F6F44240      MOV       04042H,R4
@@ -468,7 +501,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0108 F2F60000 E    MOV       R6,g_ms_uw
 010C 2067          SUB       R6,R7
 010E 4862          CMP       R6,#02H
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 9   
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 9   
 
 0110 ED08          JMPR      cc_UGT,?C0002
 0112         ?C0005:
@@ -519,10 +552,60 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 017E DB00          RETS      
              ; FUNCTION spi_tle9180d_31qk_trans (END    RMASK = @0x40D0)
 
+             ; FUNCTION crc3 (BEGIN  RMASK = @0x4332)
+                                           ; SOURCE LINE # 321
+;---- Variable 'Data' assigned to Register 'R8' ----
+                                           ; SOURCE LINE # 322
+                                           ; SOURCE LINE # 324
+                                           ; SOURCE LINE # 326
+                                           ; SOURCE LINE # 327
+                                           ; SOURCE LINE # 328
+0180 F048          MOV       R4,R8
+0182 E005          MOV       R5,#00H
+0184 F095          MOV       R9,R5
+;---- Variable 'Gk' assigned to Register 'R8/R9' ----
+                                           ; SOURCE LINE # 330
+C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/27/2020 17:22:40 PAGE 10  
+
+0186 E102          MOVB      RL1,#00H
+;---- Variable 'i' assigned to Register 'RL1' ----
+0188         ?C0016:
+                                           ; SOURCE LINE # 332
+0188 F048          MOV       R4,R8
+018A 6840          AND       R4,#00H
+018C F059          MOV       R5,R9
+018E 66F50080      AND       R5,#08000H
+0192 2841          SUB       R4,#01H
+0194 3850          SUBC      R5,#00H
+0196 3D05          JMPR      cc_NZ,?C0018
+                                           ; SOURCE LINE # 334
+0198 56F90030      XOR       R9,#03000H
+                                           ; SOURCE LINE # 335
+019C 0088          ADD       R8,R8
+019E 1099          ADDC      R9,R9
+                                           ; SOURCE LINE # 336
+01A0 0D02          JMPR      cc_UC,?C0013
+01A2         ?C0018:
+                                           ; SOURCE LINE # 339
+01A2 0088          ADD       R8,R8
+01A4 1099          ADDC      R9,R9
+                                           ; SOURCE LINE # 340
+                                           ; SOURCE LINE # 341
+01A6         ?C0013:
+01A6 0921          ADDB      RL1,#01H
+01A8 47F21800      CMPB      RL1,#018H
+01AC 8DED          JMPR      cc_ULT,?C0016
+01AE         ?C0014:
+                                           ; SOURCE LINE # 344
+01AE E108          MOVB      RL4,#00H
+                                           ; SOURCE LINE # 346
+01B0 DB00          RETS      
+             ; FUNCTION crc3 (END    RMASK = @0x4332)
+
 
 
 MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
-  CODE SIZE        =         384     --------
+  CODE SIZE        =         434     --------
   NEAR-CONST SIZE  =    --------     --------
   FAR-CONST SIZE   =    --------     --------
   HUGE-CONST SIZE  =    --------     --------
@@ -532,8 +615,6 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   XHUGE-DATA SIZE  =    --------     --------
   IDATA-DATA SIZE  =    --------     --------
   SDATA-DATA SIZE  =    --------     --------
-C166 COMPILER V7.57.0, TLE9180D_31QK                                                       12/26/2020 15:24:00 PAGE 10  
-
   BDATA-DATA SIZE  =    --------     --------
   HUGE-DATA SIZE   =    --------     --------
   BIT SIZE         =    --------     --------

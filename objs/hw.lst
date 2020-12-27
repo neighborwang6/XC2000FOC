@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 1   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE HW
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\hw.c MODV2 LARGE BRO
    51  1        ad_setting();  //Why we need init the AD module twice?
    52  1        cc2_setting();
    53  1        cc6_setting();
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 2   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 2   
 
    54  1        
    55  1        tle9180d_31qk_init();
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\hw.c MODV2 LARGE BRO
   113  1        
   114  1        P5_DIDIS       =  0xFFFF;
   115  1        P15_DIDIS      =  0xCF;    // P15.5: ERR2 (digital input enable)
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 3   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 3   
 
   116  1        
   117  1        P2_IOCR03      =  0x0080;  // Debug only  
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\hw.c MODV2 LARGE BRO
   175         /////////////////////////////////////////////////////////
   176         void keep_alive(u8 on_off)
   177         {
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 4   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 4   
 
   178  1        if(on_off)
   179  1        {
@@ -202,7 +202,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE Hw_Driver\hw.c MODV2 LARGE BRO
   185  2        }
   186  1      }
   187         /////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 5   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -266,7 +266,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0050 DA000000 R    CALLS     SEG (capcom_setting),capcom_setting
                                            ; SOURCE LINE # 48
 0054 DA000000 E    CALLS     SEG (rtc_setting),rtc_setting
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 6   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 6   
 
                                            ; SOURCE LINE # 49
 0058 DA000000 E    CALLS     SEG (timer_setting),timer_setting
@@ -330,7 +330,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 00C6 F6F440E8      MOV       0E840H,R4
                                            ; SOURCE LINE # 82
 00CA E6F48000      MOV       R4,#080H
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 7   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 7   
 
 00CE F6F480E8      MOV       0E880H,R4
                                            ; SOURCE LINE # 84
@@ -394,7 +394,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION pll_setting (BEGIN  RMASK = @0x8000)
                                            ; SOURCE LINE # 121
                                            ; SOURCE LINE # 123
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 8   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 8   
 
 014A E6AF0000      MOV       SCU_EXTCON,#00H
                                            ; SOURCE LINE # 124
@@ -458,7 +458,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 147
 017A DB00          RETS      
              ; FUNCTION delay_ns (END    RMASK = @0x4070)
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 9   
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 9   
 
 
              ; FUNCTION delay_msx (BEGIN  RMASK = @0x43E0)
@@ -522,7 +522,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 01B6         ?C0033:
                                            ; SOURCE LINE # 186
 01B6 DB00          RETS      
-C166 COMPILER V7.57.0, HW                                                                  12/26/2020 15:23:58 PAGE 10  
+C166 COMPILER V7.57.0, HW                                                                  12/27/2020 17:22:38 PAGE 10  
 
              ; FUNCTION keep_alive (END    RMASK = @0x4010)
 

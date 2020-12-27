@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, MAIN                                                                12/26/2020 15:24:03 PAGE 1   
+C166 COMPILER V7.57.0, MAIN                                                                12/27/2020 17:22:43 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\main.c MODV2 LARGE BROWSE 
    49  1          while (1)
    50  1        {   
    51  2          //////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, MAIN                                                                12/26/2020 15:24:03 PAGE 2   
+C166 COMPILER V7.57.0, MAIN                                                                12/27/2020 17:22:43 PAGE 2   
 
    52  2          // 5ms task
    53  2          if (g_overflow_5ms_ub == 1)
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\main.c MODV2 LARGE BROWSE 
   111  1        //////////////////////////////////////////////////////
   112  1        // FIXED: yly
   113  1        keep_alive(1); //Power Hold.
-C166 COMPILER V7.57.0, MAIN                                                                12/26/2020 15:24:03 PAGE 3   
+C166 COMPILER V7.57.0, MAIN                                                                12/27/2020 17:22:43 PAGE 3   
 
   114  1        
   115  1        //////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\main.c MODV2 LARGE BROWSE 
   173         
   174         ////////////////////////////////////////////////////////////////////////////////
   175         //
-C166 COMPILER V7.57.0, MAIN                                                                12/26/2020 15:24:03 PAGE 4   
+C166 COMPILER V7.57.0, MAIN                                                                12/27/2020 17:22:43 PAGE 4   
 
   176         ////////////////////////////////////////////////////////////////////////////////
   177         void app_5ms_task(void)
@@ -212,7 +212,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE src\main.c MODV2 LARGE BROWSE 
   193  1        diag_main_loop_hook(); 
   194  1      }
   195         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, MAIN                                                                12/26/2020 15:24:03 PAGE 5   
+C166 COMPILER V7.57.0, MAIN                                                                12/27/2020 17:22:43 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -276,7 +276,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0062 DA000000 E    CALLS     SEG (diag_hw_init),diag_hw_init
                                            ; SOURCE LINE # 109
 0066 B54AB5B5      EINIT     
-C166 COMPILER V7.57.0, MAIN                                                                12/26/2020 15:24:03 PAGE 6   
+C166 COMPILER V7.57.0, MAIN                                                                12/27/2020 17:22:43 PAGE 6   
 
                                            ; SOURCE LINE # 113
 006A E018          MOV       R8,#01H
@@ -340,7 +340,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
              ; FUNCTION app_mainloop_task (BEGIN  RMASK = @0x7FFF)
                                            ; SOURCE LINE # 185
-C166 COMPILER V7.57.0, MAIN                                                                12/26/2020 15:24:03 PAGE 7   
+C166 COMPILER V7.57.0, MAIN                                                                12/27/2020 17:22:43 PAGE 7   
 
                                            ; SOURCE LINE # 193
 00C4 DA000000 E    CALLS     SEG (diag_main_loop_hook),diag_main_loop_hook

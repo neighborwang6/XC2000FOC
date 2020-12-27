@@ -318,18 +318,38 @@ u16 spi_tle9180d_31qk_trans(u16 ch)
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
-u8 crc3()
+u8 crc3(u16 Data)
 {
-	//The CRC generator polynomial is x^3+x^1+1. 0b1011
+	u8 i;
 	u8 checksum=0;
+	//The CRC generator polynomial is x^3+x^1+1. 0b1011
+	u32 Polynomial=0xB0000000;
+	u32 RealPolynomial=0x30000000;
+	u32 Gk=(u32)Data;
 	
+	for(i=0;i<28;i++)
+	{
+		if((Gk&0x80000000)==1)
+		{
+			Gk^=RealPolynomial;
+			Gk<<=1;
+		}
+			else
+			{
+				Gk<<=1;
+			}
+	}
+	
+	checksum = (Gk&0x70000000)>>;
+
+	return 0;
 	
 }
 
-void TLE9180D_Communicate(u8 C,u8 ADDR,u8 Data)
-{
-	//MOSI: C+ADDR[6:0]+DATA[7:0]+Resverd[4:0]+CRC[3:0]
-	
-	//MISO: SPI status[5:0]+ADDR[6:0]+DATA[7:0]+R+CRC[3:0]
-	
-}
+//void TLE9180D_Communicate(u8 C,u8 ADDR,u8 Data)
+//{
+//	//MOSI: C+ADDR[6:0]+DATA[7:0]+Resverd[4:0]+CRC[3:0]
+//	
+//	//MISO: SPI status[5:0]+ADDR[6:0]+DATA[7:0]+R+CRC[3:0]
+//	
+//}

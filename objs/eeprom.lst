@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 1   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE EEPROM
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\eeprom.c MODV2 LARGE 
    51  1        SET_EESCK(0);delay_us(1);
    52  1        SET_EEWP(0); delay_us(1);
    53  1        SET_EESDI(1);delay_us(1);
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 2   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 2   
 
    54  1        
    55  1        SET_EEWP(1);
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\eeprom.c MODV2 LARGE 
   113  2        }
   114  1        
   115  1        return tmp1;
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 3   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 3   
 
   116  1        
   117  1      #else
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\eeprom.c MODV2 LARGE 
   175         ////////////////////////////////////////////////////////////////////////////////
   176         u8 eeprom_wr(u16 addr,u8 len,u8 *buf)
   177         {
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 4   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 4   
 
   178  1        u8 idx;
   179  1        
@@ -244,7 +244,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\eeprom.c MODV2 LARGE 
   227  1        return 0;
   228  1      }
   229         ////////////////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 5   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -308,7 +308,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 71
 0066 E7F85500      MOVB      RL4,#055H
 006A B980          MOVB      [R0],RL4      ; buf
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 6   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 6   
 
 006C E7F8AA00      MOVB      RL4,#0AAH
 0070 E4800100      MOVB      [R0+#01H],RL4 ; buf+1
@@ -372,7 +372,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 95
 00D4 E004          MOV       R4,#00H
 00D6 0D27          JMPR      cc_UC,?C0010
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 7   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 7   
 
 00D8         ?C0009:
                                            ; SOURCE LINE # 97
@@ -436,7 +436,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0126 0802          ADD       R0,#02H
 0128 FCFF          POP       R15
 012A FCFE          POP       R14
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 8   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 8   
 
 012C FCFD          POP       R13
 012E DB00          RETS      
@@ -500,7 +500,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0182 DA000000 R    CALLS     SEG (byte_shift),byte_shift
                                            ; SOURCE LINE # 154
 0186 E089          MOV       R9,#08H
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 9   
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 9   
 
 0188 E008          MOV       R8,#00H
 018A DA000000 R    CALLS     SEG (byte_shift),byte_shift
@@ -564,7 +564,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 ;---- Variable 'len' assigned to Register 'R13' ----
 01E4 8880          MOV       [-R0],R8
 01E6 2802          SUB       R0,#02H
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 10  
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 10  
 
                                            ; SOURCE LINE # 177
                                            ; SOURCE LINE # 180
@@ -628,7 +628,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0252 E108          MOVB      RL4,#00H
 0254 B980          MOVB      [R0],RL4      ; idx
                                            ; SOURCE LINE # 195
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 11  
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 11  
 
 0256 0D0A          JMPR      cc_UC,?C0027
 0258         ?C0029:
@@ -692,7 +692,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 02B2 8880          MOV       [-R0],R8
 02B4 2802          SUB       R0,#02H
                                            ; SOURCE LINE # 215
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 12  
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 12  
 
                                            ; SOURCE LINE # 217
 02B6 E018          MOV       R8,#01H
@@ -756,7 +756,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION eeprom_rd (END    RMASK = @0x7FFF)
 
 
-C166 COMPILER V7.57.0, EEPROM                                                              12/26/2020 15:24:01 PAGE 13  
+C166 COMPILER V7.57.0, EEPROM                                                              12/27/2020 17:22:41 PAGE 13  
 
 
 MODULE INFORMATION:   INITIALIZED  UNINITIALIZED

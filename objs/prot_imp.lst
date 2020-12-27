@@ -1,4 +1,4 @@
-C166 COMPILER V7.57.0, PROT_IMP                                                            12/26/2020 15:24:02 PAGE 1   
+C166 COMPILER V7.57.0, PROT_IMP                                                            12/27/2020 17:22:42 PAGE 1   
 
 
 C166 COMPILER V7.57.0, COMPILATION OF MODULE PROT_IMP
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu2_prot\prot_imp.c 
    51         // disabled.
    52         u8 security_mode=0;
    53         
-C166 COMPILER V7.57.0, PROT_IMP                                                            12/26/2020 15:24:02 PAGE 2   
+C166 COMPILER V7.57.0, PROT_IMP                                                            12/27/2020 17:22:42 PAGE 2   
 
    54         u8 comp_on_tout[10]={0,0,0,0,0,0,0,0,0,0}; // SOL,MOTOR,LAMP
    55         
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu2_prot\prot_imp.c 
   113  1        u8 sum=0;
   114  1        for(idx=0;idx<buflen;idx++)
   115  1        {
-C166 COMPILER V7.57.0, PROT_IMP                                                            12/26/2020 15:24:02 PAGE 3   
+C166 COMPILER V7.57.0, PROT_IMP                                                            12/27/2020 17:22:42 PAGE 3   
 
   116  2          sum+=buf[idx];
   117  2        }   
@@ -154,7 +154,7 @@ COMPILER INVOKED BY: C:\Keil_v5\C166\BIN\C166.EXE DTC_Diag\mcu2_prot\prot_imp.c 
   139         //////////////////////////////////////////////////////////////////////
   140         //
   141         //////////////////////////////////////////////////////////////////////
-C166 COMPILER V7.57.0, PROT_IMP                                                            12/26/2020 15:24:02 PAGE 4   
+C166 COMPILER V7.57.0, PROT_IMP                                                            12/27/2020 17:22:42 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -218,7 +218,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0024 8DF6          JMPR      cc_ULT,?C0007
 0026         ?C0005:
                                            ; SOURCE LINE # 119
-C166 COMPILER V7.57.0, PROT_IMP                                                            12/26/2020 15:24:02 PAGE 5   
+C166 COMPILER V7.57.0, PROT_IMP                                                            12/27/2020 17:22:42 PAGE 5   
 
 0026 F182          MOVB      RL4,RL1
                                            ; SOURCE LINE # 120
